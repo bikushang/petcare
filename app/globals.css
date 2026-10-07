@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-plus-jakarta: 'Plus Jakarta Sans';
+}
+
+* { box-sizing: border-box; }
+html { background: #f7faf8; }
+body { margin: 0; background: #f7faf8; color: #142221; font-family: var(--font-plus-jakarta), sans-serif; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+::selection { background: #c6e9dc; color: #142221; }
