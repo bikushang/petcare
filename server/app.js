@@ -35,6 +35,20 @@ const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 
+// Netlify's serverless adapter exposes the request body as a Buffer.
+// Normalize it before Express's JSON middleware runs so API handlers receive
+// the same object shape in local and serverless deployments.
+app.use((req, res, next) => {
+  if (Buffer.isBuffer(req.body)) {
+    try {
+      req.body = JSON.parse(req.body.toString('utf8'));
+    } catch {
+      req.body = {};
+    }
+  }
+  next();
+});
+
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(requestLogger);
