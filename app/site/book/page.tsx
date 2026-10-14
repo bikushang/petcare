@@ -335,7 +335,7 @@ export default function BookPage() {
 
     /* Reference comes from the record we are about to write, derived from the
        highest existing suffix — not Math.random(), which could collide. */
-    const reference = nextDocNumber('NG-BK-', db?.messages ?? [], 1001, 4);
+    const reference = nextDocNumber('NG-BK-', db?.messages.map((message) => message.reference) ?? [], 1001, 4);
 
     /* Token numbers are per-day, so derive from the appointments already on
        that date rather than from the length of the whole collection. */
@@ -957,7 +957,7 @@ export default function BookPage() {
                   </div>
                 </StepBlock>
               </div>
-            </>
+              </form>
           )}
         </div>
       </Section>

@@ -319,7 +319,7 @@ export default function ReviewsPage() {
 
     const record: SiteReview = {
       id: newId('rev'),
-      reference: nextDocNumber(`NG-REV-${new Date().getFullYear()}-`, db?.siteReviews ?? [], 1, 4),
+      reference: nextDocNumber(`NG-REV-${new Date().getFullYear()}-`, db?.siteReviews.map((review) => review.reference) ?? [], 1, 4),
       name: name.trim(),
       email: email.trim(),
       petName: petName.trim(),

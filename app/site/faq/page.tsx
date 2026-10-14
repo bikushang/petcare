@@ -416,7 +416,7 @@ export default function FaqPage() {
 
     const record: SiteMessage = {
       id: newId('msg'),
-      reference: nextDocNumber(`NG-FAQ-${new Date().getFullYear()}-`, db?.messages ?? [], 1, 4),
+      reference: nextDocNumber(`NG-FAQ-${new Date().getFullYear()}-`, db?.messages.map((message) => message.reference) ?? [], 1, 4),
       source: 'FAQ question',
       name: name.trim(),
       email: email.trim(),

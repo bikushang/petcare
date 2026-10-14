@@ -158,7 +158,7 @@ export default function ContactPage() {
 
     const record: SiteMessage = {
       id: newId('msg'),
-      reference: nextDocNumber(`NG-${new Date().getFullYear()}-`, db?.messages ?? [], 1001, 4),
+      reference: nextDocNumber(`NG-${new Date().getFullYear()}-`, db?.messages.map((message) => message.reference) ?? [], 1001, 4),
       source: 'Contact form',
       name: name.trim(),
       email: email.trim(),
