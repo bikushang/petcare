@@ -285,7 +285,7 @@ Scheduled/Pending: ${pending.length > 0 ? pending.map((p) => `${p.vaccineName} (
 Overdue: ${overdue.length > 0 ? overdue.map((o) => o.vaccineName).join(', ') : 'None'}
 
 CORE VACCINES ${pet.species === 'Dog' ? '(Canine)' : pet.species === 'Cat' ? '(Feline)' : ''}
-${coreVaccines.map((v) => `• ${v}${missing.includes(v) ? ' — RECOMMENDED' : ' ✓ Up to date'}`).join('\n')}
+${coreVaccines.map((v) => `• ${v}${missing.includes(v) ? ' — RECOMMENDED' : ' — up to date'}`).join('\n')}
 
 RECOMMENDATIONS
 ${missing.length > 0 ? `The following core vaccines are recommended:\n${missing.map((m) => `• Schedule ${m} at earliest convenience`).join('\n')}` : 'All core vaccines appear current. Continue with annual boosters as scheduled.'}
@@ -517,7 +517,7 @@ IMPORTANT: This AI-generated explanation is for educational purposes and does no
 
 /* ── WhatsApp Reply Draft ── */
 export function generateWhatsAppDraft(owner: Owner, pet: Pet, context: string): AISuggestion {
-  const content = `Hi ${owner.name.split(' ')[0]}! 👋
+  const content = `Hi ${owner.name.split(' ')[0]},
 
 This is ${pet.name}'s veterinary clinic following up on your recent visit.
 
@@ -526,7 +526,7 @@ ${context}
 If you have any questions or concerns about ${pet.name}, please don't hesitate to reach out. We're here to help!
 
 Best regards,
-The team at your veterinary clinic 🐾`;
+The team at your veterinary clinic`;
 
   return {
     id: id(),

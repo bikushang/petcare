@@ -9,107 +9,17 @@ import {
   Languages, DollarSign, Receipt, BellRing, Eye, EyeOff,
 } from 'lucide-react';
 import Shell from '../components/Shell';
-import { Card, SectionTitle, inputCls, Button, Select, Checkbox, Field, Textarea, Badge, Modal, EmptyState } from '../components/ui';
+import { Card, SectionTitle, Button, Input, Select, Switch, ColorInput, Field, Textarea, Badge, Modal, EmptyState, Tabs } from '../components/ui';
+import { useSettings, type ClinicSettings } from '../lib/settings';
+import { confirmAction } from '../lib/helpers';
 import { branches as branchList, clinics } from '../lib/platform';
-
-const SETTINGS_KEY = 'petcare-pro-settings';
-const THEME_KEY = 'petcare-pro-theme';
 
 type Tab = 'general' | 'branding' | 'themes' | 'languages' | 'currencies' | 'taxes' | 'email' | 'notifications' | 'backup' | 'cache' | 'apikeys' | 'payments' | 'clinic' | 'branches' | 'numbering' | 'documents' | 'integrations';
 
-type ClinicSettings = {
-  clinicName: string;
-  legalName: string;
-  phone: string;
-  email: string;
-  address: string;
-  website: string;
-  taxId: string;
-  registrationNumber: string;
-  currency: string;
-  currencySymbol: string;
-  language: string;
-  dateFormat: string;
-  timeFormat: string;
-  timezone: string;
-  taxRate: string;
-  taxInclusive: boolean;
-  invoicePrefix: string;
-  estimatePrefix: string;
-  receiptPrefix: string;
-  prescriptionPrefix: string;
-  labTestPrefix: string;
-  surgeryPrefix: string;
-  boardingPrefix: string;
-  groomingPrefix: string;
-  theme: string;
-  primaryColor: string;
-  fontSize: string;
-  emailFrom: string;
-  emailReplyTo: string;
-  smsProvider: string;
-  lowStockThreshold: string;
-  appointmentSlotMin: string;
-  enableOnlineBooking: boolean;
-  enableSelfCheckIn: boolean;
-  autoGenerateInvoices: boolean;
-};
-
-const defaults: ClinicSettings = {
-  clinicName: 'Northgate Animal Hospital',
-  legalName: 'Northgate Veterinary Care LLC',
-  phone: '+1 415 555 0100',
-  email: 'reception@northgategp.com',
-  address: '128 Maple Avenue, Northgate, CA 94110',
-  website: 'www.northgatevet.com',
-  taxId: 'TAX-94110-001',
-  registrationNumber: 'VET-CA-2019-0042',
-  currency: 'USD',
-  currencySymbol: '$',
-  language: 'English',
-  dateFormat: 'YYYY-MM-DD',
-  timeFormat: '24h',
-  timezone: 'America/Los_Angeles',
-  taxRate: '8.5',
-  taxInclusive: false,
-  invoicePrefix: 'INV-',
-  estimatePrefix: 'EST-',
-  receiptPrefix: 'RCP-',
-  prescriptionPrefix: 'RX-',
-  labTestPrefix: 'LAB-',
-  surgeryPrefix: 'SRG-',
-  boardingPrefix: 'BRD-',
-  groomingPrefix: 'GRM-',
-  theme: 'light',
-  primaryColor: '#2d7766',
-  fontSize: 'medium',
-  emailFrom: 'noreply@northgatevet.com',
-  emailReplyTo: 'reception@northgategp.com',
-  smsProvider: 'Twilio',
-  lowStockThreshold: '10',
-  appointmentSlotMin: '30',
-  enableOnlineBooking: true,
-  enableSelfCheckIn: false,
-  autoGenerateInvoices: true,
-};
-
-function readSettings(): ClinicSettings {
-  if (typeof window === 'undefined') return defaults;
-  try {
-    const raw = window.localStorage.getItem(SETTINGS_KEY);
-    if (!raw) return defaults;
-    return { ...defaults, ...JSON.parse(raw) };
-  } catch {
-    return defaults;
-  }
-}
-
-function writeSettings(s: ClinicSettings) {
-  if (typeof window !== 'undefined') window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
-}
-
 export default function SettingsPage() {
-  const [settings, setSettings] = useState<ClinicSettings>(defaults);
+  const { settings, update: applySettings, reset: resetSettings } = useSettings();
+  const [draft, setDraft] = useState<ClinicSettings | null>(null);
+  const current = draft ?? settings;
   const [saved, setSaved] = useState(false);
   const [tab, setTab] = useState<Tab>('general');
 
@@ -177,20 +87,31 @@ export default function SettingsPage() {
   const [backupRunning, setBackupRunning] = useState(false);
   const [cacheStats] = useState({ size: '247 MB', entries: 14523, hitRate: '94.2%', lastCleared: '2026-10-06T03:00:00' });
 
-  useEffect(() => {
-    setSettings(readSettings());
-  }, []);
-
   const set = (k: keyof ClinicSettings, v: string | boolean) => {
-    setSettings((s) => ({ ...s, [k]: v }));
+    setDraft((d) => ({ ...(d ?? settings), [k]: v }));
     setSaved(false);
+    // Appearance is applied live so the effect is visible while choosing.
+    if (k === 'theme' || k === 'primaryColor' || k === 'fontSize') {
+      applySettings({ [k]: v } as Partial<ClinicSettings>);
+    }
   };
 
   const save = () => {
-    writeSettings(settings);
+    if (draft) applySettings(draft);
+    setDraft(null);
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   };
+
+  const restoreDefaults = () => {
+    if (!confirmAction('Restore all settings to their defaults? Your customisations will be lost.')) return;
+    resetSettings();
+    setDraft(null);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2500);
+  };
+
+  const dirty = draft !== null;
 
   // Email template handlers
   const openEditTpl = (tpl: typeof emailTemplates[0]) => {
@@ -247,16 +168,9 @@ export default function SettingsPage() {
   const labelCls = 'text-[11px] font-medium text-ink/60 uppercase tracking-wide';
 
   return (
-    <Shell title="Administration" subtitle="Complete administration center for clinic configuration">
+    <Shell module="settings" title="Administration" subtitle="Complete administration center for clinic configuration">
       {/* Tabs */}
-      <div className="flex items-center gap-1 border-b border-line mb-5 overflow-x-auto">
-        {tabs.map((t) => (
-          <button key={t.key} onClick={() => setTab(t.key)}
-            className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${tab === t.key ? 'border-sage text-sage' : 'border-transparent text-ink/50 hover:text-ink'}`}>
-            <t.icon className="w-3.5 h-3.5" /> {t.label}
-          </button>
-        ))}
-      </div>
+      <Tabs tabs={tabs} value={tab} onChange={setTab} />
 
       {/* ════════════════════════════════════════════
           GENERAL SETTINGS
@@ -267,34 +181,34 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <label className="block">
               <span className={labelCls}>Clinic name</span>
-              <input className={`${inputCls} mt-1`} value={settings.clinicName} onChange={(e) => set('clinicName', e.target.value)} />
+              <Input className="mt-1" value={current.clinicName} onChange={(e) => set('clinicName', e.target.value)} />
             </label>
             <label className="block">
               <span className={labelCls}>Website</span>
-              <input className={`${inputCls} mt-1`} value={settings.website} onChange={(e) => set('website', e.target.value)} />
+              <Input className="mt-1" value={current.website} onChange={(e) => set('website', e.target.value)} />
             </label>
             <label className="block">
               <span className={labelCls}>Timezone</span>
-              <Select className="mt-1" value={settings.timezone} onChange={(e) => set('timezone', e.target.value)}>
+              <Select className="mt-1" value={current.timezone} onChange={(e) => set('timezone', e.target.value)}>
                 {['America/Los_Angeles', 'America/New_York', 'America/Chicago', 'Europe/London', 'Europe/Paris', 'Asia/Tokyo', 'Australia/Sydney'].map((tz) => <option key={tz}>{tz}</option>)}
               </Select>
             </label>
             <label className="block">
               <span className={labelCls}>Date format</span>
-              <Select className="mt-1" value={settings.dateFormat} onChange={(e) => set('dateFormat', e.target.value)}>
+              <Select className="mt-1" value={current.dateFormat} onChange={(e) => set('dateFormat', e.target.value)}>
                 {['YYYY-MM-DD', 'DD/MM/YYYY', 'MM/DD/YYYY', 'DD-MM-YYYY'].map((d) => <option key={d}>{d}</option>)}
               </Select>
             </label>
             <label className="block">
               <span className={labelCls}>Time format</span>
-              <Select className="mt-1" value={settings.timeFormat} onChange={(e) => set('timeFormat', e.target.value)}>
+              <Select className="mt-1" value={current.timeFormat} onChange={(e) => set('timeFormat', e.target.value)}>
                 <option value="24h">24-hour (14:30)</option>
                 <option value="12h">12-hour (2:30 PM)</option>
               </Select>
             </label>
             <label className="block">
               <span className={labelCls}>SMS provider</span>
-              <Select className="mt-1" value={settings.smsProvider} onChange={(e) => set('smsProvider', e.target.value)}>
+              <Select className="mt-1" value={current.smsProvider} onChange={(e) => set('smsProvider', e.target.value)}>
                 {['Twilio', 'Nexmo', 'AWS SNS', 'MessageBird'].map((p) => <option key={p}>{p}</option>)}
               </Select>
             </label>
@@ -305,15 +219,15 @@ export default function SettingsPage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 rounded-xl border border-line cursor-pointer hover:bg-canvas transition-colors">
                 <div><div className="text-sm font-medium text-ink">Enable online booking</div><div className="text-[11px] text-ink/50">Allow clients to book appointments online</div></div>
-                <Checkbox checked={settings.enableOnlineBooking} onChange={(e) => set('enableOnlineBooking', e.target.checked)} label="" />
+                <Switch checked={current.enableOnlineBooking} onChange={(v) => set('enableOnlineBooking', v)} />
               </div>
               <div className="flex items-center justify-between p-3 rounded-xl border border-line cursor-pointer hover:bg-canvas transition-colors">
                 <div><div className="text-sm font-medium text-ink">Enable self check-in kiosk</div><div className="text-[11px] text-ink/50">Allow clients to self check-in at the front desk</div></div>
-                <Checkbox checked={settings.enableSelfCheckIn} onChange={(e) => set('enableSelfCheckIn', e.target.checked)} label="" />
+                <Switch checked={current.enableSelfCheckIn} onChange={(v) => set('enableSelfCheckIn', v)} />
               </div>
               <div className="flex items-center justify-between p-3 rounded-xl border border-line cursor-pointer hover:bg-canvas transition-colors">
                 <div><div className="text-sm font-medium text-ink">Auto-generate invoices</div><div className="text-[11px] text-ink/50">Automatically create invoices for completed appointments</div></div>
-                <Checkbox checked={settings.autoGenerateInvoices} onChange={(e) => set('autoGenerateInvoices', e.target.checked)} label="" />
+                <Switch checked={current.autoGenerateInvoices} onChange={(v) => set('autoGenerateInvoices', v)} />
               </div>
             </div>
           </div>
@@ -323,13 +237,13 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label className="block">
                 <span className={labelCls}>Appointment slot duration (minutes)</span>
-                <Select className="mt-1" value={settings.appointmentSlotMin} onChange={(e) => set('appointmentSlotMin', e.target.value)}>
+                <Select className="mt-1" value={current.appointmentSlotMin} onChange={(e) => set('appointmentSlotMin', e.target.value)}>
                   {['15', '20', '30', '45', '60'].map((m) => <option key={m}>{m} min</option>)}
                 </Select>
               </label>
               <label className="block">
                 <span className={labelCls}>Low stock alert threshold</span>
-                <input className={`${inputCls} mt-1`} value={settings.lowStockThreshold} onChange={(e) => set('lowStockThreshold', e.target.value)} />
+                <Input className="mt-1" value={current.lowStockThreshold} onChange={(e) => set('lowStockThreshold', e.target.value)} />
               </label>
             </div>
           </div>
@@ -345,8 +259,8 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <span className={labelCls}>Clinic logo</span>
-              <div className="mt-2 rounded-xl border-2 border-dashed border-line p-8 text-center hover:border-sage/40 transition-colors cursor-pointer">
-                <div className="w-16 h-16 rounded-2xl bg-sage text-white flex items-center justify-center mx-auto text-2xl font-bold">N</div>
+              <div className="mt-2 rounded-xl border-2 border-dashed border-line p-8 text-center hover:border-plum/40 transition-colors cursor-pointer">
+                <div className="w-16 h-16 rounded-2xl bg-plum text-white flex items-center justify-center mx-auto text-2xl font-bold">N</div>
                 <p className="text-xs text-ink/50 mt-3">Click to upload logo (PNG, SVG, max 2MB)</p>
                 <Button size="sm" variant="outline" className="mt-3">Upload logo</Button>
               </div>
@@ -356,10 +270,10 @@ export default function SettingsPage() {
               <div className="mt-2 rounded-xl border border-line p-4">
                 <div className="bg-white rounded-lg p-4 border border-line">
                   <div className="flex items-center gap-3 pb-3 border-b border-line">
-                    <div className="w-10 h-10 rounded-xl bg-sage text-white flex items-center justify-center text-sm font-bold">N</div>
+                    <div className="w-10 h-10 rounded-xl bg-plum text-white flex items-center justify-center text-sm font-bold">N</div>
                     <div>
-                      <div className="text-sm font-bold text-ink">{settings.clinicName}</div>
-                      <div className="text-[10px] text-ink/50">{settings.address}</div>
+                      <div className="text-sm font-bold text-ink">{current.clinicName}</div>
+                      <div className="text-[10px] text-ink/50">{current.address}</div>
                     </div>
                   </div>
                   <div className="pt-3 text-[10px] text-ink/40">Document letterhead preview</div>
@@ -371,24 +285,21 @@ export default function SettingsPage() {
           <div className="mt-6 pt-6 border-t border-line">
             <h4 className="text-sm font-semibold text-ink mb-3">Report styling</h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <label className="block">
+              <div className="block">
                 <span className={labelCls}>Primary color</span>
-                <div className="flex items-center gap-2 mt-1">
-                  <input type="color" className="w-12 h-9 rounded-lg border border-line cursor-pointer" value={settings.primaryColor} onChange={(e) => set('primaryColor', e.target.value)} />
-                  <input className={inputCls} value={settings.primaryColor} onChange={(e) => set('primaryColor', e.target.value)} />
-                </div>
-              </label>
+                <ColorInput className="mt-1" value={current.primaryColor} onChange={(e) => set('primaryColor', e.target.value)} />
+              </div>
               <label className="block">
                 <span className={labelCls}>Font size</span>
-                <Select className="mt-1" value={settings.fontSize} onChange={(e) => set('fontSize', e.target.value)}>
+                <Select className="mt-1" value={current.fontSize} onChange={(e) => set('fontSize', e.target.value)}>
                   <option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option>
                 </Select>
               </label>
               <label className="block">
                 <span className={labelCls}>Font family</span>
-                <select className={`${inputCls} mt-1`} defaultValue="Inter">
+                <Select className="mt-1" defaultValue="Inter">
                   <option>Inter</option><option>Roboto</option><option>Open Sans</option><option>Lato</option><option>Poppins</option>
-                </select>
+                </Select>
               </label>
             </div>
           </div>
@@ -405,16 +316,16 @@ export default function SettingsPage() {
             {[
               { name: 'Light', value: 'light', icon: Sun, bg: 'bg-white border-2', text: 'text-ink' },
               { name: 'Dark', value: 'dark', icon: Moon, bg: 'bg-ink border-2', text: 'text-white' },
-              { name: 'Sage (Default)', value: 'sage', icon: Building, bg: 'bg-mint border-2', text: 'text-sage' },
+              { name: 'Violet (Default)', value: 'plum', icon: Building, bg: 'bg-lilac border-2', text: 'text-plum' },
               { name: 'Coral', value: 'coral', icon: Building, bg: 'bg-coral/15 border-2', text: 'text-coral' },
             ].map((theme) => (
               <button key={theme.value} onClick={() => set('theme', theme.value)}
-                className={`rounded-2xl p-5 border-2 transition-all text-center ${settings.theme === theme.value ? 'border-sage ring-2 ring-mint' : 'border-line hover:border-sage/30'}`}>
+                className={`rounded-2xl p-5 border-2 transition-all text-center ${current.theme === theme.value ? 'border-plum ring-2 ring-lilac' : 'border-line hover:border-plum/30'}`}>
                 <div className={`w-full h-20 rounded-xl ${theme.bg} ${theme.text} flex items-center justify-center mb-3`}>
                   <theme.icon className="w-8 h-8" />
                 </div>
                 <div className="text-sm font-medium text-ink">{theme.name}</div>
-                {settings.theme === theme.value && <div className="text-[10px] text-sage mt-1">Currently active</div>}
+                {current.theme === theme.value && <div className="text-[10px] text-plum mt-1">Currently active</div>}
               </button>
             ))}
           </div>
@@ -423,9 +334,9 @@ export default function SettingsPage() {
             <h4 className="text-sm font-semibold text-ink mb-3">Color palette preview</h4>
             <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
               {[
-                { name: 'Primary', color: '#2d7766' }, { name: 'Secondary', color: '#f17f65' },
-                { name: 'Accent', color: '#f59e0b' }, { name: 'Info', color: '#0ea5e9' },
-                { name: 'Success', color: '#22c55e' }, { name: 'Warning', color: '#ef4444' },
+                { name: 'Primary', color: '#4C1D95' }, { name: 'Deep', color: '#3B0764' },
+                { name: 'Accent', color: '#7C3AED' }, { name: 'Tint', color: '#EDE9FE' },
+                { name: 'Coral', color: '#f17f65' }, { name: 'Info', color: '#0ea5e9' },
               ].map((c) => (
                 <div key={c.name} className="rounded-xl overflow-hidden border border-line">
                   <div className="h-12" style={{ backgroundColor: c.color }} />
@@ -446,15 +357,15 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <label className="block">
               <span className={labelCls}>Default system language</span>
-              <Select className="mt-1" value={settings.language} onChange={(e) => set('language', e.target.value)}>
+              <Select className="mt-1" value={current.language} onChange={(e) => set('language', e.target.value)}>
                 {['English', 'Spanish', 'French', 'German', 'Portuguese', 'Italian', 'Japanese', 'Chinese', 'Arabic', 'Hindi'].map((l) => <option key={l}>{l}</option>)}
               </Select>
             </label>
             <label className="block">
               <span className={labelCls}>Fallback language</span>
-              <select className={`${inputCls} mt-1`} defaultValue="English">
+              <Select className="mt-1" defaultValue="English">
                 {['English', 'Spanish', 'French'].map((l) => <option key={l}>{l}</option>)}
-              </select>
+              </Select>
             </label>
           </div>
 
@@ -469,14 +380,14 @@ export default function SettingsPage() {
               { lang: 'Japanese', code: 'ja', native: '日本語', enabled: false, completion: 20 },
             ].map((l) => (
               <div key={l.code} className="flex items-center gap-3 p-3 rounded-xl border border-line">
-                <div className={`w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold ${l.enabled ? 'bg-mint text-sage' : 'bg-ink/5 text-ink/30'}`}>
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold ${l.enabled ? 'bg-lilac text-plum' : 'bg-ink/5 text-ink/30'}`}>
                   {l.code.toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium text-ink">{l.native}</div>
                   <div className="text-[11px] text-ink/50">{l.lang} · {l.completion}% translated</div>
                 </div>
-                <Checkbox checked={l.enabled} onChange={() => {}} label="" />
+                <Switch checked={l.enabled} onChange={() => {}} />
               </div>
             ))}
           </div>
@@ -492,13 +403,13 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <label className="block">
               <span className={labelCls}>Primary currency</span>
-              <Select className="mt-1" value={settings.currency} onChange={(e) => set('currency', e.target.value)}>
+              <Select className="mt-1" value={current.currency} onChange={(e) => set('currency', e.target.value)}>
                 {['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'INR', 'BRL'].map((c) => <option key={c}>{c}</option>)}
               </Select>
             </label>
             <label className="block">
               <span className={labelCls}>Currency symbol</span>
-              <input className={`${inputCls} mt-1`} value={settings.currencySymbol} onChange={(e) => set('currencySymbol', e.target.value)} />
+              <Input className="mt-1" value={current.currencySymbol} onChange={(e) => set('currencySymbol', e.target.value)} />
             </label>
           </div>
 
@@ -518,7 +429,7 @@ export default function SettingsPage() {
                   <div className="text-sm font-medium text-ink">{c.code} — {c.name}</div>
                   <div className="text-[11px] text-ink/50">Exchange rate: {c.rate} (per USD)</div>
                 </div>
-                <Checkbox checked={c.enabled} onChange={() => {}} label="" />
+                <Switch checked={c.enabled} onChange={() => {}} />
               </div>
             ))}
           </div>
@@ -534,17 +445,17 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <label className="block">
               <span className={labelCls}>Default tax rate (%)</span>
-              <input className={`${inputCls} mt-1`} value={settings.taxRate} onChange={(e) => set('taxRate', e.target.value)} />
+              <Input className="mt-1" value={current.taxRate} onChange={(e) => set('taxRate', e.target.value)} />
             </label>
             <label className="block">
               <span className={labelCls}>Tax ID / VAT number</span>
-              <input className={`${inputCls} mt-1`} value={settings.taxId} onChange={(e) => set('taxId', e.target.value)} />
+              <Input className="mt-1" value={current.taxId} onChange={(e) => set('taxId', e.target.value)} />
             </label>
           </div>
 
           <div className="flex items-center justify-between p-3 rounded-xl border border-line cursor-pointer hover:bg-canvas transition-colors mb-6">
             <div><div className="text-sm font-medium text-ink">Tax-inclusive pricing</div><div className="text-[11px] text-ink/50">Show prices with tax already included</div></div>
-            <Checkbox checked={settings.taxInclusive} onChange={(e) => set('taxInclusive', e.target.checked)} label="" />
+            <Switch checked={current.taxInclusive} onChange={(v) => set('taxInclusive', v)} />
           </div>
 
           <h4 className="text-sm font-semibold text-ink mb-3 mt-6 pt-6 border-t border-line">Tax brackets by service</h4>
@@ -563,9 +474,9 @@ export default function SettingsPage() {
                 <div className="flex-1">
                   <div className="text-sm font-medium text-ink">{t.service}</div>
                 </div>
-                {t.exempt && <span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage">Tax exempt</span>}
+                {t.exempt && <span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum">Tax exempt</span>}
                 <div className="w-20 text-right">
-                  <input className={`${inputCls} text-right`} defaultValue={t.rate} />
+                  <Input className="text-right" defaultValue={t.rate} />
                 </div>
               </div>
             ))}
@@ -583,11 +494,11 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <label className="block">
                 <span className={labelCls}>From email address</span>
-                <input className={`${inputCls} mt-1`} value={settings.emailFrom} onChange={(e) => set('emailFrom', e.target.value)} />
+                <Input className="mt-1" value={current.emailFrom} onChange={(e) => set('emailFrom', e.target.value)} />
               </label>
               <label className="block">
                 <span className={labelCls}>Reply-to address</span>
-                <input className={`${inputCls} mt-1`} value={settings.emailReplyTo} onChange={(e) => set('emailReplyTo', e.target.value)} />
+                <Input className="mt-1" value={current.emailReplyTo} onChange={(e) => set('emailReplyTo', e.target.value)} />
               </label>
             </div>
 
@@ -614,10 +525,10 @@ export default function SettingsPage() {
             {editTpl && (
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
-                  <Field label="Template name"><input className={inputCls} value={editTpl.name} onChange={(e) => setEditTpl({ ...editTpl, name: e.target.value })} /></Field>
-                  <Field label="Trigger"><input className={inputCls} value={editTpl.trigger} onChange={(e) => setEditTpl({ ...editTpl, trigger: e.target.value })} /></Field>
+                  <Field label="Template name"><Input value={editTpl.name} onChange={(e) => setEditTpl({ ...editTpl, name: e.target.value })} /></Field>
+                  <Field label="Trigger"><Input value={editTpl.trigger} onChange={(e) => setEditTpl({ ...editTpl, trigger: e.target.value })} /></Field>
                 </div>
-                <Field label="Subject line"><input className={inputCls} value={editTpl.subject} onChange={(e) => setEditTpl({ ...editTpl, subject: e.target.value })} /></Field>
+                <Field label="Subject line"><Input value={editTpl.subject} onChange={(e) => setEditTpl({ ...editTpl, subject: e.target.value })} /></Field>
                 <Field label="Email body">
                   <Textarea value={tplBody} onChange={(e) => setTplBody(e.target.value)} className="min-h-[200px] font-mono text-xs" />
                 </Field>
@@ -649,7 +560,7 @@ export default function SettingsPage() {
             {Object.entries(notifRules).map(([key, enabled]) => (
               <div key={key} className="flex items-center justify-between p-3 rounded-xl border border-line cursor-pointer hover:bg-canvas transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${enabled ? 'bg-mint text-sage' : 'bg-ink/5 text-ink/30'}`}>
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${enabled ? 'bg-lilac text-plum' : 'bg-ink/5 text-ink/30'}`}>
                     <BellRing className="w-4 h-4" />
                   </div>
                   <div>
@@ -657,7 +568,7 @@ export default function SettingsPage() {
                     <div className="text-[11px] text-ink/50">{enabled ? 'Active' : 'Disabled'}</div>
                   </div>
                 </div>
-                <Checkbox checked={enabled} onChange={(e) => setNotifRules((prev) => ({ ...prev, [key]: e.target.checked }))} label="" />
+                <Switch checked={enabled} onChange={(v) => setNotifRules((prev) => ({ ...prev, [key]: v }))} />
               </div>
             ))}
           </div>
@@ -672,13 +583,13 @@ export default function SettingsPage() {
               ].map((c) => (
                 <div key={c.channel} className="p-4 rounded-xl border border-line">
                   <div className="flex items-center gap-2 mb-2">
-                    <c.icon className="w-4 h-4 text-sage" />
+                    <c.icon className="w-4 h-4 text-plum" />
                     <span className="text-sm font-medium text-ink">{c.channel}</span>
                   </div>
                   <div className="text-[11px] text-ink/50 mb-3">{c.desc}</div>
                   <div className="flex items-center justify-between">
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full ${c.enabled ? 'bg-mint text-sage' : 'bg-ink/5 text-ink/40'}`}>{c.enabled ? 'Enabled' : 'Disabled'}</span>
-                    <Checkbox checked={c.enabled} onChange={() => {}} label="" />
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full ${c.enabled ? 'bg-lilac text-plum' : 'bg-ink/5 text-ink/40'}`}>{c.enabled ? 'Enabled' : 'Disabled'}</span>
+                    <Switch checked={c.enabled} onChange={() => {}} />
                   </div>
                 </div>
               ))}
@@ -693,10 +604,10 @@ export default function SettingsPage() {
       {tab === 'backup' && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><Cloud className="w-5 h-5" /></div><div><div className="text-lg font-bold text-ink">Daily</div><div className="text-[11px] text-ink/50">Backup frequency</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><Cloud className="w-5 h-5" /></div><div><div className="text-lg font-bold text-ink">Daily</div><div className="text-[11px] text-ink/50">Backup frequency</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center"><HardDrive className="w-5 h-5" /></div><div><div className="text-lg font-bold text-ink">1.2 GB</div><div className="text-[11px] text-ink/50">Last backup size</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center"><Server className="w-5 h-5" /></div><div><div className="text-lg font-bold text-ink">30</div><div className="text-[11px] text-ink/50">Days retained</div></div></div></Card>
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-mint text-sage flex items-center justify-center"><Check className="w-5 h-5" /></div><div><div className="text-lg font-bold text-ink">6h ago</div><div className="text-[11px] text-ink/50">Last backup</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-lilac text-plum flex items-center justify-center"><Check className="w-5 h-5" /></div><div><div className="text-lg font-bold text-ink">6h ago</div><div className="text-[11px] text-ink/50">Last backup</div></div></div></Card>
           </div>
 
           <Card className="p-5 mb-4">
@@ -715,12 +626,12 @@ export default function SettingsPage() {
                 { name: 'Full database backup', date: '2026-10-06 02:00', size: '1.1 GB', type: 'Full', status: 'Completed' },
               ].map((b, i) => (
                 <div key={i} className="flex items-center gap-3 p-3 rounded-xl border border-line">
-                  <Check className="w-4 h-4 text-sage shrink-0" />
+                  <Check className="w-4 h-4 text-plum shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-ink">{b.name}</div>
                     <div className="text-[11px] text-ink/50">{b.date} · {b.size} · {b.type}</div>
                   </div>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage">{b.status}</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum">{b.status}</span>
                   <Button size="sm" variant="outline"><Download className="w-3 h-3" /> Restore</Button>
                 </div>
               ))}
@@ -732,25 +643,25 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label className="block">
                 <span className={labelCls}>Backup frequency</span>
-                <select className={`${inputCls} mt-1`} defaultValue="Daily">
+                <Select className="mt-1" defaultValue="Daily">
                   <option>Every 4 hours</option><option>Daily</option><option>Weekly</option><option>Custom</option>
-                </select>
+                </Select>
               </label>
               <label className="block">
                 <span className={labelCls}>Retention period (days)</span>
-                <input className={`${inputCls} mt-1`} defaultValue="30" />
+                <Input className="mt-1" defaultValue="30" />
               </label>
               <label className="block">
                 <span className={labelCls}>Storage location</span>
-                <select className={`${inputCls} mt-1`} defaultValue="Cloud (AWS S3)">
+                <Select className="mt-1" defaultValue="Cloud (AWS S3)">
                   <option>Cloud (AWS S3)</option><option>Local server</option><option>Offsite (S3 + Tape)</option>
-                </select>
+                </Select>
               </label>
               <label className="block">
                 <span className={labelCls}>Encryption</span>
-                <select className={`${inputCls} mt-1`} defaultValue="AES-256">
+                <Select className="mt-1" defaultValue="AES-256">
                   <option>AES-256</option><option>AES-128</option><option>None</option>
-                </select>
+                </Select>
               </label>
             </div>
           </Card>
@@ -764,8 +675,8 @@ export default function SettingsPage() {
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center"><Zap className="w-5 h-5" /></div><div><div className="text-lg font-bold text-ink">{cacheStats.size}</div><div className="text-[11px] text-ink/50">Cache size</div></div></div></Card>
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><Database className="w-5 h-5" /></div><div><div className="text-lg font-bold text-ink">{cacheStats.entries.toLocaleString()}</div><div className="text-[11px] text-ink/50">Cached entries</div></div></div></Card>
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-mint text-sage flex items-center justify-center"><Check className="w-5 h-5" /></div><div><div className="text-lg font-bold text-ink">{cacheStats.hitRate}</div><div className="text-[11px] text-ink/50">Hit rate</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><Database className="w-5 h-5" /></div><div><div className="text-lg font-bold text-ink">{cacheStats.entries.toLocaleString()}</div><div className="text-[11px] text-ink/50">Cached entries</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-lilac text-plum flex items-center justify-center"><Check className="w-5 h-5" /></div><div><div className="text-lg font-bold text-ink">{cacheStats.hitRate}</div><div className="text-[11px] text-ink/50">Hit rate</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center"><RefreshCw className="w-5 h-5" /></div><div><div className="text-lg font-bold text-ink">1d ago</div><div className="text-[11px] text-ink/50">Last cleared</div></div></div></Card>
           </div>
 
@@ -841,7 +752,7 @@ export default function SettingsPage() {
                 <div key={w.endpoint} className="flex items-center gap-3 p-3 rounded-xl border border-line">
                   <code className="text-xs font-mono text-sky-600 flex-1">{w.endpoint}</code>
                   <span className="text-[11px] text-ink/50">{w.event}</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage">{w.status}</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum">{w.status}</span>
                 </div>
               ))}
             </div>
@@ -849,8 +760,8 @@ export default function SettingsPage() {
 
           <Modal open={keyModalOpen} onClose={() => setKeyModalOpen(false)} title="Add API key">
             <div className="space-y-3">
-              <Field label="Key name"><input className={inputCls} value={newKeyName} onChange={(e) => setNewKeyName(e.target.value)} placeholder="e.g. Stripe Secret Key" /></Field>
-              <Field label="API key value"><input className={inputCls} type="password" placeholder="••••••••••••••••" /></Field>
+              <Field label="Key name"><Input value={newKeyName} onChange={(e) => setNewKeyName(e.target.value)} placeholder="e.g. Stripe Secret Key" /></Field>
+              <Field label="API key value"><Input type="password" placeholder="••••••••••••••••" /></Field>
               <div className="flex justify-end gap-2">
                 <Button variant="ghost" onClick={() => setKeyModalOpen(false)}>Cancel</Button>
                 <Button onClick={addApiKey}>Add key</Button>
@@ -870,18 +781,18 @@ export default function SettingsPage() {
           <div className="space-y-3">
             {paymentConfigs.map((p) => (
               <div key={p.id} className="flex items-center gap-4 p-4 rounded-xl border border-line">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${p.status === 'Connected' ? 'bg-mint text-sage' : 'bg-canvas text-ink/40'}`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${p.status === 'Connected' ? 'bg-lilac text-plum' : 'bg-canvas text-ink/40'}`}>
                   <CreditCard className="w-6 h-6" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-ink">{p.provider}</span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full ${p.mode === 'Live' ? 'bg-sage/10 text-sage' : 'bg-amber-100 text-amber-600'}`}>{p.mode}</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full ${p.mode === 'Live' ? 'bg-plum/10 text-plum' : 'bg-amber-100 text-amber-600'}`}>{p.mode}</span>
                   </div>
                   <div className="text-[11px] text-ink/50 mt-0.5">Currencies: {p.currencies}</div>
                   {p.lastSync && <div className="text-[10px] text-ink/40 mt-0.5">Last sync: {new Date(p.lastSync).toLocaleString()}</div>}
                 </div>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${p.status === 'Connected' ? 'bg-mint text-sage' : 'bg-ink/5 text-ink/40'}`}>{p.status}</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${p.status === 'Connected' ? 'bg-lilac text-plum' : 'bg-ink/5 text-ink/40'}`}>{p.status}</span>
                 <Button size="sm" variant={p.status === 'Connected' ? 'outline' : 'primary'} onClick={() => togglePayment(p.id)}>
                   {p.status === 'Connected' ? 'Disconnect' : 'Connect'}
                 </Button>
@@ -894,15 +805,15 @@ export default function SettingsPage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 rounded-xl border border-line">
                 <div><div className="text-sm font-medium text-ink">Accept partial payments</div><div className="text-[11px] text-ink/50">Allow clients to pay invoices in multiple installments</div></div>
-                <Checkbox checked onChange={() => {}} label="" />
+                <Switch checked onChange={() => {}} />
               </div>
               <div className="flex items-center justify-between p-3 rounded-xl border border-line">
                 <div><div className="text-sm font-medium text-ink">Require deposit for surgery</div><div className="text-[11px] text-ink/50">Collect 30% deposit when booking surgical procedures</div></div>
-                <Checkbox checked onChange={() => {}} label="" />
+                <Switch checked onChange={() => {}} />
               </div>
               <div className="flex items-center justify-between p-3 rounded-xl border border-line">
                 <div><div className="text-sm font-medium text-ink">Auto-send receipt on payment</div><div className="text-[11px] text-ink/50">Email payment receipt immediately after transaction</div></div>
-                <Checkbox checked onChange={() => {}} label="" />
+                <Switch checked onChange={() => {}} />
               </div>
             </div>
           </div>
@@ -918,31 +829,31 @@ export default function SettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <label className="block">
               <span className={labelCls}>Legal name</span>
-              <input className={`${inputCls} mt-1`} value={settings.legalName} onChange={(e) => set('legalName', e.target.value)} />
+              <Input className="mt-1" value={current.legalName} onChange={(e) => set('legalName', e.target.value)} />
             </label>
             <label className="block">
               <span className={labelCls}>Registration number</span>
-              <input className={`${inputCls} mt-1`} value={settings.registrationNumber} onChange={(e) => set('registrationNumber', e.target.value)} />
+              <Input className="mt-1" value={current.registrationNumber} onChange={(e) => set('registrationNumber', e.target.value)} />
             </label>
             <label className="block">
               <span className={labelCls}>Phone</span>
-              <input className={`${inputCls} mt-1`} value={settings.phone} onChange={(e) => set('phone', e.target.value)} />
+              <Input className="mt-1" value={current.phone} onChange={(e) => set('phone', e.target.value)} />
             </label>
             <label className="block">
               <span className={labelCls}>Email</span>
-              <input className={`${inputCls} mt-1`} value={settings.email} onChange={(e) => set('email', e.target.value)} />
+              <Input className="mt-1" value={current.email} onChange={(e) => set('email', e.target.value)} />
             </label>
             <label className="block md:col-span-2">
               <span className={labelCls}>Address</span>
-              <input className={`${inputCls} mt-1`} value={settings.address} onChange={(e) => set('address', e.target.value)} />
+              <Input className="mt-1" value={current.address} onChange={(e) => set('address', e.target.value)} />
             </label>
             <label className="block">
               <span className={labelCls}>Website</span>
-              <input className={`${inputCls} mt-1`} value={settings.website} onChange={(e) => set('website', e.target.value)} />
+              <Input className="mt-1" value={current.website} onChange={(e) => set('website', e.target.value)} />
             </label>
             <label className="block">
               <span className={labelCls}>Tax ID</span>
-              <input className={`${inputCls} mt-1`} value={settings.taxId} onChange={(e) => set('taxId', e.target.value)} />
+              <Input className="mt-1" value={current.taxId} onChange={(e) => set('taxId', e.target.value)} />
             </label>
           </div>
 
@@ -952,8 +863,8 @@ export default function SettingsPage() {
               {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => (
                 <div key={day} className="flex items-center gap-3 p-2.5 rounded-xl bg-canvas">
                   <span className="text-sm font-medium text-ink w-24">{day}</span>
-                  <input className={`${inputCls} flex-1`} defaultValue={day === 'Sunday' ? 'Closed' : '08:00 - 18:00'} />
-                  <Checkbox checked={day !== 'Sunday'} onChange={() => {}} label="" />
+                  <Input className="flex-1" defaultValue={day === 'Sunday' ? 'Closed' : '08:00 - 18:00'} />
+                  <Switch checked={day !== 'Sunday'} onChange={() => {}} />
                 </div>
               ))}
             </div>
@@ -978,16 +889,16 @@ export default function SettingsPage() {
                     <div className="text-sm font-semibold text-ink">{b.name}</div>
                     <div className="text-[11px] text-ink/50">{b.address}</div>
                   </div>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${b.status === 'Active' ? 'bg-mint text-sage' : 'bg-ink/5 text-ink/40'}`}>{b.status}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${b.status === 'Active' ? 'bg-lilac text-plum' : 'bg-ink/5 text-ink/40'}`}>{b.status}</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <label className="block">
                     <span className={labelCls}>Phone</span>
-                    <input className={`${inputCls} mt-1`} defaultValue={b.phone} />
+                    <Input className="mt-1" defaultValue={b.phone} />
                   </label>
                   <label className="block">
                     <span className={labelCls}>Email</span>
-                    <input className={`${inputCls} mt-1`} defaultValue={b.email} />
+                    <Input className="mt-1" defaultValue={b.email} />
                   </label>
                 </div>
               </div>
@@ -1023,7 +934,7 @@ export default function SettingsPage() {
                   <div className="text-[11px] text-ink/50">Example: {rule.example}</div>
                 </div>
                 <div className="w-28">
-                  <input className={inputCls} value={settings[rule.key]} onChange={(e) => set(rule.key, e.target.value)} />
+                  <Input value={settings[rule.key]} onChange={(e) => set(rule.key, e.target.value)} />
                 </div>
               </div>
             ))}
@@ -1034,19 +945,19 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <label className="block">
                 <span className={labelCls}>Format pattern</span>
-                <select className={`${inputCls} mt-1`} defaultValue="PREFIX-YYYY-####">
+                <Select className="mt-1" defaultValue="PREFIX-YYYY-####">
                   <option>PREFIX-YYYY-####</option><option>PREFIX-YYYYMM-####</option><option>PREFIX-####</option><option>PREFIX-YYYY-XXXXXXXX</option>
-                </select>
+                </Select>
               </label>
               <label className="block">
                 <span className={labelCls}>Starting number</span>
-                <input className={`${inputCls} mt-1`} defaultValue="0001" />
+                <Input className="mt-1" defaultValue="0001" />
               </label>
               <label className="block">
                 <span className={labelCls}>Reset period</span>
-                <select className={`${inputCls} mt-1`} defaultValue="Yearly">
+                <Select className="mt-1" defaultValue="Yearly">
                   <option>Never</option><option>Yearly</option><option>Monthly</option><option>Daily</option>
-                </select>
+                </Select>
               </label>
             </div>
           </div>
@@ -1088,27 +999,27 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label className="block">
                 <span className={labelCls}>Default paper size</span>
-                <select className={`${inputCls} mt-1`} defaultValue="A4">
+                <Select className="mt-1" defaultValue="A4">
                   <option>A4</option><option>Letter</option><option>Legal</option>
-                </select>
+                </Select>
               </label>
               <label className="block">
                 <span className={labelCls}>PDF quality</span>
-                <select className={`${inputCls} mt-1`} defaultValue="High">
+                <Select className="mt-1" defaultValue="High">
                   <option>High (300 DPI)</option><option>Standard (150 DPI)</option><option>Draft (72 DPI)</option>
-                </select>
+                </Select>
               </label>
               <label className="block">
                 <span className={labelCls}>Digital signature</span>
-                <select className={`${inputCls} mt-1`} defaultValue="Required">
+                <Select className="mt-1" defaultValue="Required">
                   <option>Required</option><option>Optional</option><option>Disabled</option>
-                </select>
+                </Select>
               </label>
               <label className="block">
                 <span className={labelCls}>Auto-print on creation</span>
-                <select className={`${inputCls} mt-1`} defaultValue="No">
+                <Select className="mt-1" defaultValue="No">
                   <option>No</option><option>Yes</option>
-                </select>
+                </Select>
               </label>
             </div>
           </div>
@@ -1125,7 +1036,7 @@ export default function SettingsPage() {
           <div className="space-y-2">
             {integrations.map((int) => (
               <div key={int.id} className="flex items-center gap-3 p-3 rounded-xl border border-line hover:bg-canvas/30 transition-colors">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${int.status === 'Connected' ? 'bg-mint text-sage' : 'bg-canvas text-ink/40'}`}>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${int.status === 'Connected' ? 'bg-lilac text-plum' : 'bg-canvas text-ink/40'}`}>
                   <Plug className="w-5 h-5" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -1135,7 +1046,7 @@ export default function SettingsPage() {
                   </div>
                   <div className="text-[11px] text-ink/50">{int.desc}</div>
                 </div>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${int.status === 'Connected' ? 'bg-mint text-sage' : 'bg-ink/5 text-ink/40'}`}>{int.status}</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${int.status === 'Connected' ? 'bg-lilac text-plum' : 'bg-ink/5 text-ink/40'}`}>{int.status}</span>
                 <Button size="sm" variant={int.status === 'Connected' ? 'outline' : 'primary'} onClick={() => toggleIntegration(int.id)}>
                   {int.status === 'Connected' ? 'Disconnect' : 'Connect'}
                 </Button>
@@ -1146,13 +1057,19 @@ export default function SettingsPage() {
       )}
 
       {/* Save bar (always visible) */}
-      <div className="flex items-center justify-end gap-3 mt-5">
-        {saved && (
-          <span className="text-xs text-sage font-medium flex items-center gap-1">
-            <Check className="w-4 h-4" /> Saved
+      <div className="flex flex-wrap items-center justify-end gap-3 mt-5">
+        {dirty && (
+          <span className="text-xs text-coral font-medium flex items-center gap-1 mr-auto">
+            <AlertCircle className="w-4 h-4" /> You have unsaved changes
           </span>
         )}
-        <Button onClick={save}><Save className="w-4 h-4" /> Save changes</Button>
+        {saved && (
+          <span className="text-xs text-plum font-medium flex items-center gap-1">
+            <Check className="w-4 h-4" /> Saved — applied across the app
+          </span>
+        )}
+        <Button variant="outline" onClick={restoreDefaults}>Restore defaults</Button>
+        <Button onClick={save} disabled={!dirty}><Save className="w-4 h-4" /> Save changes</Button>
       </div>
     </Shell>
   );

@@ -170,7 +170,7 @@ function generateAIInsights(
   }
   if (retentionRate >= 60) {
     insights.push({
-      icon: Users, tone: 'sage',
+      icon: Users, tone: 'plum',
       title: 'Strong client retention',
       text: `${retentionRate}% of clients are returning — above the veterinary industry average of 55%. Consider a loyalty program to push this even higher.`,
     });
@@ -189,7 +189,7 @@ function generateAIInsights(
     });
   }
   insights.push({
-    icon: TrendingUp, tone: 'sage',
+    icon: TrendingUp, tone: 'plum',
     title: 'Growth trajectory',
     text: `${newCust.length} new clients and ${newPets.length} new pets in the last 90 days. Revenue is trending upward. Focus on preventive care packages to maximize lifetime value per pet.`,
   });
@@ -204,7 +204,7 @@ function generateAIInsights(
 export function TodayAppointmentsWidget({ todays, petName, ownerName }: Props) {
   return (
     <Card className="p-5">
-      <SectionTitle title="Today's appointments" action={<Link href="/appointments" className="text-xs text-sage font-medium flex items-center gap-1 hover:underline">View all <ArrowRight className="w-3 h-3" /></Link>} />
+      <SectionTitle title="Today's appointments" action={<Link href="/appointments" className="text-xs text-plum font-medium flex items-center gap-1 hover:underline">View all <ArrowRight className="w-3 h-3" /></Link>} />
       <div className="space-y-2">
         {todays.slice(0, 6).map((a) => (
           <div key={a.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-canvas transition-colors">
@@ -259,7 +259,7 @@ export function EmergencyCasesWidget({ emergencyCases, petName }: { emergencyCas
             </div>
           </div>
         )) : <div className="flex flex-col items-center py-6 text-center">
-          <Heart className="w-6 h-6 text-sage mb-2" />
+          <Heart className="w-6 h-6 text-plum mb-2" />
           <span className="text-sm text-ink/50">No emergencies on record.</span>
         </div>}
       </div>
@@ -294,11 +294,11 @@ export function WaitingQueueWidget({ todays, petName }: { todays: any[]; petName
 export function UpcomingVaccinationsWidget({ upcomingVaccines, petName }: { upcomingVaccines: any[]; petName: (id: string) => string }) {
   return (
     <Card className="p-5">
-      <SectionTitle title="Upcoming vaccinations" action={<Syringe className="w-4 h-4 text-sage" />} />
+      <SectionTitle title="Upcoming vaccinations" action={<Syringe className="w-4 h-4 text-plum" />} />
       <div className="space-y-2">
         {upcomingVaccines.map((r) => (
           <div key={r.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-line">
-            <div className="w-8 h-8 rounded-lg bg-mint text-sage flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-lilac text-plum flex items-center justify-center shrink-0">
               <Syringe className="w-4 h-4" />
             </div>
             <div className="flex-1 min-w-0">
@@ -336,10 +336,10 @@ export function BoardingOccupancyWidget({ boardingOccupancy }: { boardingOccupan
   const rooms = new Set(boardingOccupancy.map((b) => b.room));
   return (
     <Card className="p-5">
-      <SectionTitle title="Boarding occupancy" action={<Link href="/boarding" className="text-xs text-sage font-medium flex items-center gap-1 hover:underline">Manage <ArrowRight className="w-3 h-3" /></Link>} />
+      <SectionTitle title="Boarding occupancy" action={<Link href="/boarding" className="text-xs text-plum font-medium flex items-center gap-1 hover:underline">Manage <ArrowRight className="w-3 h-3" /></Link>} />
       <div className="grid grid-cols-2 gap-3 mb-3">
-        <div className="rounded-xl bg-mint p-3">
-          <div className="text-2xl font-bold text-sage">{boardingOccupancy.length}</div>
+        <div className="rounded-xl bg-lilac p-3">
+          <div className="text-2xl font-bold text-plum">{boardingOccupancy.length}</div>
           <div className="text-[11px] text-ink/60">Pets in house</div>
         </div>
         <div className="rounded-xl bg-canvas p-3">
@@ -350,7 +350,7 @@ export function BoardingOccupancyWidget({ boardingOccupancy }: { boardingOccupan
       <div className="space-y-2">
         {boardingOccupancy.slice(0, 4).map((b) => (
           <div key={b.id} className="flex items-center gap-3 px-3 py-2 rounded-xl bg-canvas">
-            <Hotel className="w-4 h-4 text-sage shrink-0" />
+            <Hotel className="w-4 h-4 text-plum shrink-0" />
             <div className="flex-1 min-w-0">
               <div className="text-sm font-medium text-ink truncate">{b.petName} · {b.room}</div>
               <div className="text-[11px] text-ink/50">Out: {b.checkOut}</div>
@@ -365,11 +365,11 @@ export function BoardingOccupancyWidget({ boardingOccupancy }: { boardingOccupan
 export function GroomingAppointmentsWidget({ groomingToday }: { groomingToday: any[] }) {
   return (
     <Card className="p-5">
-      <SectionTitle title="Grooming appointments" action={<Link href="/grooming" className="text-xs text-sage font-medium flex items-center gap-1 hover:underline">Manage <ArrowRight className="w-3 h-3" /></Link>} />
+      <SectionTitle title="Grooming appointments" action={<Link href="/grooming" className="text-xs text-plum font-medium flex items-center gap-1 hover:underline">Manage <ArrowRight className="w-3 h-3" /></Link>} />
       <div className="space-y-2">
         {groomingToday.map((g) => (
           <div key={g.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-line">
-            <Scissors className="w-4 h-4 text-sage shrink-0" />
+            <Scissors className="w-4 h-4 text-plum shrink-0" />
             <div className="flex-1 min-w-0">
               <div className="text-sm font-medium text-ink truncate">{g.petName} · {(g.services || []).map((s: any) => s.name).join(', ') || g.packageName || 'Grooming'}</div>
               <div className="text-[11px] text-ink/50">{g.time} · {g.groomer}</div>
@@ -386,7 +386,7 @@ export function GroomingAppointmentsWidget({ groomingToday }: { groomingToday: a
 export function LowStockWidget({ lowStock }: { lowStock: any[] }) {
   return (
     <Card className="p-5">
-      <SectionTitle title="Low-stock medicines" action={<Link href="/pharmacy" className="text-xs text-sage font-medium flex items-center gap-1 hover:underline">Manage <ArrowRight className="w-3 h-3" /></Link>} />
+      <SectionTitle title="Low-stock medicines" action={<Link href="/pharmacy" className="text-xs text-plum font-medium flex items-center gap-1 hover:underline">Manage <ArrowRight className="w-3 h-3" /></Link>} />
       <div className="space-y-2">
         {lowStock.map((m) => (
           <div key={m.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-coral/20 bg-coral/5">
@@ -429,13 +429,13 @@ export function RevenueSummaryWidget({ revenue, dailyIncome, monthlyIncome, outs
     <Card className="p-5">
       <SectionTitle title="Revenue summary" />
       <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-xl bg-mint p-3.5">
-          <DollarSign className="w-4 h-4 text-sage mb-1.5" />
+        <div className="rounded-xl bg-lilac p-3.5">
+          <DollarSign className="w-4 h-4 text-plum mb-1.5" />
           <div className="text-xl font-bold text-ink">${dailyIncome.toLocaleString()}</div>
           <div className="text-[11px] text-ink/50">Daily income</div>
         </div>
-        <div className="rounded-xl bg-mint p-3.5">
-          <TrendingUp className="w-4 h-4 text-sage mb-1.5" />
+        <div className="rounded-xl bg-lilac p-3.5">
+          <TrendingUp className="w-4 h-4 text-plum mb-1.5" />
           <div className="text-xl font-bold text-ink">${monthlyIncome.toLocaleString()}</div>
           <div className="text-[11px] text-ink/50">Monthly income</div>
         </div>
@@ -457,7 +457,7 @@ export function RevenueSummaryWidget({ revenue, dailyIncome, monthlyIncome, outs
 export function OutstandingInvoicesWidget({ overdue, pending, ownerName }: { overdue: any[]; pending: any[]; ownerName: (id: string) => string }) {
   return (
     <Card className="p-5">
-      <SectionTitle title="Outstanding invoices" action={<Link href="/billing" className="text-xs text-sage font-medium flex items-center gap-1 hover:underline">Manage <ArrowRight className="w-3 h-3" /></Link>} />
+      <SectionTitle title="Outstanding invoices" action={<Link href="/billing" className="text-xs text-plum font-medium flex items-center gap-1 hover:underline">Manage <ArrowRight className="w-3 h-3" /></Link>} />
       <div className="space-y-2">
         {[...overdue, ...pending].slice(0, 5).map((i) => (
           <div key={i.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-line">
@@ -483,13 +483,13 @@ export function NewCustomersWidget({ newCustomers, newPets }: { newCustomers: an
     <Card className="p-5">
       <SectionTitle title="New customers & pets" action={<span className="text-[11px] text-ink/40">Last 90 days</span>} />
       <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-xl bg-mint p-3.5">
-          <UserCheck className="w-4 h-4 text-sage mb-1.5" />
+        <div className="rounded-xl bg-lilac p-3.5">
+          <UserCheck className="w-4 h-4 text-plum mb-1.5" />
           <div className="text-xl font-bold text-ink">{newCustomers.length}</div>
           <div className="text-[11px] text-ink/50">New clients</div>
         </div>
-        <div className="rounded-xl bg-mint p-3.5">
-          <PawPrint className="w-4 h-4 text-sage mb-1.5" />
+        <div className="rounded-xl bg-lilac p-3.5">
+          <PawPrint className="w-4 h-4 text-plum mb-1.5" />
           <div className="text-xl font-bold text-ink">{newPets.length}</div>
           <div className="text-[11px] text-ink/50">New pets</div>
         </div>
@@ -506,8 +506,8 @@ export function StaffAttendanceWidget({ staffAttendance, totalStaff }: { staffAt
       <div className="flex items-center gap-4">
         <div className="relative w-20 h-20 shrink-0">
           <svg className="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
-            <circle cx="40" cy="40" r="32" fill="none" stroke="#e4ece8" strokeWidth="8" />
-            <circle cx="40" cy="40" r="32" fill="none" stroke="#2d7766" strokeWidth="8"
+            <circle cx="40" cy="40" r="32" fill="none" stroke="#E8E3F3" strokeWidth="8" />
+            <circle cx="40" cy="40" r="32" fill="none" stroke="#4C1D95" strokeWidth="8"
               strokeDasharray={`${(pct / 100) * 201} 201`} strokeLinecap="round" />
           </svg>
           <div className="absolute inset-0 flex items-center justify-center text-sm font-bold text-ink">{pct}%</div>
@@ -546,19 +546,19 @@ export function SatisfactionWidget({ score }: { score: number }) {
 
 export function AIInsightsWidget({ insights }: { insights: { icon: typeof Sparkles; tone: string; title: string; text: string }[] }) {
   const tones: Record<string, string> = {
-    sage: 'bg-mint text-sage border-sage/20',
+    plum: 'bg-lilac text-plum border-plum/20',
     coral: 'bg-coral/10 text-coral border-coral/20',
     amber: 'bg-amber-50 text-amber-700 border-amber-200',
     sky: 'bg-sky-50 text-sky-700 border-sky-200',
   };
   return (
     <Card className="p-5">
-      <SectionTitle title="AI-generated business insights" action={<span className="inline-flex items-center gap-1 text-[11px] text-sage font-medium"><Brain className="w-3.5 h-3.5" /> AI</span>} />
+      <SectionTitle title="AI-generated business insights" action={<span className="inline-flex items-center gap-1 text-[11px] text-plum font-medium"><Brain className="w-3.5 h-3.5" /> AI</span>} />
       <div className="space-y-3">
         {insights.map((ins, i) => {
           const Icon = ins.icon;
           return (
-            <div key={i} className={`rounded-xl border p-3.5 ${tones[ins.tone] || tones.sage}`}>
+            <div key={i} className={`rounded-xl border p-3.5 ${tones[ins.tone] || tones.plum}`}>
               <div className="flex items-start gap-2.5">
                 <Icon className="w-4 h-4 mt-0.5 shrink-0" />
                 <div>
@@ -575,7 +575,7 @@ export function AIInsightsWidget({ insights }: { insights: { icon: typeof Sparkl
 }
 
 export function RevenueGraphWidget({ monthlyRevenue }: { monthlyRevenue: { month: string; revenue: number }[] }) {
-  return <AreaChartCard title="Revenue graph (monthly)" data={monthlyRevenue} dataKey="revenue" xKey="month" color="#2d7766" height={240} />;
+  return <AreaChartCard title="Revenue graph (monthly)" data={monthlyRevenue} dataKey="revenue" xKey="month" color="#4C1D95" height={240} />;
 }
 
 export function AppointmentTrendsWidget({ appointmentTrends }: { appointmentTrends: { day: string; appts: number; revenue: number }[] }) {
@@ -642,7 +642,7 @@ export function CustomerRetentionWidget({ retentionRate }: { retentionRate: numb
       <div className="flex items-center gap-4">
         <div className="relative w-20 h-20 shrink-0">
           <svg className="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
-            <circle cx="40" cy="40" r="32" fill="none" stroke="#e4ece8" strokeWidth="8" />
+            <circle cx="40" cy="40" r="32" fill="none" stroke="#E8E3F3" strokeWidth="8" />
             <circle cx="40" cy="40" r="32" fill="none" stroke="#0ea5e9" strokeWidth="8"
               strokeDasharray={`${(retentionRate / 100) * 201} 201`} strokeLinecap="round" />
           </svg>
@@ -664,7 +664,7 @@ export function BranchComparisonWidget({ branchComparison }: { branchComparison:
       <div className="space-y-3">
         {branchComparison.map((b) => (
           <div key={b.branch} className="flex items-center gap-4 px-3 py-3 rounded-xl border border-line">
-            <div className="w-10 h-10 rounded-xl bg-mint text-sage flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-lilac text-plum flex items-center justify-center shrink-0">
               <Building2 className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
@@ -686,14 +686,14 @@ export function AIRecommendationsWidget({ insights }: { insights: { icon: typeof
   const recs = insights.filter((i) => i.title.includes('recommendation') || i.title.includes('opportunity') || i.title.includes('alert') || i.title.includes('capacity'));
   return (
     <Card className="p-5">
-      <SectionTitle title="AI recommendations" action={<span className="inline-flex items-center gap-1 text-[11px] text-sage font-medium"><Sparkles className="w-3.5 h-3.5" /> Smart</span>} />
+      <SectionTitle title="AI recommendations" action={<span className="inline-flex items-center gap-1 text-[11px] text-plum font-medium"><Sparkles className="w-3.5 h-3.5" /> Smart</span>} />
       <div className="space-y-2">
         {recs.map((r, i) => {
           const Icon = r.icon;
-          const tones: Record<string, string> = { coral: 'text-coral', amber: 'text-amber-600', sage: 'text-sage', sky: 'text-sky-600' };
+          const tones: Record<string, string> = { coral: 'text-coral', amber: 'text-amber-600', plum: 'text-plum', sky: 'text-sky-600' };
           return (
             <div key={i} className="flex items-start gap-2.5 px-3 py-2.5 rounded-xl bg-canvas">
-              <Icon className={`w-4 h-4 mt-0.5 shrink-0 ${tones[r.tone] || tones.sage}`} />
+              <Icon className={`w-4 h-4 mt-0.5 shrink-0 ${tones[r.tone] || tones.plum}`} />
               <div>
                 <div className="text-xs font-semibold text-ink">{r.title}</div>
                 <div className="text-[11px] text-ink/60 mt-0.5 leading-relaxed">{r.text}</div>
@@ -713,11 +713,11 @@ export function BIDashboardGrid({ db, todays, petName, ownerName }: Props) {
     <>
       {/* Stat row */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        <StatCard icon={CalendarDays} label="Today's appts" value={todays.length} sub={`${bi.activeConsults.length} active`} tone="sage" />
+        <StatCard icon={CalendarDays} label="Today's appts" value={todays.length} sub={`${bi.activeConsults.length} active`} tone="plum" />
         <StatCard icon={Stethoscope} label="In consult" value={bi.activeConsults.length} sub="Right now" tone="coral" />
         <StatCard icon={Clock} label="Waiting" value={bi.waitingQueue.length} sub="In queue" tone="amber" />
         <StatCard icon={Hotel} label="Boarding" value={bi.boardingOccupancy.length} sub="In house" tone="sky" />
-        <StatCard icon={Scissors} label="Grooming" value={bi.groomingToday.length} sub="Today" tone="sage" />
+        <StatCard icon={Scissors} label="Grooming" value={bi.groomingToday.length} sub="Today" tone="plum" />
         <StatCard icon={AlertTriangle} label="Low stock" value={bi.lowStock.length} sub="Need reorder" tone="coral" />
       </div>
 

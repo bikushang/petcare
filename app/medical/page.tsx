@@ -8,7 +8,7 @@ import {
   ChevronDown, ChevronUp, X, Paperclip, ClipboardCheck,
 } from 'lucide-react';
 import Shell from '../components/Shell';
-import { Card, Badge, Button, EmptyState, Modal, Field, inputCls, Select, DateInput, Textarea, NumberInput } from '../components/ui';
+import { Card, Badge, Button, EmptyState, Modal, Field, Input, Select, DateInput, Textarea, NumberInput } from '../components/ui';
 import { useDB, MedRecord, VitalSigns, EMRAttachment, SOAPNotes, newId, today } from '../lib/store';
 import { useAuth } from '../lib/auth';
 import { AISuggestionButton, AISuggestionPanel } from '../components/ai-suggestion';
@@ -20,7 +20,7 @@ const typeIcon: Record<string, typeof Stethoscope> = {
   Consultation: ClipboardList, Vaccination: Syringe, Surgery: Stethoscope, Lab: FlaskConical, Prescription: Pill, Imaging: Scan,
 };
 const typeColor: Record<string, string> = {
-  Consultation: 'bg-sky-100 text-sky-700', Vaccination: 'bg-mint text-sage', Surgery: 'bg-coral/15 text-coral',
+  Consultation: 'bg-sky-100 text-sky-700', Vaccination: 'bg-lilac text-plum', Surgery: 'bg-coral/15 text-coral',
   Lab: 'bg-amber-100 text-amber-700', Prescription: 'bg-violet-100 text-violet-700', Imaging: 'bg-indigo-100 text-indigo-700',
 };
 const vets = ['Dr. Rivera', 'Dr. Okafor', 'Dr. Patel'];
@@ -131,7 +131,7 @@ export default function MedicalPage() {
 
   const deleteRecord = (id: string) => remove('medRecords', id);
 
-  if (!db) return <Shell title="Medical Records"><div className="text-sm text-ink/50">Loading…</div></Shell>;
+  if (!db) return <Shell module="medical" title="Medical Records"><div className="text-sm text-ink/50">Loading…</div></Shell>;
 
   return (
     <Shell title="Medical Records" subtitle="Electronic medical records, consultations, and clinical timeline">
@@ -170,10 +170,10 @@ export default function MedicalPage() {
               const Icon = typeIcon[r.type] ?? ClipboardList;
               return (
                 <div key={r.id} className="relative pl-12 group">
-                  <div className={`absolute left-0 top-1 w-8 h-8 rounded-xl flex items-center justify-center ${typeColor[r.type] || 'bg-mint text-sage'}`}>
+                  <div className={`absolute left-0 top-1 w-8 h-8 rounded-xl flex items-center justify-center ${typeColor[r.type] || 'bg-lilac text-plum'}`}>
                     <Icon className="w-4 h-4" />
                   </div>
-                  <Card className="p-4 cursor-pointer hover:ring-2 hover:ring-sage/20 transition-all" >
+                  <Card className="p-4 cursor-pointer hover:ring-2 hover:ring-plum/20 transition-all" >
                     <div className="flex items-center justify-between" onClick={() => setDetailRecord(r)}>
                       <div>
                         <div className="text-sm font-semibold text-ink">{r.title}</div>
@@ -187,7 +187,7 @@ export default function MedicalPage() {
                           </span>
                         )}
                         {r.vitalSigns && r.vitalSigns.heartRate > 0 && (
-                          <span className="inline-flex items-center gap-1 text-[10px] text-sage">
+                          <span className="inline-flex items-center gap-1 text-[10px] text-plum">
                             <Activity className="w-3 h-3" />
                           </span>
                         )}
@@ -252,12 +252,12 @@ export default function MedicalPage() {
             </Field>
             <Field label="Date"><DateInput value={form.date} onChange={(e) => set('date', e.target.value)} /></Field>
           </div>
-          <Field label="Title"><input className={inputCls} value={form.title} onChange={(e) => set('title', e.target.value)} placeholder="Annual wellness exam" /></Field>
+          <Field label="Title"><Input value={form.title} onChange={(e) => set('title', e.target.value)} placeholder="Annual wellness exam" /></Field>
 
           {/* Chief complaint & history */}
           <div className="border-t border-line pt-3 space-y-3">
             <div className="text-[11px] font-semibold text-ink/50 uppercase tracking-wide">Clinical Information</div>
-            <Field label="Chief Complaint"><input className={inputCls} value={form.chiefComplaint} onChange={(e) => set('chiefComplaint', e.target.value)} placeholder="Limping on left hind for 3 days" /></Field>
+            <Field label="Chief Complaint"><Input value={form.chiefComplaint} onChange={(e) => set('chiefComplaint', e.target.value)} placeholder="Limping on left hind for 3 days" /></Field>
             <Field label="Medical History"><Textarea value={form.medicalHistory} onChange={(e) => set('medicalHistory', e.target.value)} placeholder="Previous conditions, medications, surgeries…" className="min-h-[60px]" /></Field>
             <Field label="Physical Examination"><Textarea value={form.physicalExamination} onChange={(e) => set('physicalExamination', e.target.value)} placeholder="BAR, MM pink, CRT <2s, hydration normal…" className="min-h-[60px]" /></Field>
           </div>
@@ -284,7 +284,7 @@ export default function MedicalPage() {
           {/* Diagnosis & treatment plan */}
           <div className="border-t border-line pt-3 space-y-3">
             <div className="text-[11px] font-semibold text-ink/50 uppercase tracking-wide">Diagnosis & Plan</div>
-            <Field label="Diagnosis"><input className={inputCls} value={form.diagnosis} onChange={(e) => set('diagnosis', e.target.value)} placeholder="Mild hip dysplasia with inflammation" /></Field>
+            <Field label="Diagnosis"><Input value={form.diagnosis} onChange={(e) => set('diagnosis', e.target.value)} placeholder="Mild hip dysplasia with inflammation" /></Field>
             <Field label="Treatment Plan"><Textarea value={form.treatmentPlan} onChange={(e) => set('treatmentPlan', e.target.value)} placeholder="Meloxicam 0.1mg/kg PO 7d, rest 2 weeks…" className="min-h-[60px]" /></Field>
           </div>
 
@@ -334,7 +334,7 @@ export default function MedicalPage() {
                   </div>
                 )}
                 <div className="grid grid-cols-3 gap-2">
-                  <Field label="Name"><input className={inputCls} value={attForm.name} onChange={(e) => setAttForm({ ...attForm, name: e.target.value })} placeholder="X-ray left hip" /></Field>
+                  <Field label="Name"><Input value={attForm.name} onChange={(e) => setAttForm({ ...attForm, name: e.target.value })} placeholder="X-ray left hip" /></Field>
                   <Field label="Type">
                     <Select value={attForm.type} onChange={(e) => setAttForm({ ...attForm, type: e.target.value as EMRAttachment['type'] })}>
                       {attachmentTypes.map((t) => <option key={t}>{t}</option>)}
@@ -439,8 +439,8 @@ export default function MedicalPage() {
 
             {/* Treatment plan */}
             {detailRecord.treatmentPlan && (
-              <div className="rounded-lg bg-mint/20 border border-sage/20 p-3">
-                <div className="text-[10px] text-sage uppercase tracking-wide font-medium mb-1">Treatment Plan</div>
+              <div className="rounded-lg bg-lilac/20 border border-plum/20 p-3">
+                <div className="text-[10px] text-plum uppercase tracking-wide font-medium mb-1">Treatment Plan</div>
                 <div className="text-xs text-ink/80 whitespace-pre-wrap">{detailRecord.treatmentPlan}</div>
               </div>
             )}
@@ -453,7 +453,7 @@ export default function MedicalPage() {
                   {detailRecord.soapNotes.subjective && <SOAPBox letter="S" label="Subjective" text={detailRecord.soapNotes.subjective} color="text-sky-600 bg-sky-50 border-sky-100" />}
                   {detailRecord.soapNotes.objective && <SOAPBox letter="O" label="Objective" text={detailRecord.soapNotes.objective} color="text-amber-600 bg-amber-50 border-amber-100" />}
                   {detailRecord.soapNotes.assessment && <SOAPBox letter="A" label="Assessment" text={detailRecord.soapNotes.assessment} color="text-coral bg-coral/5 border-coral/15" />}
-                  {detailRecord.soapNotes.plan && <SOAPBox letter="P" label="Plan" text={detailRecord.soapNotes.plan} color="text-sage bg-mint/20 border-sage/20" />}
+                  {detailRecord.soapNotes.plan && <SOAPBox letter="P" label="Plan" text={detailRecord.soapNotes.plan} color="text-plum bg-lilac/20 border-plum/20" />}
                 </div>
               </div>
             )}

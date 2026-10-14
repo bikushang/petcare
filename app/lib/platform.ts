@@ -141,7 +141,7 @@ export const roleInfo: Record<Role, RoleInfo> = {
     label: 'Clinic Owner',
     description: 'Owns and manages the clinic and all its branches',
     scope: 'clinic',
-    badgeColor: 'bg-sage/10 text-sage border-sage/20',
+    badgeColor: 'bg-plum/10 text-plum border-plum/20',
   },
   'Branch Manager': {
     label: 'Branch Manager',
@@ -153,7 +153,7 @@ export const roleInfo: Record<Role, RoleInfo> = {
     label: 'Veterinarian',
     description: 'Performs consultations, diagnoses, and treatments',
     scope: 'branch',
-    badgeColor: 'bg-mint text-sage border-mint',
+    badgeColor: 'bg-lilac text-plum border-lilac',
   },
   Receptionist: {
     label: 'Receptionist',
@@ -165,7 +165,7 @@ export const roleInfo: Record<Role, RoleInfo> = {
     label: 'Veterinary Nurse',
     description: 'Assists with treatments, monitoring, and patient care',
     scope: 'branch',
-    badgeColor: 'bg-teal-100 text-teal-700 border-teal-200',
+    badgeColor: 'bg-violet-100 text-violet-700 border-violet-200',
   },
   'Laboratory Technician': {
     label: 'Laboratory Technician',
@@ -195,7 +195,7 @@ export const roleInfo: Record<Role, RoleInfo> = {
     label: 'Accountant',
     description: 'Manages invoices, payments, and financial reports',
     scope: 'clinic',
-    badgeColor: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+    badgeColor: 'bg-indigo-100 text-indigo-700 border-indigo-200',
   },
   'Inventory Manager': {
     label: 'Inventory Manager',

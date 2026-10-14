@@ -8,7 +8,7 @@ import {
   Calendar, Users, FlaskRound, Pill, ClipboardCheck, BedDouble,
 } from 'lucide-react';
 import Shell from '../components/Shell';
-import { Card, Button, EmptyState, Modal, Field, inputCls, Select, Textarea, NumberInput, Checkbox, Badge } from '../components/ui';
+import { Card, Button, EmptyState, Modal, Field, Input, Select, Textarea, NumberInput, DatePicker, TimeInput, Checkbox, Badge, Tabs } from '../components/ui';
 import { useDB, Surgery, StaffAssignment, EquipmentItem, AnesthesiaVital, RecoveryVital, newId, today } from '../lib/store';
 import { AISuggestionButton, AISuggestionPanel } from '../components/ai-suggestion';
 import { generateSurgerySummary } from '../lib/ai-engine';
@@ -28,13 +28,13 @@ const statusStyle: Record<Surgery['status'], { bg: string; text: string; dot: st
   Scheduled: { bg: 'bg-sky-100', text: 'text-sky-700', dot: 'bg-sky-500' },
   'Pre-op': { bg: 'bg-amber-100', text: 'text-amber-700', dot: 'bg-amber-500' },
   'In surgery': { bg: 'bg-coral/15', text: 'text-coral', dot: 'bg-coral' },
-  Recovery: { bg: 'bg-teal-100', text: 'text-teal-700', dot: 'bg-teal-500' },
-  Completed: { bg: 'bg-mint', text: 'text-sage', dot: 'bg-sage' },
+  Recovery: { bg: 'bg-violet-100', text: 'text-violet-700', dot: 'bg-violet-500' },
+  Completed: { bg: 'bg-lilac', text: 'text-plum', dot: 'bg-plum' },
   Cancelled: { bg: 'bg-canvas', text: 'text-ink/40', dot: 'bg-ink/30' },
 };
 
 const outcomeStyle: Record<Surgery['outcome'], string> = {
-  Successful: 'text-sage bg-mint',
+  Successful: 'text-plum bg-lilac',
   'Successful with complications': 'text-amber-700 bg-amber-100',
   Unsuccessful: 'text-coral bg-coral/15',
   Pending: 'text-ink/40 bg-canvas',
@@ -241,13 +241,13 @@ export default function SurgeriesPage() {
     <style>
       *{box-sizing:border-box;margin:0;padding:0;font-family:Georgia,serif;color:#1a1a1a}
       body{padding:40px;max-width:750px;margin:0 auto}
-      .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #2d7a5f;padding-bottom:16px;margin-bottom:20px}
-      .clinic-name{font-size:22px;font-weight:bold;color:#2d7a5f}
+      .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #4C1D95;padding-bottom:16px;margin-bottom:20px}
+      .clinic-name{font-size:22px;font-weight:bold;color:#4C1D95}
       .clinic-sub{font-size:12px;color:#666;margin-top:2px}
       .surg-num{font-size:12px;color:#666;text-align:right}
-      .surg-num b{font-size:14px;color:#2d7a5f;font-family:monospace}
+      .surg-num b{font-size:14px;color:#4C1D95;font-family:monospace}
       .section{margin-bottom:20px}
-      .section-title{font-size:14px;font-weight:bold;color:#2d7a5f;border-bottom:1px solid #ddd;padding-bottom:4px;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+      .section-title{font-size:14px;font-weight:bold;color:#4C1D95;border-bottom:1px solid #ddd;padding-bottom:4px;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
       .patient-box{background:#f8f9fa;border:1px solid #e0e0e0;border-radius:8px;padding:14px;margin-bottom:18px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
       .patient-box .label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#999}
       .patient-box .value{font-size:14px;font-weight:bold}
@@ -311,7 +311,7 @@ export default function SurgeriesPage() {
     setTimeout(() => { win.print(); }, 500);
   };
 
-  if (!db) return <Shell title="Surgery"><div className="text-sm text-ink/50">Loading…</div></Shell>;
+  if (!db) return <Shell module="surgeries" title="Surgery"><div className="text-sm text-ink/50">Loading…</div></Shell>;
 
   const hasFilters = petFilter !== 'all' || statusFilter !== 'all';
 
@@ -319,10 +319,10 @@ export default function SurgeriesPage() {
     <Shell title="Surgery" subtitle="Surgical workflow management — booking, theater allocation, staff, equipment, consent, anesthesia, recovery, and discharge">
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">
-        <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-mint flex items-center justify-center"><Stethoscope className="w-5 h-5 text-sage" /></div><div><div className="text-2xl font-bold text-ink">{stats.total}</div><div className="text-[11px] text-ink/50">Total surgeries</div></div></div></Card>
+        <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-lilac flex items-center justify-center"><Stethoscope className="w-5 h-5 text-plum" /></div><div><div className="text-2xl font-bold text-ink">{stats.total}</div><div className="text-[11px] text-ink/50">Total surgeries</div></div></div></Card>
         <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center"><Calendar className="w-5 h-5 text-sky-600" /></div><div><div className="text-2xl font-bold text-sky-700">{stats.scheduled}</div><div className="text-[11px] text-ink/50">Scheduled</div></div></div></Card>
         <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-coral/15 flex items-center justify-center"><Activity className="w-5 h-5 text-coral" /></div><div><div className="text-2xl font-bold text-coral">{stats.inSurgery}</div><div className="text-[11px] text-ink/50">Pre-op / In surgery</div></div></div></Card>
-        <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-mint flex items-center justify-center"><CheckCircle2 className="w-5 h-5 text-sage" /></div><div><div className="text-2xl font-bold text-sage">{stats.completed}</div><div className="text-[11px] text-ink/50">Completed</div></div></div></Card>
+        <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-lilac flex items-center justify-center"><CheckCircle2 className="w-5 h-5 text-plum" /></div><div><div className="text-2xl font-bold text-plum">{stats.completed}</div><div className="text-[11px] text-ink/50">Completed</div></div></div></Card>
         <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center"><AlertTriangle className="w-5 h-5 text-amber-600" /></div><div><div className="text-2xl font-bold text-amber-600">{stats.emergency}</div><div className="text-[11px] text-ink/50">Emergency</div></div></div></Card>
       </div>
 
@@ -359,7 +359,7 @@ export default function SurgeriesPage() {
             const equipAllChecked = checklistComplete(s);
             const pet = petOf(s.petId);
             return (
-              <Card key={s.id} className="group hover:ring-2 hover:ring-sage/20 transition-all">
+              <Card key={s.id} className="group hover:ring-2 hover:ring-plum/20 transition-all">
                 <div className="p-4 flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 flex-1 min-w-0 cursor-pointer" onClick={() => setExpandedId(expanded ? null : s.id)}>
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${S.bg}`}>
@@ -383,18 +383,18 @@ export default function SurgeriesPage() {
                       </div>
                       <div className="flex items-center gap-2 mt-1.5">
                         {s.consentSigned ? (
-                          <span className="text-[10px] text-sage flex items-center gap-0.5"><ShieldCheck className="w-3 h-3" /> Consent signed</span>
+                          <span className="text-[10px] text-plum flex items-center gap-0.5"><ShieldCheck className="w-3 h-3" /> Consent signed</span>
                         ) : (
                           <span className="text-[10px] text-ink/40 flex items-center gap-0.5"><ShieldCheck className="w-3 h-3" /> Consent pending</span>
                         )}
                         {s.equipmentChecklist.length > 0 && (
-                          <span className={`text-[10px] flex items-center gap-0.5 ${equipAllChecked ? 'text-sage' : 'text-amber-600'}`}>
+                          <span className={`text-[10px] flex items-center gap-0.5 ${equipAllChecked ? 'text-plum' : 'text-amber-600'}`}>
                             <ClipboardCheck className="w-3 h-3" /> Checklist {equipAllChecked ? 'complete' : 'incomplete'}
                           </span>
                         )}
                         {s.anesthesiaVitals.length > 0 && <span className="text-[10px] text-sky-600 flex items-center gap-0.5"><Syringe className="w-3 h-3" /> {s.anesthesiaVitals.length} anesthesia records</span>}
-                        {s.recoveryVitals.length > 0 && <span className="text-[10px] text-teal-600 flex items-center gap-0.5"><Heart className="w-3 h-3" /> {s.recoveryVitals.length} recovery records</span>}
-                        {s.dischargeSummary && <span className="text-[10px] text-sage flex items-center gap-0.5"><Home className="w-3 h-3" /> Discharged</span>}
+                        {s.recoveryVitals.length > 0 && <span className="text-[10px] text-violet-600 flex items-center gap-0.5"><Heart className="w-3 h-3" /> {s.recoveryVitals.length} recovery records</span>}
+                        {s.dischargeSummary && <span className="text-[10px] text-plum flex items-center gap-0.5"><Home className="w-3 h-3" /> Discharged</span>}
                       </div>
                     </div>
                     <button className="text-ink/30 hover:text-ink mt-1">
@@ -431,7 +431,7 @@ export default function SurgeriesPage() {
                       <div className="space-y-1">
                         {s.staff.map((st, i) => (
                           <div key={i} className="flex items-center gap-2 text-xs">
-                            <span className="text-[10px] px-2 py-0.5 rounded bg-mint text-sage font-medium">{st.role}</span>
+                            <span className="text-[10px] px-2 py-0.5 rounded bg-lilac text-plum font-medium">{st.role}</span>
                             <span className="text-ink/70">{st.staffName}</span>
                           </div>
                         ))}
@@ -445,7 +445,7 @@ export default function SurgeriesPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
                           {s.equipmentChecklist.map((e, i) => (
                             <div key={i} className="flex items-center gap-2 text-xs">
-                              <span className={`w-4 h-4 rounded flex items-center justify-center shrink-0 ${e.checked ? 'bg-sage text-white' : 'border border-line'}`}>
+                              <span className={`w-4 h-4 rounded flex items-center justify-center shrink-0 ${e.checked ? 'bg-plum text-white' : 'border border-line'}`}>
                                 {e.checked && <CheckCircle2 className="w-3 h-3" />}
                               </span>
                               <span className={e.checked ? 'text-ink/70' : 'text-ink/50'}>{e.name}</span>
@@ -552,19 +552,7 @@ export default function SurgeriesPage() {
       <Modal open={open} onClose={() => { setOpen(false); setEditS(null); }} title={editS ? `Edit ${editS.surgeryNumber}` : 'New surgery'} wide>
         <div className="space-y-4">
           {/* Tabs */}
-          <div className="flex items-center gap-1 border-b border-line overflow-x-auto">
-            {tabs.map((t) => (
-              <button
-                key={t.key}
-                onClick={() => setActiveTab(t.key)}
-                className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${
-                  activeTab === t.key ? 'border-sage text-sage' : 'border-transparent text-ink/50 hover:text-ink'
-                }`}
-              >
-                <t.icon className="w-3.5 h-3.5" /> {t.label}
-              </button>
-            ))}
-          </div>
+          <Tabs tabs={tabs} value={activeTab} onChange={setActiveTab} size="sm" className="mb-1" />
 
           {/* Overview tab */}
           {activeTab === 'overview' && (
@@ -593,11 +581,11 @@ export default function SurgeriesPage() {
                 </Field>
               </div>
 
-              <Field label="Procedure name"><input className={inputCls} value={form.procedureName} onChange={(e) => set('procedureName', e.target.value)} placeholder="e.g. Ovariohysterectomy (spay)" /></Field>
+              <Field label="Procedure name"><Input value={form.procedureName} onChange={(e) => set('procedureName', e.target.value)} placeholder="e.g. Ovariohysterectomy (spay)" /></Field>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <Field label="Date"><input className={inputCls} type="date" value={form.date} onChange={(e) => set('date', e.target.value)} /></Field>
-                <Field label="Time"><input className={inputCls} type="time" value={form.time} onChange={(e) => set('time', e.target.value)} /></Field>
+                <Field label="Date"><DatePicker value={form.date} onChange={(e) => set('date', e.target.value)} /></Field>
+                <Field label="Time"><TimeInput value={form.time} onChange={(e) => set('time', e.target.value)} /></Field>
                 <Field label="Est. duration (min)"><NumberInput value={String(form.estimatedDurationMin)} onChange={(e) => set('estimatedDurationMin', parseInt(e.target.value) || 0)} /></Field>
                 <Field label="Theater">
                   <Select value={form.theater} onChange={(e) => set('theater', e.target.value)}>
@@ -639,16 +627,12 @@ export default function SurgeriesPage() {
                 <div className="space-y-2">
                   {form.equipmentChecklist.map((e, idx) => (
                     <div key={idx} className="flex items-center gap-2 flex-wrap">
-                      <input className={`${inputCls} flex-1 min-w-[140px]`} value={e.name} onChange={(ev) => setEquip(idx, 'name', ev.target.value)} placeholder="Equipment name" />
+                      <Input className="flex-1 min-w-[140px]" value={e.name} onChange={(ev) => setEquip(idx, 'name', ev.target.value)} placeholder="Equipment name" />
                       <Select value={e.category} onChange={(ev) => setEquip(idx, 'category', ev.target.value)} className="w-40">
                         {equipCategories.map((c) => <option key={c}>{c}</option>)}
                       </Select>
-                      <label className="flex items-center gap-1 text-xs text-ink/60 cursor-pointer whitespace-nowrap">
-                        <input type="checkbox" checked={e.required} onChange={(ev) => setEquip(idx, 'required', ev.target.checked)} className="w-3.5 h-3.5 accent-sage" /> Required
-                      </label>
-                      <label className="flex items-center gap-1 text-xs text-ink/60 cursor-pointer whitespace-nowrap">
-                        <input type="checkbox" checked={e.checked} onChange={(ev) => setEquip(idx, 'checked', ev.target.checked)} className="w-3.5 h-3.5 accent-sage" /> Checked
-                      </label>
+                      <Checkbox checked={e.required} onChange={(ev) => setEquip(idx, 'required', ev.target.checked)} label="Required" className="shrink-0" />
+                      <Checkbox checked={e.checked} onChange={(ev) => setEquip(idx, 'checked', ev.target.checked)} label="Checked" className="shrink-0" />
                       {form.equipmentChecklist.length > 0 && (
                         <button onClick={() => removeEquip(idx)} className="w-7 h-7 rounded-lg hover:bg-coral/10 text-ink/40 hover:text-coral flex items-center justify-center transition-colors shrink-0"><X className="w-3.5 h-3.5" /></button>
                       )}
@@ -664,8 +648,8 @@ export default function SurgeriesPage() {
                   <Checkbox checked={form.consentSigned} onChange={(e) => set('consentSigned', e.target.checked)} label="Consent form signed" />
                   {form.consentSigned && (
                     <div className="grid grid-cols-2 gap-3">
-                      <Field label="Signed by"><input className={inputCls} value={form.consentSignedBy} onChange={(e) => set('consentSignedBy', e.target.value)} placeholder="Owner name" /></Field>
-                      <Field label="Consent date"><input className={inputCls} type="date" value={form.consentDate} onChange={(e) => set('consentDate', e.target.value)} /></Field>
+                      <Field label="Signed by"><Input value={form.consentSignedBy} onChange={(e) => set('consentSignedBy', e.target.value)} placeholder="Owner name" /></Field>
+                      <Field label="Consent date"><DatePicker value={form.consentDate} onChange={(e) => set('consentDate', e.target.value)} /></Field>
                     </div>
                   )}
                   <Field label="Consent notes"><Textarea value={form.consentNotes} onChange={(e) => set('consentNotes', e.target.value)} placeholder="Risks discussed, special instructions…" className="min-h-[50px]" /></Field>
@@ -677,7 +661,7 @@ export default function SurgeriesPage() {
           {/* Pre-op tab */}
           {activeTab === 'preop' && (
             <div className="space-y-3">
-              <Field label="Pre-operative diagnosis"><input className={inputCls} value={form.preOpDiagnosis} onChange={(e) => set('preOpDiagnosis', e.target.value)} placeholder="e.g. Cranial cruciate ligament rupture" /></Field>
+              <Field label="Pre-operative diagnosis"><Input value={form.preOpDiagnosis} onChange={(e) => set('preOpDiagnosis', e.target.value)} placeholder="e.g. Cranial cruciate ligament rupture" /></Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Pre-op bloodwork"><Textarea value={form.preOpBloodwork} onChange={(e) => set('preOpBloodwork', e.target.value)} placeholder="PCV, TS, ALT, BUN results…" className="min-h-[60px]" /></Field>
                 <Field label="Fasting hours"><NumberInput value={String(form.fastingHours)} onChange={(e) => set('fastingHours', parseInt(e.target.value) || 0)} /></Field>
@@ -706,15 +690,15 @@ export default function SurgeriesPage() {
           {/* Anesthesia tab */}
           {activeTab === 'anesthesia' && (
             <div className="space-y-3">
-              <Field label="Anesthetic protocol"><input className={inputCls} value={form.anestheticProtocol} onChange={(e) => set('anestheticProtocol', e.target.value)} placeholder="e.g. Propofol induction, isoflurane maintenance" /></Field>
+              <Field label="Anesthetic protocol"><Input value={form.anestheticProtocol} onChange={(e) => set('anestheticProtocol', e.target.value)} placeholder="e.g. Propofol induction, isoflurane maintenance" /></Field>
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Premedication"><input className={inputCls} value={form.premedication} onChange={(e) => set('premedication', e.target.value)} placeholder="e.g. Midazolam 0.2mg/kg + Butorphanol 0.3mg/kg IM" /></Field>
-                <Field label="Induction agent"><input className={inputCls} value={form.inductionAgent} onChange={(e) => set('inductionAgent', e.target.value)} placeholder="Propofol" /></Field>
-                <Field label="Induction dose"><input className={inputCls} value={form.inductionDose} onChange={(e) => set('inductionDose', e.target.value)} placeholder="4 mg/kg IV" /></Field>
-                <Field label="Maintenance agent"><input className={inputCls} value={form.maintenanceAgent} onChange={(e) => set('maintenanceAgent', e.target.value)} placeholder="Isoflurane" /></Field>
-                <Field label="Maintenance dose"><input className={inputCls} value={form.maintenanceDose} onChange={(e) => set('maintenanceDose', e.target.value)} placeholder="1.5-2% in O2" /></Field>
-                <Field label="Analgesia"><input className={inputCls} value={form.analgesia} onChange={(e) => set('analgesia', e.target.value)} placeholder="Methadone 0.2mg/kg, Fentanyl CRI…" /></Field>
-                <Field label="Fluid therapy"><input className={inputCls} value={form.fluidTherapy} onChange={(e) => set('fluidTherapy', e.target.value)} placeholder="Lactated Ringers 5ml/kg/hr" /></Field>
+                <Field label="Premedication"><Input value={form.premedication} onChange={(e) => set('premedication', e.target.value)} placeholder="e.g. Midazolam 0.2mg/kg + Butorphanol 0.3mg/kg IM" /></Field>
+                <Field label="Induction agent"><Input value={form.inductionAgent} onChange={(e) => set('inductionAgent', e.target.value)} placeholder="Propofol" /></Field>
+                <Field label="Induction dose"><Input value={form.inductionDose} onChange={(e) => set('inductionDose', e.target.value)} placeholder="4 mg/kg IV" /></Field>
+                <Field label="Maintenance agent"><Input value={form.maintenanceAgent} onChange={(e) => set('maintenanceAgent', e.target.value)} placeholder="Isoflurane" /></Field>
+                <Field label="Maintenance dose"><Input value={form.maintenanceDose} onChange={(e) => set('maintenanceDose', e.target.value)} placeholder="1.5-2% in O2" /></Field>
+                <Field label="Analgesia"><Input value={form.analgesia} onChange={(e) => set('analgesia', e.target.value)} placeholder="Methadone 0.2mg/kg, Fentanyl CRI…" /></Field>
+                <Field label="Fluid therapy"><Input value={form.fluidTherapy} onChange={(e) => set('fluidTherapy', e.target.value)} placeholder="Lactated Ringers 5ml/kg/hr" /></Field>
               </div>
 
               {/* Anesthesia vitals */}
@@ -730,17 +714,17 @@ export default function SurgeriesPage() {
                         <span className="text-[11px] font-medium text-ink/50">Reading {idx + 1}</span>
                         <button onClick={() => removeAnesVital(idx)} className="w-6 h-6 rounded-lg hover:bg-coral/10 text-ink/40 hover:text-coral flex items-center justify-center transition-colors"><X className="w-3.5 h-3.5" /></button>
                       </div>
-                      <div className="grid grid-cols-4 gap-1.5">
-                        <input className={`${inputCls} h-8 text-xs`} value={v.time} onChange={(e) => setAnesVital(idx, 'time', e.target.value)} placeholder="Time" />
-                        <input className={`${inputCls} h-8 text-xs`} type="number" value={v.heartRate || ''} onChange={(e) => setAnesVital(idx, 'heartRate', parseInt(e.target.value) || 0)} placeholder="HR" />
-                        <input className={`${inputCls} h-8 text-xs`} type="number" value={v.respiratoryRate || ''} onChange={(e) => setAnesVital(idx, 'respiratoryRate', parseInt(e.target.value) || 0)} placeholder="RR" />
-                        <input className={`${inputCls} h-8 text-xs`} type="number" value={v.temperatureC || ''} onChange={(e) => setAnesVital(idx, 'temperatureC', parseFloat(e.target.value) || 0)} placeholder="Temp" />
-                        <input className={`${inputCls} h-8 text-xs`} type="number" value={v.bloodPressureSys || ''} onChange={(e) => setAnesVital(idx, 'bloodPressureSys', parseInt(e.target.value) || 0)} placeholder="BP Sys" />
-                        <input className={`${inputCls} h-8 text-xs`} type="number" value={v.bloodPressureDia || ''} onChange={(e) => setAnesVital(idx, 'bloodPressureDia', parseInt(e.target.value) || 0)} placeholder="BP Dia" />
-                        <input className={`${inputCls} h-8 text-xs`} type="number" value={v.oxygenLevel || ''} onChange={(e) => setAnesVital(idx, 'oxygenLevel', parseInt(e.target.value) || 0)} placeholder="SpO2" />
-                        <input className={`${inputCls} h-8 text-xs`} type="number" value={v.etCO2 || ''} onChange={(e) => setAnesVital(idx, 'etCO2', parseInt(e.target.value) || 0)} placeholder="etCO2" />
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                        <TimeInput value={v.time} onChange={(e) => setAnesVital(idx, 'time', e.target.value)} />
+                        <NumberInput value={v.heartRate ? String(v.heartRate) : ''} onChange={(e) => setAnesVital(idx, 'heartRate', parseInt(e.target.value) || 0)} placeholder="HR" />
+                        <NumberInput value={v.respiratoryRate ? String(v.respiratoryRate) : ''} onChange={(e) => setAnesVital(idx, 'respiratoryRate', parseInt(e.target.value) || 0)} placeholder="RR" />
+                        <NumberInput value={v.temperatureC ? String(v.temperatureC) : ''} onChange={(e) => setAnesVital(idx, 'temperatureC', parseFloat(e.target.value) || 0)} placeholder="Temp" />
+                        <NumberInput value={v.bloodPressureSys ? String(v.bloodPressureSys) : ''} onChange={(e) => setAnesVital(idx, 'bloodPressureSys', parseInt(e.target.value) || 0)} placeholder="BP Sys" />
+                        <NumberInput value={v.bloodPressureDia ? String(v.bloodPressureDia) : ''} onChange={(e) => setAnesVital(idx, 'bloodPressureDia', parseInt(e.target.value) || 0)} placeholder="BP Dia" />
+                        <NumberInput value={v.oxygenLevel ? String(v.oxygenLevel) : ''} onChange={(e) => setAnesVital(idx, 'oxygenLevel', parseInt(e.target.value) || 0)} placeholder="SpO2" />
+                        <NumberInput value={v.etCO2 ? String(v.etCO2) : ''} onChange={(e) => setAnesVital(idx, 'etCO2', parseInt(e.target.value) || 0)} placeholder="etCO2" />
                       </div>
-                      <input className={`${inputCls} h-8 text-xs mt-1.5`} value={v.notes} onChange={(e) => setAnesVital(idx, 'notes', e.target.value)} placeholder="Notes (induction, surgical plane, gas off, etc.)" />
+                      <Input className="mt-1.5" value={v.notes} onChange={(e) => setAnesVital(idx, 'notes', e.target.value)} placeholder="Notes (induction, surgical plane, gas off, etc.)" />
                     </div>
                   ))}
                 </div>
@@ -767,18 +751,18 @@ export default function SurgeriesPage() {
                         <span className="text-[11px] font-medium text-ink/50">Reading {idx + 1}</span>
                         <button onClick={() => removeRecVital(idx)} className="w-6 h-6 rounded-lg hover:bg-coral/10 text-ink/40 hover:text-coral flex items-center justify-center transition-colors"><X className="w-3.5 h-3.5" /></button>
                       </div>
-                      <div className="grid grid-cols-5 gap-1.5">
-                        <input className={`${inputCls} h-8 text-xs`} value={v.time} onChange={(e) => setRecVital(idx, 'time', e.target.value)} placeholder="Time" />
-                        <input className={`${inputCls} h-8 text-xs`} type="number" value={v.temperatureC || ''} onChange={(e) => setRecVital(idx, 'temperatureC', parseFloat(e.target.value) || 0)} placeholder="Temp" />
-                        <input className={`${inputCls} h-8 text-xs`} type="number" value={v.heartRate || ''} onChange={(e) => setRecVital(idx, 'heartRate', parseInt(e.target.value) || 0)} placeholder="HR" />
-                        <input className={`${inputCls} h-8 text-xs`} type="number" value={v.respiratoryRate || ''} onChange={(e) => setRecVital(idx, 'respiratoryRate', parseInt(e.target.value) || 0)} placeholder="RR" />
-                        <input className={`${inputCls} h-8 text-xs`} type="number" value={v.painScore || ''} onChange={(e) => setRecVital(idx, 'painScore', parseInt(e.target.value) || 0)} placeholder="Pain 0-4" />
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5">
+                        <TimeInput value={v.time} onChange={(e) => setRecVital(idx, 'time', e.target.value)} />
+                        <NumberInput value={v.temperatureC ? String(v.temperatureC) : ''} onChange={(e) => setRecVital(idx, 'temperatureC', parseFloat(e.target.value) || 0)} placeholder="Temp" />
+                        <NumberInput value={v.heartRate ? String(v.heartRate) : ''} onChange={(e) => setRecVital(idx, 'heartRate', parseInt(e.target.value) || 0)} placeholder="HR" />
+                        <NumberInput value={v.respiratoryRate ? String(v.respiratoryRate) : ''} onChange={(e) => setRecVital(idx, 'respiratoryRate', parseInt(e.target.value) || 0)} placeholder="RR" />
+                        <NumberInput value={v.painScore ? String(v.painScore) : ''} onChange={(e) => setRecVital(idx, 'painScore', parseInt(e.target.value) || 0)} placeholder="Pain 0-4" />
                       </div>
                       <div className="grid grid-cols-2 gap-1.5 mt-1.5">
                         <Select value={v.consciousness} onChange={(e) => setRecVital(idx, 'consciousness', e.target.value)}>
                           {consciousnessLevels.map((c) => <option key={c}>{c}</option>)}
                         </Select>
-                        <input className={`${inputCls} h-8 text-xs`} value={v.notes} onChange={(e) => setRecVital(idx, 'notes', e.target.value)} placeholder="Notes" />
+                        <Input value={v.notes} onChange={(e) => setRecVital(idx, 'notes', e.target.value)} placeholder="Notes" />
                       </div>
                     </div>
                   ))}
@@ -791,8 +775,8 @@ export default function SurgeriesPage() {
           {activeTab === 'discharge' && (
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Discharge date"><input className={inputCls} type="date" value={form.dischargeDate} onChange={(e) => set('dischargeDate', e.target.value)} /></Field>
-                <Field label="Follow-up date"><input className={inputCls} type="date" value={form.followUpDate} onChange={(e) => set('followUpDate', e.target.value)} /></Field>
+                <Field label="Discharge date"><DatePicker value={form.dischargeDate} onChange={(e) => set('dischargeDate', e.target.value)} /></Field>
+                <Field label="Follow-up date"><DatePicker value={form.followUpDate} onChange={(e) => set('followUpDate', e.target.value)} /></Field>
               </div>
               <Field label="Discharge summary"><Textarea value={form.dischargeSummary} onChange={(e) => set('dischargeSummary', e.target.value)} placeholder="Summary of procedure, outcome, and patient status at discharge…" className="min-h-[80px]" /></Field>
               <Field label="Home care instructions"><Textarea value={form.homeCareInstructions} onChange={(e) => set('homeCareInstructions', e.target.value)} placeholder="Activity restrictions, feeding, medication schedule, wound care, warning signs…" className="min-h-[80px]" /></Field>
@@ -811,18 +795,18 @@ export default function SurgeriesPage() {
       <Modal open={!!printS} onClose={() => setPrintS(null)} title={`Surgery Report ${printS?.surgeryNumber ?? ''}`} wide>
         {printS && (
           <div className="space-y-4">
-            <div className="rounded-2xl border-2 border-sage/30 bg-gradient-to-br from-mint/20 to-white p-6">
+            <div className="rounded-2xl border-2 border-plum/30 bg-gradient-to-br from-lilac/20 to-white p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-xl bg-sage flex items-center justify-center"><Stethoscope className="w-5 h-5 text-white" /></div>
+                  <div className="w-10 h-10 rounded-xl bg-plum flex items-center justify-center"><Stethoscope className="w-5 h-5 text-white" /></div>
                   <div><div className="text-sm font-bold text-ink">PetCare Pro</div><div className="text-[10px] text-ink/50">Surgery Report</div></div>
                 </div>
                 <div className="text-right">
                   <div className="text-[10px] text-ink/40">Report No</div>
-                  <div className="text-sm font-mono font-semibold text-sage">{printS.surgeryNumber}</div>
+                  <div className="text-sm font-mono font-semibold text-plum">{printS.surgeryNumber}</div>
                 </div>
               </div>
-              <div className="border-t border-sage/20 pt-3 space-y-2 text-xs">
+              <div className="border-t border-plum/20 pt-3 space-y-2 text-xs">
                 <div className="grid grid-cols-2 gap-3">
                   <div><span className="text-ink/40">Patient:</span> <span className="font-medium text-ink">{petName(printS.petId)}</span></div>
                   <div><span className="text-ink/40">Owner:</span> <span className="font-medium text-ink">{ownerOf(printS.petId)}</span></div>
@@ -838,20 +822,20 @@ export default function SurgeriesPage() {
                 <div><span className="text-ink/40">Outcome:</span> <span className="font-medium text-ink">{printS.outcome}</span></div>
               </div>
               {printS.staff.length > 0 && (
-                <div className="border-t border-sage/20 mt-3 pt-3">
-                  <div className="text-[10px] font-semibold text-sage uppercase tracking-wide mb-1">Surgical Team</div>
+                <div className="border-t border-plum/20 mt-3 pt-3">
+                  <div className="text-[10px] font-semibold text-plum uppercase tracking-wide mb-1">Surgical Team</div>
                   <div className="text-xs text-ink/70">{printS.staff.map((s) => `${s.role}: ${s.staffName}`).join(' · ')}</div>
                 </div>
               )}
               {printS.surgeryNotes && (
-                <div className="border-t border-sage/20 mt-3 pt-3">
-                  <div className="text-[10px] font-semibold text-sage uppercase tracking-wide mb-1">Surgery Notes</div>
+                <div className="border-t border-plum/20 mt-3 pt-3">
+                  <div className="text-[10px] font-semibold text-plum uppercase tracking-wide mb-1">Surgery Notes</div>
                   <div className="text-[11px] text-ink/60 whitespace-pre-wrap">{printS.surgeryNotes}</div>
                 </div>
               )}
               {printS.dischargeSummary && (
-                <div className="border-t border-sage/20 mt-3 pt-3">
-                  <div className="text-[10px] font-semibold text-sage uppercase tracking-wide mb-1">Discharge Summary</div>
+                <div className="border-t border-plum/20 mt-3 pt-3">
+                  <div className="text-[10px] font-semibold text-plum uppercase tracking-wide mb-1">Discharge Summary</div>
                   <div className="text-[11px] text-ink/60">{printS.dischargeSummary}</div>
                 </div>
               )}

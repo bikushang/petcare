@@ -74,6 +74,14 @@ import {
   type TransferItem,
   type StockTransfer,
   type StockAdjustment,
+  type Campaign,
+  type Segment,
+  type SegmentRule,
+  type SegmentRuleField,
+  type SiteMessage,
+  type SiteReview,
+  type Subscriber,
+  type MessageAttachment,
   type Collection,
   type CollectionType as ApiCollectionType,
 } from './api';
@@ -146,6 +154,14 @@ export type {
   TransferItem,
   StockTransfer,
   StockAdjustment,
+  Campaign,
+  Segment,
+  SegmentRule,
+  SegmentRuleField,
+  SiteMessage,
+  SiteReview,
+  Subscriber,
+  MessageAttachment,
   DB,
 };
 
@@ -176,6 +192,11 @@ const emptyDB: DB = {
   inventoryItems: [],
   stockTransfers: [],
   stockAdjustments: [],
+  campaigns: [],
+  segments: [],
+  messages: [],
+  siteReviews: [],
+  subscribers: [],
 };
 
 export function useDB() {
@@ -216,6 +237,7 @@ export function useDB() {
           [collection]: (prev ?? emptyDB)[collection].filter((i) => i.id !== item.id),
         }));
         setError((err as Error).message);
+        throw err;
       }
     },
     [],
@@ -227,16 +249,29 @@ export function useDB() {
       id: string,
       patch: Partial<CollectionType<C>>,
     ): Promise<void> => {
-      setDb((prev) => ({
-        ...(prev ?? emptyDB),
-        [collection]: (prev ?? emptyDB)[collection].map((i) =>
-          i.id === id ? { ...i, ...patch } : i,
-        ),
-      }));
+      // Snapshot the row so a failed request can be rolled back rather than
+      // leaving the UI showing a change the database never accepted.
+      let previous: CollectionType<C> | undefined;
+      setDb((prev) => {
+        const base = prev ?? emptyDB;
+        previous = base[collection].find((i) => i.id === id) as CollectionType<C> | undefined;
+        return {
+          ...base,
+          [collection]: base[collection].map((i) => (i.id === id ? { ...i, ...patch } : i)),
+        };
+      });
       try {
         await updateItem(collection, id, patch);
       } catch (err) {
+        if (previous) {
+          const restored = previous;
+          setDb((prev) => ({
+            ...(prev ?? emptyDB),
+            [collection]: (prev ?? emptyDB)[collection].map((i) => (i.id === id ? restored : i)),
+          }));
+        }
         setError((err as Error).message);
+        throw err;
       }
     },
     [],
@@ -244,14 +279,31 @@ export function useDB() {
 
   const remove = useCallback(
     async (collection: Collection, id: string): Promise<void> => {
-      setDb((prev) => ({
-        ...(prev ?? emptyDB),
-        [collection]: (prev ?? emptyDB)[collection].filter((i) => i.id !== id),
-      }));
+      // Keep the removed row and its position so a failed delete restores it.
+      let removed: { item: DB[Collection][number]; index: number } | undefined;
+      setDb((prev) => {
+        const base = prev ?? emptyDB;
+        const index = base[collection].findIndex((i) => i.id === id);
+        if (index >= 0) removed = { item: base[collection][index], index };
+        return {
+          ...base,
+          [collection]: base[collection].filter((i) => i.id !== id),
+        };
+      });
       try {
         await deleteItem(collection, id);
       } catch (err) {
+        if (removed) {
+          const { item, index } = removed;
+          setDb((prev) => {
+            const base = prev ?? emptyDB;
+            const list = [...base[collection]] as DB[Collection];
+            (list as unknown[]).splice(index, 0, item);
+            return { ...base, [collection]: list };
+          });
+        }
         setError((err as Error).message);
+        throw err;
       }
     },
     [],
@@ -324,7 +376,7 @@ export function filterDBByBranch(db: DB, user: User | null): DB {
     (l) => branchVetNames.includes(l.requestedBy) || db.pets.find((pet) => pet.id === l.petId && pets.includes(pet)),
   );
 
-  return { owners, pets, appointments, medRecords, medStock, invoices, expenses: db.expenses, staff, boarding, grooming, vaccinations, prescriptions, surgeries, labTests, suppliers: db.suppliers, purchases: db.purchases, pharmacySales: db.pharmacySales, warehouses: db.warehouses, inventoryItems: db.inventoryItems, stockTransfers: db.stockTransfers, stockAdjustments: db.stockAdjustments };
+  return { owners, pets, appointments, medRecords, medStock, invoices, expenses: db.expenses, staff, boarding, grooming, vaccinations, prescriptions, surgeries, labTests, suppliers: db.suppliers, purchases: db.purchases, pharmacySales: db.pharmacySales, warehouses: db.warehouses, inventoryItems: db.inventoryItems, stockTransfers: db.stockTransfers, stockAdjustments: db.stockAdjustments, campaigns: db.campaigns, segments: db.segments, messages: db.messages, siteReviews: db.siteReviews, subscribers: db.subscribers };
 }
 
 export function useBranchDB() {

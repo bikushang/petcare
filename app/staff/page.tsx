@@ -7,10 +7,7 @@ import {
   ChevronRight, X, Download, Star,
 } from 'lucide-react';
 import Shell from '../components/Shell';
-import {
-  Card, Badge, Button, EmptyState, Modal, Field, inputCls, Select, Checkbox,
-  SectionTitle, StatCard, DateInput, NumberInput, Textarea, BarChartCard,
-} from '../components/ui';
+import { Card, Badge, Button, EmptyState, Modal, Field, Input, Select, Checkbox, SectionTitle, StatCard, DateInput, NumberInput, Textarea, BarChartCard, Tabs } from '../components/ui';
 import { useDB, Staff, newId } from '../lib/store';
 import { useAuth, updateStaffStatus } from '../lib/auth';
 import { staffRoleOptions, branchNames, allRoles, roleInfo } from '../lib/platform';
@@ -21,14 +18,14 @@ const managementRoles: Role[] = ['Super Admin', 'Clinic Owner', 'Branch Manager'
 
 type Tab = 'overview' | 'attendance' | 'leave' | 'payroll' | 'performance' | 'documents' | 'activity';
 
-const tabs: { id: Tab; label: string; icon: typeof Users }[] = [
-  { id: 'overview', label: 'Overview', icon: Users },
-  { id: 'attendance', label: 'Attendance', icon: Clock },
-  { id: 'leave', label: 'Leave', icon: Calendar },
-  { id: 'payroll', label: 'Payroll', icon: DollarSign },
-  { id: 'performance', label: 'Performance', icon: Award },
-  { id: 'documents', label: 'Documents', icon: FileText },
-  { id: 'activity', label: 'Activity', icon: Activity },
+const tabs: { key: Tab; label: string; icon: typeof Users }[] = [
+  { key: 'overview', label: 'Overview', icon: Users },
+  { key: 'attendance', label: 'Attendance', icon: Clock },
+  { key: 'leave', label: 'Leave', icon: Calendar },
+  { key: 'payroll', label: 'Payroll', icon: DollarSign },
+  { key: 'performance', label: 'Performance', icon: Award },
+  { key: 'documents', label: 'Documents', icon: FileText },
+  { key: 'activity', label: 'Activity', icon: Activity },
 ];
 
 export default function StaffPage() {
@@ -49,7 +46,7 @@ export default function StaffPage() {
     branchAccess: [] as string[],
   });
 
-  if (!db) return <Shell title="Staff"><div className="text-sm text-ink/50">Loading...</div></Shell>;
+  if (!db) return <Shell module="staff" title="Staff"><div className="text-sm text-ink/50">Loading...</div></Shell>;
 
   const canManage = user && managementRoles.includes(user.role);
   const isSuperAdmin = user?.role === 'Super Admin';
@@ -174,8 +171,8 @@ export default function StaffPage() {
     <Shell title="Staff & HR" subtitle="Team management, attendance, payroll, performance, and more">
       {/* Stats row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
-        <StatCard icon={Users} label="Total staff" value={String(visibleStaff.length)} tone="sage" />
-        <StatCard icon={CheckCircle2} label="Active" value={String(activeCount)} tone="sage" />
+        <StatCard icon={Users} label="Total staff" value={String(visibleStaff.length)} tone="plum" />
+        <StatCard icon={CheckCircle2} label="Active" value={String(activeCount)} tone="plum" />
         <StatCard icon={Calendar} label="On leave" value={String(onLeaveCount)} tone="amber" />
         <StatCard icon={DollarSign} label="Monthly payroll" value={fmtMoney(totalPayroll)} tone="coral" />
       </div>
@@ -188,22 +185,7 @@ export default function StaffPage() {
       )}
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-5 overflow-x-auto pb-1">
-        {tabs.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${
-              tab === t.id
-                ? 'bg-sage text-white'
-                : 'text-ink/60 hover:bg-canvas'
-            }`}
-          >
-            <t.icon className="w-4 h-4" />
-            {t.label}
-          </button>
-        ))}
-      </div>
+      <Tabs tabs={tabs} value={tab} onChange={setTab} />
 
       {/* Tab content */}
       {tab === 'overview' && (
@@ -260,7 +242,7 @@ export default function StaffPage() {
                       <div className="text-[10px] text-ink/40 uppercase tracking-wide mb-1">Work activity</div>
                       <div className="flex flex-wrap gap-1">
                         {work.appts > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-sky-100 text-sky-700">{work.appts} appts</span>}
-                        {work.meds > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-mint text-sage">{work.meds} records</span>}
+                        {work.meds > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-lilac text-plum">{work.meds} records</span>}
                         {work.surgeries > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-coral/15 text-coral">{work.surgeries} surgeries</span>}
                         {work.labs > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-100 text-cyan-700">{work.labs} labs</span>}
                         {work.grooming > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-pink-100 text-pink-700">{work.grooming} grooms</span>}
@@ -275,7 +257,7 @@ export default function StaffPage() {
                           key={st}
                           onClick={() => changeStatus(s, st)}
                           className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-[10px] font-medium transition-colors ${
-                            s.status === st ? 'bg-mint text-sage ring-1 ring-sage/20' : 'text-ink/50 hover:bg-canvas'
+                            s.status === st ? 'bg-lilac text-plum ring-1 ring-plum/20' : 'text-ink/50 hover:bg-canvas'
                           }`}
                         >
                           {statusIcon(st)}
@@ -315,7 +297,7 @@ export default function StaffPage() {
                       </div>
                     </div>
                     <div className="flex gap-1.5">
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-mint text-sage font-medium">{presentCount} Present</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-lilac text-plum font-medium">{presentCount} Present</span>
                       {lateCount > 0 && <span className="text-[10px] px-2 py-0.5 rounded bg-amber-100 text-amber-700 font-medium">{lateCount} Late</span>}
                       {absentCount > 0 && <span className="text-[10px] px-2 py-0.5 rounded bg-coral/10 text-coral font-medium">{absentCount} Absent</span>}
                     </div>
@@ -328,7 +310,7 @@ export default function StaffPage() {
                           <div className="flex items-center gap-2">
                             <span className="text-ink/50">{a.checkIn || '—'} → {a.checkOut || '—'}</span>
                             <span className={`px-1.5 py-0.5 rounded font-medium ${
-                              a.status === 'Present' ? 'bg-mint text-sage' :
+                              a.status === 'Present' ? 'bg-lilac text-plum' :
                               a.status === 'Late' ? 'bg-amber-100 text-amber-700' :
                               a.status === 'Absent' ? 'bg-coral/10 text-coral' :
                               a.status === 'On leave' ? 'bg-sky-100 text-sky-700' :
@@ -376,7 +358,7 @@ export default function StaffPage() {
                   <div key={s.id} className="flex items-center justify-between text-xs">
                     <span className="text-ink/70 font-medium truncate">{s.name}</span>
                     <div className="flex gap-1.5">
-                      <span className="px-1.5 py-0.5 rounded bg-mint text-sage font-medium" title="Annual">{s.leaveBalance?.annual ?? 0}A</span>
+                      <span className="px-1.5 py-0.5 rounded bg-lilac text-plum font-medium" title="Annual">{s.leaveBalance?.annual ?? 0}A</span>
                       <span className="px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 font-medium" title="Sick">{s.leaveBalance?.sick ?? 0}S</span>
                       <span className="px-1.5 py-0.5 rounded bg-sky-100 text-sky-700 font-medium" title="Personal">{s.leaveBalance?.personal ?? 0}P</span>
                     </div>
@@ -405,7 +387,7 @@ export default function StaffPage() {
                     </div>
                     <div className="flex flex-col items-end gap-1">
                       <span className={`text-[10px] px-2 py-0.5 rounded font-medium ${
-                        leave.status === 'Approved' ? 'bg-mint text-sage' :
+                        leave.status === 'Approved' ? 'bg-lilac text-plum' :
                         leave.status === 'Pending' ? 'bg-amber-100 text-amber-700' :
                         leave.status === 'Rejected' ? 'bg-coral/10 text-coral' :
                         'bg-line text-ink/60'
@@ -470,7 +452,7 @@ export default function StaffPage() {
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-[11px] font-semibold text-ink/70">{latestPayroll.period}</span>
                         <span className={`text-[10px] px-2 py-0.5 rounded font-medium ${
-                          latestPayroll.status === 'Paid' ? 'bg-mint text-sage' :
+                          latestPayroll.status === 'Paid' ? 'bg-lilac text-plum' :
                           latestPayroll.status === 'Pending' ? 'bg-amber-100 text-amber-700' :
                           'bg-line text-ink/60'
                         }`}>{latestPayroll.status}</span>
@@ -497,7 +479,7 @@ export default function StaffPage() {
                             <div className="flex items-center gap-2">
                               <span className="font-medium text-ink">{fmtMoney(b.amount)}</span>
                               <span className={`text-[9px] px-1.5 py-0.5 rounded ${
-                                b.status === 'Paid' ? 'bg-mint text-sage' :
+                                b.status === 'Paid' ? 'bg-lilac text-plum' :
                                 b.status === 'Pending' ? 'bg-amber-100 text-amber-700' :
                                 'bg-line text-ink/60'
                               }`}>{b.status}</span>
@@ -541,7 +523,7 @@ export default function StaffPage() {
                     </div>
                   </div>
                   <div className={`text-[10px] px-2 py-0.5 rounded font-medium inline-block mb-3 ${
-                    latest.overallRating === 'Excellent' ? 'bg-mint text-sage' :
+                    latest.overallRating === 'Excellent' ? 'bg-lilac text-plum' :
                     latest.overallRating === 'Good' ? 'bg-sky-100 text-sky-700' :
                     latest.overallRating === 'Satisfactory' ? 'bg-amber-100 text-amber-700' :
                     'bg-coral/10 text-coral'
@@ -552,7 +534,7 @@ export default function StaffPage() {
                         <div key={i} className="flex items-center gap-2">
                           <span className="text-[11px] text-ink/60 w-28 truncate">{cat.name}</span>
                           <div className="flex-1 h-1.5 rounded-full bg-canvas overflow-hidden">
-                            <div className="h-full rounded-full bg-sage" style={{ width: `${(cat.score / 5) * 100}%` }} />
+                            <div className="h-full rounded-full bg-plum" style={{ width: `${(cat.score / 5) * 100}%` }} />
                           </div>
                           <span className="text-[10px] text-ink/50 font-medium w-6 text-right">{cat.score}/5</span>
                         </div>
@@ -609,7 +591,7 @@ export default function StaffPage() {
                           <span className="text-[10px] text-ink/40">Exp: {doc.expiryDate}</span>
                         )}
                         <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
-                          doc.status === 'Active' ? 'bg-mint text-sage' :
+                          doc.status === 'Active' ? 'bg-lilac text-plum' :
                           doc.status === 'Expired' ? 'bg-coral/10 text-coral' :
                           'bg-amber-100 text-amber-700'
                         }`}>{doc.status}</span>
@@ -645,7 +627,7 @@ export default function StaffPage() {
                 <div className="space-y-1.5">
                   {(s.activityLog || []).slice(-5).reverse().map((log) => (
                     <div key={log.id} className="flex items-start gap-2.5 text-[11px] py-1.5">
-                      <div className="w-1.5 h-1.5 rounded-full bg-sage mt-1.5 shrink-0" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-plum mt-1.5 shrink-0" />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
                           <span className="text-ink/40">{log.date} {log.time}</span>
@@ -664,7 +646,7 @@ export default function StaffPage() {
                     return work.total > 0 ? (
                       <div className="flex flex-wrap gap-1">
                         {work.appts > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-sky-100 text-sky-700">{work.appts} appointments</span>}
-                        {work.meds > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-mint text-sage">{work.meds} medical records</span>}
+                        {work.meds > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-lilac text-plum">{work.meds} medical records</span>}
                         {work.surgeries > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-coral/15 text-coral">{work.surgeries} surgeries</span>}
                         {work.labs > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-100 text-cyan-700">{work.labs} lab tests</span>}
                         {work.grooming > 0 && <span className="text-[9px] px-1.5 py-0.5 rounded bg-pink-100 text-pink-700">{work.grooming} grooming</span>}
@@ -690,7 +672,7 @@ export default function StaffPage() {
       >
         <div className="space-y-3">
           <Field label="Full name">
-            <input className={inputCls} value={form.name} onChange={(e) => set('name', e.target.value)} placeholder="Dr. Maya Rivera" />
+            <Input value={form.name} onChange={(e) => set('name', e.target.value)} placeholder="Dr. Maya Rivera" />
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Role">
@@ -704,10 +686,10 @@ export default function StaffPage() {
               </Select>
             </Field>
             <Field label="Phone">
-              <input className={inputCls} value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+1 415 555 0200" />
+              <Input type="tel" value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+1 415 555 0200" />
             </Field>
             <Field label="Email">
-              <input className={inputCls} value={form.email} onChange={(e) => set('email', e.target.value)} placeholder="name@petcare.pro" />
+              <Input type="email" value={form.email} onChange={(e) => set('email', e.target.value)} placeholder="name@petcare.pro" />
             </Field>
             <Field label="Status">
               <Select value={form.status} onChange={(e) => set('status', e.target.value)}>
@@ -715,7 +697,7 @@ export default function StaffPage() {
               </Select>
             </Field>
             <Field label="Shift">
-              <input className={inputCls} value={form.shift} onChange={(e) => set('shift', e.target.value)} placeholder="Mon–Fri 09:00–17:00" />
+              <Input value={form.shift} onChange={(e) => set('shift', e.target.value)} placeholder="Mon–Fri 09:00–17:00" />
             </Field>
           </div>
           {(isSuperAdmin || isClinicOwner) && (

@@ -1,9 +1,9 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { PawPrint, Plus, Search, Phone, Mail, Cake, Scale, Edit2, Trash2, X, QrCode, Cpu, Ruler, Heart, User, Crown, Award, CreditCard } from 'lucide-react';
+import { PawPrint, Plus, Phone, Mail, Cake, Scale, Edit2, Trash2, X, QrCode, Cpu, Ruler, Heart, User, Crown, Award, CreditCard } from 'lucide-react';
 import Shell from '../components/Shell';
-import { Card, Badge, Button, EmptyState, Modal, Field, inputCls, Select, DateInput, Checkbox } from '../components/ui';
+import { Card, Badge, Button, EmptyState, Modal, Field, Input, SearchInput, NumberInput, Textarea, Select, DateInput, Checkbox } from '../components/ui';
 import { PetProfileDrawer } from '../components/pet-profile';
 import { OwnerCRMDrawer } from '../components/owner-crm';
 import { useDB, Owner, Pet, newId, today } from '../lib/store';
@@ -153,27 +153,24 @@ export default function PatientsPage() {
   const apptsOfOwner = (oid: string) => db?.appointments.filter((a) => a.ownerId === oid) ?? [];
   const invoicesOfOwner = (oid: string) => db?.invoices.filter((i) => i.ownerId === oid) ?? [];
 
-  if (!db) return <Shell title="Patients"><div className="text-sm text-ink/50">Loading…</div></Shell>;
+  if (!db) return <Shell module="patients" title="Patients"><div className="text-sm text-ink/50">Loading…</div></Shell>;
 
   return (
     <Shell title="Patients" subtitle="Digital pet profiles and their owners">
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
-        <div className="flex items-center gap-2 px-3 h-10 rounded-lg bg-white border border-line flex-1">
-          <Search className="w-4 h-4 text-ink/40" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by pet name, breed, owner, microchip, QR…"
-            className="bg-transparent border-0 outline-none text-sm w-full placeholder:text-ink/40"
-          />
-        </div>
+        <SearchInput
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search by pet name, breed, owner, microchip, QR…"
+          className="flex-1"
+        />
         <div className="flex items-center gap-1 p-1 rounded-lg bg-white border border-line">
           {(['pets', 'owners'] as const).map((tb) => (
             <button
               key={tb}
               onClick={() => setTab(tb)}
               className={`px-3 h-8 rounded-md text-xs font-medium capitalize transition-colors ${
-                tab === tb ? 'bg-mint text-sage' : 'text-ink/60 hover:bg-canvas'
+                tab === tb ? 'bg-lilac text-plum' : 'text-ink/60 hover:bg-canvas'
               }`}
             >
               {tb}
@@ -204,7 +201,7 @@ export default function PatientsPage() {
                   <div className="flex items-start gap-3">
                     <button
                       onClick={() => setDetailPet(p)}
-                      className="w-11 h-11 rounded-xl bg-mint text-sage flex items-center justify-center text-sm font-semibold shrink-0 hover:ring-2 hover:ring-sage/30 transition-all"
+                      className="w-11 h-11 rounded-xl bg-lilac text-plum flex items-center justify-center text-sm font-semibold shrink-0 hover:ring-2 hover:ring-plum/30 transition-all"
                     >
                       {p.name.slice(0, 2).toUpperCase()}
                     </button>
@@ -247,7 +244,7 @@ export default function PatientsPage() {
                       <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-sky-50 text-sky-700 font-medium">Chip: {p.microchipNumber}</span>
                     )}
                     {p.qrCodeId && (
-                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-mint text-sage font-medium">QR: {p.qrCodeId}</span>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-lilac text-plum font-medium">QR: {p.qrCodeId}</span>
                     )}
                     {p.rfidNumber && (
                       <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 font-medium">RFID: {p.rfidNumber}</span>
@@ -281,19 +278,19 @@ export default function PatientsPage() {
                   <div onClick={() => setDetailOwner(o)}>
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-mint text-sage flex items-center justify-center text-sm font-semibold shrink-0">
+                        <div className="w-11 h-11 rounded-xl bg-lilac text-plum flex items-center justify-center text-sm font-semibold shrink-0">
                           {o.name.slice(0, 2).toUpperCase()}
                         </div>
                         <div>
                           <div className="text-sm font-semibold text-ink flex items-center gap-1.5">
                             {o.name}
                             {o.membershipPlan === 'VIP' && <Crown className="w-3 h-3 text-amber-600" />}
-                            {o.membershipPlan === 'Premium' && <Award className="w-3 h-3 text-sage" />}
+                            {o.membershipPlan === 'Premium' && <Award className="w-3 h-3 text-plum" />}
                           </div>
                           <div className="text-[11px] text-ink/50 mt-0.5">{o.customerId || o.id.slice(-6)} · {oPets.length} pet{oPets.length !== 1 ? 's' : ''}</div>
                         </div>
                       </div>
-                      <span className={`text-[9px] px-2 py-0.5 rounded-full font-medium ${o.membershipPlan === 'VIP' ? 'bg-amber-100 text-amber-700' : o.membershipPlan === 'Premium' ? 'bg-mint text-sage' : o.membershipPlan === 'Basic' ? 'bg-sky-100 text-sky-700' : 'bg-ink/10 text-ink/50'}`}>{o.membershipPlan}</span>
+                      <span className={`text-[9px] px-2 py-0.5 rounded-full font-medium ${o.membershipPlan === 'VIP' ? 'bg-amber-100 text-amber-700' : o.membershipPlan === 'Premium' ? 'bg-lilac text-plum' : o.membershipPlan === 'Basic' ? 'bg-sky-100 text-sky-700' : 'bg-ink/10 text-ink/50'}`}>{o.membershipPlan}</span>
                     </div>
                     <div className="grid grid-cols-3 gap-2 mt-3 text-center">
                       <div className="rounded-lg bg-canvas py-1.5">
@@ -319,7 +316,7 @@ export default function PatientsPage() {
                       <button
                         key={p.id}
                         onClick={(e) => { e.stopPropagation(); setDetailPet(p); }}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-mint text-sage text-[11px] font-medium hover:ring-2 hover:ring-sage/30 transition-all"
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-lilac text-plum text-[11px] font-medium hover:ring-2 hover:ring-plum/30 transition-all"
                       >
                         <PawPrint className="w-3 h-3" /> {p.name}
                       </button>
@@ -339,31 +336,31 @@ export default function PatientsPage() {
             <div>
               <div className="text-[11px] font-semibold text-ink/50 uppercase tracking-wide mb-2">Owner</div>
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Full name"><input className={inputCls} value={form.ownerName} onChange={(e) => set('ownerName', e.target.value)} placeholder="Jane Doe" /></Field>
-                <Field label="Phone"><input className={inputCls} value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+1 415 555 0100" /></Field>
-                <Field label="Email"><input className={inputCls} value={form.email} onChange={(e) => set('email', e.target.value)} placeholder="jane@email.com" /></Field>
+                <Field label="Full name"><Input value={form.ownerName} onChange={(e) => set('ownerName', e.target.value)} placeholder="Jane Doe" /></Field>
+                <Field label="Phone"><Input value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+1 415 555 0100" /></Field>
+                <Field label="Email"><Input value={form.email} onChange={(e) => set('email', e.target.value)} placeholder="jane@email.com" /></Field>
               </div>
             </div>
           )}
           <div className="border-t border-line pt-4">
             <div className="text-[11px] font-semibold text-ink/50 uppercase tracking-wide mb-2">Pet — Basic Info</div>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Pet name"><input className={inputCls} value={form.petName} onChange={(e) => set('petName', e.target.value)} placeholder="Biscuit" /></Field>
+              <Field label="Pet name"><Input value={form.petName} onChange={(e) => set('petName', e.target.value)} placeholder="Biscuit" /></Field>
               <Field label="Species">
                 <Select value={form.species} onChange={(e) => set('species', e.target.value)}>
                   {speciesOptions.map((s) => <option key={s}>{s}</option>)}
                 </Select>
               </Field>
-              <Field label="Breed"><input className={inputCls} value={form.breed} onChange={(e) => set('breed', e.target.value)} placeholder="Golden Retriever" /></Field>
+              <Field label="Breed"><Input value={form.breed} onChange={(e) => set('breed', e.target.value)} placeholder="Golden Retriever" /></Field>
               <Field label="Gender">
                 <Select value={form.gender} onChange={(e) => set('gender', e.target.value)}>
                   <option>Male</option><option>Female</option><option>Unknown</option>
                 </Select>
               </Field>
-              <Field label="Color"><input className={inputCls} value={form.color} onChange={(e) => set('color', e.target.value)} placeholder="Golden" /></Field>
+              <Field label="Color"><Input value={form.color} onChange={(e) => set('color', e.target.value)} placeholder="Golden" /></Field>
               <Field label="Birth date"><DateInput value={form.birthDate} onChange={(e) => set('birthDate', e.target.value)} /></Field>
-              <Field label="Weight (kg)"><input className={inputCls} type="number" step="0.1" value={form.weight} onChange={(e) => set('weight', e.target.value)} placeholder="31.5" /></Field>
-              <Field label="Height (cm)"><input className={inputCls} type="number" step="0.1" value={form.height} onChange={(e) => set('height', e.target.value)} placeholder="58" /></Field>
+              <Field label="Weight (kg)"><NumberInput step={0.1} min={0} value={form.weight} onChange={(e) => set('weight', e.target.value)} placeholder="31.5" /></Field>
+              <Field label="Height (cm)"><NumberInput step={0.1} min={0} value={form.height} onChange={(e) => set('height', e.target.value)} placeholder="58" /></Field>
               <Field label="Blood group">
                 <Select value={form.bloodGroup} onChange={(e) => set('bloodGroup', e.target.value)}>
                   {bloodGroups.map((b) => <option key={b}>{b}</option>)}
@@ -382,29 +379,28 @@ export default function PatientsPage() {
           <div className="border-t border-line pt-4">
             <div className="text-[11px] font-semibold text-ink/50 uppercase tracking-wide mb-2">Medical</div>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Allergies"><input className={inputCls} value={form.allergies} onChange={(e) => set('allergies', e.target.value)} placeholder="Chicken" /></Field>
-              <Field label="Conditions"><input className={inputCls} value={form.conditions} onChange={(e) => set('conditions', e.target.value)} placeholder="Hip dysplasia" /></Field>
+              <Field label="Allergies"><Input value={form.allergies} onChange={(e) => set('allergies', e.target.value)} placeholder="Chicken" /></Field>
+              <Field label="Conditions"><Input value={form.conditions} onChange={(e) => set('conditions', e.target.value)} placeholder="Hip dysplasia" /></Field>
             </div>
           </div>
           <div className="border-t border-line pt-4">
             <div className="text-[11px] font-semibold text-ink/50 uppercase tracking-wide mb-2">Identification</div>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Microchip number"><input className={inputCls} value={form.microchipNumber} onChange={(e) => set('microchipNumber', e.target.value)} placeholder="985112003456789" /></Field>
-              <Field label="RFID number"><input className={inputCls} value={form.rfidNumber} onChange={(e) => set('rfidNumber', e.target.value)} placeholder="RFID-001234" /></Field>
-              <Field label="QR Code ID"><input className={inputCls} value={form.qrCodeId} onChange={(e) => set('qrCodeId', e.target.value)} placeholder="QR-PET-00001" /></Field>
+              <Field label="Microchip number"><Input value={form.microchipNumber} onChange={(e) => set('microchipNumber', e.target.value)} placeholder="985112003456789" /></Field>
+              <Field label="RFID number"><Input value={form.rfidNumber} onChange={(e) => set('rfidNumber', e.target.value)} placeholder="RFID-001234" /></Field>
+              <Field label="QR Code ID"><Input value={form.qrCodeId} onChange={(e) => set('qrCodeId', e.target.value)} placeholder="QR-PET-00001" /></Field>
             </div>
           </div>
           <div className="border-t border-line pt-4">
             <div className="text-[11px] font-semibold text-ink/50 uppercase tracking-wide mb-2">Insurance</div>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Provider"><input className={inputCls} value={form.insuranceProvider} onChange={(e) => set('insuranceProvider', e.target.value)} placeholder="PetPlan" /></Field>
-              <Field label="Policy number"><input className={inputCls} value={form.insurancePolicyNumber} onChange={(e) => set('insurancePolicyNumber', e.target.value)} placeholder="PP-2024-001234" /></Field>
+              <Field label="Provider"><Input value={form.insuranceProvider} onChange={(e) => set('insuranceProvider', e.target.value)} placeholder="PetPlan" /></Field>
+              <Field label="Policy number"><Input value={form.insurancePolicyNumber} onChange={(e) => set('insurancePolicyNumber', e.target.value)} placeholder="PP-2024-001234" /></Field>
               <Field label="Expiry date"><DateInput value={form.insuranceExpiry} onChange={(e) => set('insuranceExpiry', e.target.value)} /></Field>
             </div>
           </div>
           <Field label="Notes">
-            <textarea
-              className="w-full px-3.5 py-2.5 rounded-xl border border-line bg-white text-sm text-ink placeholder:text-ink/30 outline-none transition-all focus:border-sage focus:ring-4 focus:ring-mint/60 hover:border-sage/30 resize-none"
+            <Textarea
               rows={2}
               value={form.notes}
               onChange={(e) => set('notes', e.target.value)}

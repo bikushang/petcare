@@ -111,11 +111,12 @@ const defaultContent: CmsContent = {
   },
   nav: {
     links: [
-      { id: 'nav-1', label: 'Home', url: '#home' },
-      { id: 'nav-2', label: 'Services', url: '#services' },
-      { id: 'nav-3', label: 'About', url: '#about' },
-      { id: 'nav-4', label: 'Testimonials', url: '#testimonials' },
-      { id: 'nav-5', label: 'Contact', url: '#contact' },
+      { id: 'nav-1', label: 'Home', url: '/site' },
+      { id: 'nav-2', label: 'Services', url: '/site/services' },
+      { id: 'nav-3', label: 'Pricing', url: '/site/pricing' },
+      { id: 'nav-4', label: 'About', url: '/site/about' },
+      { id: 'nav-5', label: 'Blog', url: '/site/blog' },
+      { id: 'nav-6', label: 'Contact', url: '/site/contact' },
     ],
   },
 };
@@ -170,7 +171,7 @@ const defaultSeo: SeoSettings = {
   appleTouchIconUrl: '/apple-touch-icon.png',
   webManifestName: 'Northgate Animal Hospital',
   webManifestShortName: 'Northgate',
-  themeColor: '#2d7766',
+  themeColor: '#4C1D95',
   ogSiteName: 'Northgate Animal Hospital',
   ogType: 'website',
   ogLocale: 'en_US',

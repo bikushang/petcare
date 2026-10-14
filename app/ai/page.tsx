@@ -4,10 +4,11 @@ import { useState, useMemo } from 'react';
 import {
   Sparkles, Search, Stethoscope, Pill, FileText, Syringe, Calendar,
   Activity, FlaskConical, MessageCircle, Mail, BarChart2, TrendingUp,
-  Package, Database, BookOpen, Send, ChevronRight,
+  Package, Database, BookOpen, Send, ChevronRight, ArrowLeft, AlertCircle,
 } from 'lucide-react';
 import Shell from '../components/Shell';
-import { Card, SectionTitle, Button, Field, inputCls, Select, Textarea } from '../components/ui';
+import { Card, SectionTitle, Button, Field, Input, SearchInput, Select, Textarea } from '../components/ui';
+import { invoiceTotals, countsAsRevenue, round2 } from '../lib/helpers';
 import { AISuggestionPanel, AIDisclaimer } from '../components/ai-suggestion';
 import { useDB } from '../lib/store';
 import type { AISuggestion, AISuggestionType } from '../lib/ai-engine';
@@ -49,6 +50,7 @@ export default function AIPage() {
   const { db } = useDB();
   const [activeTool, setActiveTool] = useState<ToolId | null>(null);
   const [suggestion, setSuggestion] = useState<AISuggestion | null>(null);
+  const [toolError, setToolError] = useState('');
   const [category, setCategory] = useState<string>('Clinical');
 
   // Form inputs
@@ -66,7 +68,7 @@ export default function AIPage() {
   const [emailContext, setEmailContext] = useState('');
   const [whatsappContext, setWhatsappContext] = useState('');
 
-  if (!db) return <Shell title="AI Assistant"><div className="text-sm text-ink/50">Loading...</div></Shell>;
+  if (!db) return <Shell module="ai" title="AI Assistant"><div className="text-sm text-ink/50">Loading...</div></Shell>;
 
   const pets = db.pets;
   const owners = db.owners;
@@ -76,6 +78,29 @@ export default function AIPage() {
   const surgeries = db.surgeries;
 
   const runTool = (toolId: ToolId) => {
+    // Revenue figures are needed by more than one tool, so they live outside
+    // the switch. They also now use invoiceTotals(), which accounts for tax,
+    // discounts, coupons and payments already recorded.
+    const revenueDocs = db.invoices.filter(countsAsRevenue);
+    const totalRev = round2(revenueDocs.reduce((s, i) => s + invoiceTotals(i).amountPaid, 0));
+    const outstanding = round2(revenueDocs.reduce((s, i) => s + invoiceTotals(i).balance, 0));
+    const completedAppts = db.appointments.filter((a) => a.status === 'Completed').length;
+
+    // Real monthly revenue, bucketed from the invoices themselves. This used
+    // to be `totalRev * (0.7 + i * 0.06)` over six hardcoded month labels —
+    // a fabricated series presented as a forecast input.
+    const buckets = new Map<string, number>();
+    for (const inv of revenueDocs) {
+      const key = (inv.date || '').slice(0, 7);
+      if (!/^\d{4}-\d{2}$/.test(key)) continue;
+      buckets.set(key, round2((buckets.get(key) ?? 0) + invoiceTotals(inv).total));
+    }
+    const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthlyRevenue = Array.from(buckets.entries())
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .slice(-12)
+      .map(([key, revenue]) => ({ month: MONTH_NAMES[Number(key.slice(5, 7)) - 1] ?? key, revenue }));
+
     let result: AISuggestion | null = null;
     const pet = pets.find((p) => p.id === selectedPetId);
     const owner = owners.find((o) => o.id === selectedOwnerId) || (pet ? owners.find((o) => o.id === pet.ownerId) : undefined);
@@ -125,17 +150,14 @@ export default function AIPage() {
         if (owner && pet) result = generateEmailDraft(owner, pet, emailSubject || 'Follow-up regarding your pet', emailContext || 'We wanted to check in after your recent visit.');
         break;
       case 'business-insight':
-        const totalRev = db.invoices.filter((i) => i.status === 'Paid').reduce((s, i) => s + i.total, 0);
-        const outstanding = db.invoices.filter((i) => i.status !== 'Paid').reduce((s, i) => s + i.balance, 0);
-        const completed = db.appointments.filter((a) => a.status === 'Completed').length;
-        result = generateBusinessInsight(totalRev, outstanding, db.appointments.length, completed, db.staff.length, db.pets.length);
+        result = generateBusinessInsight(totalRev, outstanding, db.appointments.length, completedAppts, db.staff.length, db.pets.length);
         break;
       case 'revenue-forecast':
-        const monthlyRev = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'].map((m, i) => ({
-          month: m,
-          revenue: Math.round(totalRev * (0.7 + i * 0.06)),
-        }));
-        result = generateRevenueForecast(monthlyRev);
+        if (monthlyRevenue.length < 2) {
+          setToolError('Not enough invoiced history yet to project a trend. At least two months of invoices are needed.');
+          return;
+        }
+        result = generateRevenueForecast(monthlyRevenue);
         break;
       case 'inventory-forecast':
         result = generateInventoryForecast(db.medStock.map((s) => ({
@@ -152,7 +174,17 @@ export default function AIPage() {
         result = generateKnowledgeBaseAssistance(kbQuery || 'pain management');
         break;
     }
-    if (result) setSuggestion(result);
+    if (result) {
+      setToolError('');
+      setSuggestion(result);
+    } else {
+      setToolError(
+        needsPet && !pet ? 'Choose a patient first.'
+        : needsOwner && !owner ? 'Choose a client first.'
+        : needsAppt && !appt ? 'Choose an appointment first.'
+        : 'There is not enough data for this tool yet.',
+      );
+    }
   };
 
   const needsPet = ['symptom-analysis', 'prescription-suggestion', 'soap-note', 'medical-report', 'vaccination-recommendation', 'follow-up-recommendation', 'client-communication', 'whatsapp-draft', 'email-draft'].includes(activeTool || '');
@@ -176,7 +208,7 @@ export default function AIPage() {
             key={cat}
             onClick={() => { setCategory(cat); setActiveTool(null); setSuggestion(null); }}
             className={`px-3.5 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${
-              category === cat ? 'bg-sage text-white' : 'text-ink/60 hover:bg-canvas'
+              category === cat ? 'bg-plum text-white' : 'text-ink/60 hover:bg-canvas'
             }`}
           >
             {cat}
@@ -191,17 +223,17 @@ export default function AIPage() {
             <button
               key={tool.id}
               onClick={() => { setActiveTool(tool.id); setSuggestion(null); }}
-              className="text-left p-4 rounded-2xl border border-line bg-white hover:border-sage/30 hover:shadow-soft transition-all group"
+              className="text-left p-4 rounded-2xl border border-line bg-white hover:border-plum/30 hover:shadow-soft transition-all group"
             >
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-mint text-sage flex items-center justify-center shrink-0 group-hover:bg-sage group-hover:text-white transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-lilac text-plum flex items-center justify-center shrink-0 group-hover:bg-plum group-hover:text-white transition-colors">
                   <tool.icon className="w-5 h-5" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold text-ink">{tool.label}</div>
                   <div className="text-[11px] text-ink/50 mt-0.5 leading-relaxed">{tool.description}</div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-ink/30 group-hover:text-sage transition-colors shrink-0 mt-1" />
+                <ChevronRight className="w-4 h-4 text-ink/30 group-hover:text-plum transition-colors shrink-0 mt-1" />
               </div>
             </button>
           ))}
@@ -213,16 +245,16 @@ export default function AIPage() {
         <div className="max-w-2xl space-y-4">
           <div className="flex items-center gap-3 mb-2">
             <button
-              onClick={() => { setActiveTool(null); setSuggestion(null); }}
-              className="text-sm text-ink/50 hover:text-ink transition-colors"
+              onClick={() => { setActiveTool(null); setSuggestion(null); setToolError(''); }}
+              className="hv-slide-parent inline-flex items-center gap-1.5 text-sm text-ink/50 hover:text-plum transition-colors duration-200"
             >
-              ← Back to tools
+              <ArrowLeft className="w-4 h-4 hv-slide-back" /> Back to tools
             </button>
           </div>
 
           <Card className="p-5">
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-mint text-sage flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-lilac text-plum flex items-center justify-center">
                 <Sparkles className="w-5 h-5" />
               </div>
               <div>
@@ -342,7 +374,7 @@ export default function AIPage() {
               {activeTool === 'email-draft' && (
                 <>
                   <Field label="Email subject">
-                    <input className={inputCls} value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} placeholder="Follow-up regarding your pet" />
+                    <Input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} placeholder="Follow-up regarding your pet" />
                   </Field>
                   <Field label="Email context">
                     <Textarea
@@ -357,7 +389,7 @@ export default function AIPage() {
               {/* Search query */}
               {activeTool === 'smart-search' && (
                 <Field label="Search query">
-                  <input className={inputCls} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search pets, owners, staff, invoices..." />
+                  <SearchInput value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search pets, owners, staff, invoices..." />
                 </Field>
               )}
 
@@ -378,6 +410,12 @@ export default function AIPage() {
                   <Sparkles className="w-4 h-4" />
                   Generate AI Suggestion
                 </Button>
+                {toolError && (
+                  <div className="mt-3 flex items-start gap-2 text-xs text-coral bg-coral/10 border border-coral/20 rounded-lg px-3 py-2">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-px" />
+                    <span>{toolError}</span>
+                  </div>
+                )}
               </div>
             </div>
           </Card>

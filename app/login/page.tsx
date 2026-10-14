@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { PawPrint, Lock, Mail, Eye, EyeOff, ArrowRight, Shield, User as UserIcon, KeyRound, ArrowLeft } from 'lucide-react';
 import { login, getUser, requestPasswordReset, confirmPasswordReset } from '../lib/auth';
+import { Field, Input } from '../components/ui';
 import { demoAccounts, roleInfo } from '../lib/platform';
 import type { Role } from '../lib/platform';
 
@@ -86,7 +87,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left brand panel */}
-      <div className="hidden lg:flex flex-col justify-between w-[42%] xl:w-[38%] bg-gradient-to-br from-sage to-[#1f5a4d] p-10 xl:p-14 text-white relative overflow-hidden">
+      <div className="hidden lg:flex flex-col justify-between w-[42%] xl:w-[38%] bg-gradient-to-br from-plum to-[#2E1065] p-10 xl:p-14 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-72 h-72 bg-white/5 rounded-full -translate-y-20 translate-x-20" />
         <div className="absolute bottom-10 left-0 w-48 h-48 bg-white/5 rounded-full -translate-x-16" />
         <div className="relative">
@@ -131,7 +132,7 @@ export default function LoginPage() {
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-10 overflow-y-auto bg-canvas">
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-2.5 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-sage text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-plum text-white flex items-center justify-center">
               <PawPrint className="w-5 h-5" />
             </div>
             <div className="text-lg font-semibold text-ink">PetCare Pro</div>
@@ -143,43 +144,41 @@ export default function LoginPage() {
               <p className="text-sm text-ink/50 mt-1">Sign in to access your role-based dashboard.</p>
 
               {resetMsg && (
-                <div className="mt-3 text-xs text-sage bg-mint border border-sage/20 rounded-lg px-3 py-2">
+                <div className="mt-3 text-xs text-plum bg-lilac border border-plum/20 rounded-lg px-3 py-2">
                   {resetMsg}
                 </div>
               )}
 
               <form onSubmit={submit} className="mt-6 space-y-4">
-                <div>
-                  <label className="text-[11px] font-medium text-ink/60 uppercase tracking-wide">Email</label>
-                  <div className="mt-1 flex items-center gap-2 px-3 h-11 rounded-xl border border-line bg-white focus-within:border-sage focus-within:ring-2 focus-within:ring-mint transition-colors">
-                    <Mail className="w-4 h-4 text-ink/40 shrink-0" />
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@petcare.pro"
-                      className="bg-transparent border-0 outline-none text-sm w-full placeholder:text-ink/40"
-                      autoComplete="email"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="text-[11px] font-medium text-ink/60 uppercase tracking-wide">Password</label>
-                  <div className="mt-1 flex items-center gap-2 px-3 h-11 rounded-xl border border-line bg-white focus-within:border-sage focus-within:ring-2 focus-within:ring-mint transition-colors">
-                    <Lock className="w-4 h-4 text-ink/40 shrink-0" />
-                    <input
+                <Field label="Email">
+                  <Input
+                    type="email"
+                    icon={Mail}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@petcare.pro"
+                  />
+                </Field>
+                <Field label="Password">
+                  <div className="relative">
+                    <Input
                       type={showPass ? 'text' : 'password'}
+                      icon={Lock}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder=".........."
-                      className="bg-transparent border-0 outline-none text-sm w-full placeholder:text-ink/40"
-                      autoComplete="current-password"
+                      className="[&_input]:pr-10"
                     />
-                    <button type="button" onClick={() => setShowPass((v) => !v)} className="text-ink/40 hover:text-ink/60">
+                    <button
+                      type="button"
+                      onClick={() => setShowPass((v) => !v)}
+                      aria-label={showPass ? 'Hide password' : 'Show password'}
+                      className="hv-icon absolute right-3 top-1/2 -translate-y-1/2 z-10 text-ink/40 hover:text-plum"
+                    >
                       {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
-                </div>
+                </Field>
 
                 {error && (
                   <div className="text-xs text-coral bg-coral/10 border border-coral/20 rounded-lg px-3 py-2">
@@ -191,7 +190,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => { setMode('reset-request'); setError(''); setResetEmail(email); }}
-                    className="text-[11px] text-sage hover:underline font-medium"
+                    className="text-[11px] text-plum hover:underline font-medium"
                   >
                     Forgot password?
                   </button>
@@ -200,9 +199,9 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-11 rounded-xl bg-sage text-white text-sm font-semibold hover:bg-sage/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+                  className="hv-lift w-full h-11 rounded-xl bg-plum text-white text-sm font-semibold hover:bg-grape shadow-sm hover:shadow-lift flex items-center justify-center gap-2 disabled:opacity-60"
                 >
-                  {loading ? 'Signing in...' : <>Sign in <ArrowRight className="w-4 h-4" /></>}
+                  {loading ? 'Signing in...' : <>Sign in <ArrowRight className="w-4 h-4 hv-slide" /></>}
                 </button>
               </form>
 
@@ -226,10 +225,10 @@ export default function LoginPage() {
                           pickRole(a.email, a.password);
                           setSelectedRole(a.email);
                         }}
-                        className={`flex flex-col items-start gap-1.5 p-3 rounded-xl border text-left transition-all ${
+                        className={`hv-lift flex flex-col items-start gap-1.5 p-3 rounded-xl border text-left ${
                           isSelected
-                            ? 'border-sage bg-mint ring-2 ring-mint'
-                            : 'border-line bg-white hover:border-sage/40 hover:bg-canvas'
+                            ? 'border-plum bg-lilac ring-2 ring-lilac'
+                            : 'border-line bg-white hover:border-plum/40 hover:bg-canvas'
                         }`}
                       >
                         <div className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium border ${colorCls}`}>
@@ -253,25 +252,21 @@ export default function LoginPage() {
 
           {mode === 'reset-request' && (
             <>
-              <button onClick={() => { setMode('login'); setError(''); }} className="flex items-center gap-1 text-xs text-ink/50 hover:text-ink mb-4">
-                <ArrowLeft className="w-3.5 h-3.5" /> Back to sign in
+              <button onClick={() => { setMode('login'); setError(''); }} className="hv-slide-parent flex items-center gap-1 text-xs text-ink/50 hover:text-plum transition-colors duration-200 mb-4">
+                <ArrowLeft className="w-3.5 h-3.5 hv-slide-back" /> Back to sign in
               </button>
               <h2 className="text-xl font-bold text-ink">Reset your password</h2>
               <p className="text-sm text-ink/50 mt-1">Enter your email and we&apos;ll generate a reset token.</p>
               <form onSubmit={submitResetRequest} className="mt-6 space-y-4">
-                <div>
-                  <label className="text-[11px] font-medium text-ink/60 uppercase tracking-wide">Email</label>
-                  <div className="mt-1 flex items-center gap-2 px-3 h-11 rounded-xl border border-line bg-white focus-within:border-sage focus-within:ring-2 focus-within:ring-mint transition-colors">
-                    <Mail className="w-4 h-4 text-ink/40 shrink-0" />
-                    <input
-                      type="email"
-                      value={resetEmail}
-                      onChange={(e) => setResetEmail(e.target.value)}
-                      placeholder="you@petcare.pro"
-                      className="bg-transparent border-0 outline-none text-sm w-full placeholder:text-ink/40"
-                    />
-                  </div>
-                </div>
+                <Field label="Email">
+                  <Input
+                    type="email"
+                    icon={Mail}
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    placeholder="you@petcare.pro"
+                  />
+                </Field>
                 {error && (
                   <div className="text-xs text-coral bg-coral/10 border border-coral/20 rounded-lg px-3 py-2">
                     {error}
@@ -280,7 +275,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-11 rounded-xl bg-sage text-white text-sm font-semibold hover:bg-sage/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+                  className="hv-lift w-full h-11 rounded-xl bg-plum text-white text-sm font-semibold hover:bg-grape shadow-sm hover:shadow-lift flex items-center justify-center gap-2 disabled:opacity-60"
                 >
                   {loading ? 'Sending...' : <><KeyRound className="w-4 h-4" /> Request reset</>}
                 </button>
@@ -290,25 +285,21 @@ export default function LoginPage() {
 
           {mode === 'reset-confirm' && (
             <>
-              <button onClick={() => { setMode('login'); setError(''); }} className="flex items-center gap-1 text-xs text-ink/50 hover:text-ink mb-4">
-                <ArrowLeft className="w-3.5 h-3.5" /> Back to sign in
+              <button onClick={() => { setMode('login'); setError(''); }} className="hv-slide-parent flex items-center gap-1 text-xs text-ink/50 hover:text-plum transition-colors duration-200 mb-4">
+                <ArrowLeft className="w-3.5 h-3.5 hv-slide-back" /> Back to sign in
               </button>
               <h2 className="text-xl font-bold text-ink">Set new password</h2>
               <p className="text-sm text-ink/50 mt-1">{resetMsg}</p>
               <form onSubmit={submitResetConfirm} className="mt-6 space-y-4">
-                <div>
-                  <label className="text-[11px] font-medium text-ink/60 uppercase tracking-wide">New password</label>
-                  <div className="mt-1 flex items-center gap-2 px-3 h-11 rounded-xl border border-line bg-white focus-within:border-sage focus-within:ring-2 focus-within:ring-mint transition-colors">
-                    <Lock className="w-4 h-4 text-ink/40 shrink-0" />
-                    <input
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="Min 6 characters"
-                      className="bg-transparent border-0 outline-none text-sm w-full placeholder:text-ink/40"
-                    />
-                  </div>
-                </div>
+                <Field label="New password" hint="Minimum 6 characters">
+                  <Input
+                    type="password"
+                    icon={Lock}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Min 6 characters"
+                  />
+                </Field>
                 {error && (
                   <div className="text-xs text-coral bg-coral/10 border border-coral/20 rounded-lg px-3 py-2">
                     {error}
@@ -317,7 +308,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-11 rounded-xl bg-sage text-white text-sm font-semibold hover:bg-sage/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+                  className="hv-lift w-full h-11 rounded-xl bg-plum text-white text-sm font-semibold hover:bg-grape shadow-sm hover:shadow-lift flex items-center justify-center gap-2 disabled:opacity-60"
                 >
                   {loading ? 'Resetting...' : <><KeyRound className="w-4 h-4" /> Reset password</>}
                 </button>

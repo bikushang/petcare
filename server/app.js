@@ -28,6 +28,11 @@ const Warehouse = require('./models/Warehouse');
 const InventoryItem = require('./models/InventoryItem');
 const StockTransfer = require('./models/StockTransfer');
 const StockAdjustment = require('./models/StockAdjustment');
+const Campaign = require('./models/Campaign');
+const Segment = require('./models/Segment');
+const Message = require('./models/Message');
+const SiteReview = require('./models/SiteReview');
+const Subscriber = require('./models/Subscriber');
 
 const createCrudRoutes = require('./routes/crudRoutes');
 const aggregateRoutes = require('./routes/aggregateRoutes');
@@ -78,6 +83,11 @@ app.use('/api/purchases', createCrudRoutes(Purchase));
 app.use('/api/pharmacy-sales', createCrudRoutes(PharmacySale));
 app.use('/api/warehouses', createCrudRoutes(Warehouse));
 app.use('/api/inventory-items', createCrudRoutes(InventoryItem));
+app.use('/api/campaigns', createCrudRoutes(Campaign));
+app.use('/api/segments', createCrudRoutes(Segment));
+app.use('/api/messages', createCrudRoutes(Message));
+app.use('/api/site-reviews', createCrudRoutes(SiteReview));
+app.use('/api/subscribers', createCrudRoutes(Subscriber));
 app.use('/api/stock-transfers', createCrudRoutes(StockTransfer));
 app.use('/api/stock-adjustments', createCrudRoutes(StockAdjustment));
 

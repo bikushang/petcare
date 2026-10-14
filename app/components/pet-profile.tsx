@@ -7,7 +7,7 @@ import {
   Droplet, Utensils, Shield, Image as ImageIcon, Folder, GitBranch, TrendingUp,
   Plus, Clock, AlertTriangle, CheckCircle2,
 } from 'lucide-react';
-import { Card, Badge, Button, Modal, Field, inputCls, Select, DateInput, Checkbox, Textarea } from './ui';
+import { Card, Badge, Button, Modal, Field, Input, NumberInput, Select, DateInput, Checkbox, Textarea, ImagePicker } from './ui';
 import { AreaChartCard } from './ui';
 import type { Pet, Owner, MedRecord, Appointment, Invoice, WeightEntry, PetPhoto, PetDocument } from '../lib/api';
 import { newId, today } from '../lib/store';
@@ -55,16 +55,16 @@ export function PetProfileDrawer({ pet, owner, records, appointments, invoices, 
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-line px-5 h-14 flex items-center justify-between z-10">
           <div className="flex items-center gap-2">
-            <PawPrint className="w-4 h-4 text-sage" />
+            <PawPrint className="w-4 h-4 text-plum" />
             <h3 className="text-sm font-semibold text-ink">{pet.name} · Patient Profile</h3>
           </div>
           <button onClick={onClose} className="text-ink/50 hover:text-ink"><X className="w-5 h-5" /></button>
         </div>
 
         {/* Pet identity banner */}
-        <div className="px-5 py-4 border-b border-line bg-gradient-to-b from-mint/30 to-white">
+        <div className="px-5 py-4 border-b border-line bg-gradient-to-b from-lilac/30 to-white">
           <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-mint text-sage flex items-center justify-center text-xl font-semibold shrink-0">
+            <div className="w-16 h-16 rounded-2xl bg-lilac text-plum flex items-center justify-center text-xl font-semibold shrink-0">
               {pet.name.slice(0, 2).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
@@ -87,7 +87,7 @@ export function PetProfileDrawer({ pet, owner, records, appointments, invoices, 
                   </span>
                 )}
                 {pet.qrCodeId && (
-                  <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">
+                  <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">
                     <QrCode className="w-3 h-3" /> QR: {pet.qrCodeId}
                   </span>
                 )}
@@ -97,14 +97,16 @@ export function PetProfileDrawer({ pet, owner, records, appointments, invoices, 
         </div>
 
         {/* Tab bar */}
-        <div className="sticky top-14 bg-white border-b border-line px-5 z-10">
-          <div className="flex gap-1 overflow-x-auto -mb-px">
+        <div className="sticky top-14 bg-white border-b border-line px-5 py-2.5 z-10">
+          <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
             {tabs.map((t) => (
               <button
                 key={t.id}
                 onClick={() => setTab(t.id)}
-                className={`px-3 h-10 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${
-                  tab === t.id ? 'border-sage text-sage' : 'border-transparent text-ink/50 hover:text-ink'
+                className={`hv-lift inline-flex items-center shrink-0 px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap ${
+                  tab === t.id
+                    ? 'bg-plum text-white shadow-lift-sm'
+                    : 'bg-white text-ink/60 border border-line hover:border-plum/40 hover:bg-lilac/40 hover:text-plum'
                 }`}
               >
                 {t.label}
@@ -196,14 +198,14 @@ function OverviewTab({ pet, owner }: { pet: Pet; owner?: Owner }) {
               ID: {pet.qrCodeId || 'Not assigned'}
             </div>
             <div className="flex items-center gap-1.5 mt-2">
-              <CheckCircle2 className="w-3.5 h-3.5 text-sage" />
-              <span className="text-[11px] text-sage font-medium">
+              <CheckCircle2 className="w-3.5 h-3.5 text-plum" />
+              <span className="text-[11px] text-plum font-medium">
                 {pet.microchipNumber ? 'Microchip verified' : 'No microchip registered'}
               </span>
             </div>
             <div className="flex items-center gap-1.5 mt-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-sage" />
-              <span className="text-[11px] text-sage font-medium">
+              <CheckCircle2 className="w-3.5 h-3.5 text-plum" />
+              <span className="text-[11px] text-plum font-medium">
                 {pet.rfidNumber ? 'RFID active' : 'No RFID tag'}
               </span>
             </div>
@@ -251,7 +253,7 @@ function OverviewTab({ pet, owner }: { pet: Pet; owner?: Owner }) {
           </div>
           <div className="rounded-xl bg-canvas p-3">
             <div className="flex items-center gap-1.5 mb-1">
-              <QrCode className="w-3.5 h-3.5 text-sage" />
+              <QrCode className="w-3.5 h-3.5 text-plum" />
               <span className="text-[10px] text-ink/50 uppercase font-medium">QR Code ID</span>
             </div>
             <div className="text-xs font-mono text-ink">{pet.qrCodeId || 'Not assigned'}</div>
@@ -317,12 +319,12 @@ function TimelineTab({ pet, records, onUpdate }: { pet: Pet; records: MedRecord[
         Prescription: FileText, Imaging: Stethoscope, Consultation: Stethoscope,
       };
       const colorMap: Record<string, string> = {
-        Vaccination: 'sage', Surgery: 'coral', Lab: 'sky',
-        Prescription: 'amber', Imaging: 'sky', Consultation: 'sage',
+        Vaccination: 'plum', Surgery: 'coral', Lab: 'sky',
+        Prescription: 'amber', Imaging: 'sky', Consultation: 'plum',
       };
       items.push({
         date: r.date, type: r.type, title: r.title, vet: r.vet,
-        icon: iconMap[r.type] || Stethoscope, color: colorMap[r.type] || 'sage',
+        icon: iconMap[r.type] || Stethoscope, color: colorMap[r.type] || 'plum',
       });
     });
     return items.sort((a, b) => b.date.localeCompare(a.date));
@@ -340,7 +342,7 @@ function TimelineTab({ pet, records, onUpdate }: { pet: Pet; records: MedRecord[
   };
 
   const colorClasses: Record<string, string> = {
-    sage: 'bg-mint text-sage', coral: 'bg-coral/15 text-coral',
+    plum: 'bg-lilac text-plum', coral: 'bg-coral/15 text-coral',
     amber: 'bg-amber-100 text-amber-600', sky: 'bg-sky-100 text-sky-600',
   };
 
@@ -350,7 +352,7 @@ function TimelineTab({ pet, records, onUpdate }: { pet: Pet; records: MedRecord[
       <Card className="p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-sage" />
+            <TrendingUp className="w-4 h-4 text-plum" />
             <span className="text-sm font-semibold text-ink">Weight & Growth Chart</span>
           </div>
           <Button size="sm" onClick={() => setShowWeightModal(true)}>
@@ -358,7 +360,7 @@ function TimelineTab({ pet, records, onUpdate }: { pet: Pet; records: MedRecord[
           </Button>
         </div>
         {weightData.length > 1 ? (
-          <AreaChartCard title="" data={weightData} dataKey="weight" xKey="date" color="#2d7766" height={200} />
+          <AreaChartCard title="" data={weightData} dataKey="weight" xKey="date" color="#4C1D95" height={200} />
         ) : (
           <div className="text-center py-8 text-sm text-ink/50">
             <Scale className="w-6 h-6 text-ink/30 mx-auto mb-2" />
@@ -430,7 +432,7 @@ function TimelineTab({ pet, records, onUpdate }: { pet: Pet; records: MedRecord[
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <Field label="Weight (kg)">
-              <input className={inputCls} type="number" step="0.1" value={newWeight} onChange={(e) => setNewWeight(e.target.value)} placeholder="31.5" />
+              <NumberInput step={0.1} min={0} value={newWeight} onChange={(e) => setNewWeight(e.target.value)} placeholder="31.5" suffix="kg" />
             </Field>
             <Field label="Date">
               <DateInput value={newWeightDate} onChange={(e) => setNewWeightDate(e.target.value)} />
@@ -466,7 +468,7 @@ function RecordsTab({ records, appointments, invoices }: { records: MedRecord[];
             key={t}
             onClick={() => setFilter(t)}
             className={`px-2.5 h-7 rounded-full text-[11px] font-medium transition-colors capitalize ${
-              filter === t ? 'bg-sage text-white' : 'bg-canvas text-ink/60 hover:bg-mint'
+              filter === t ? 'bg-plum text-white' : 'bg-canvas text-ink/60 hover:bg-lilac'
             }`}
           >
             {t}
@@ -486,7 +488,7 @@ function RecordsTab({ records, appointments, invoices }: { records: MedRecord[];
               return (
                 <div key={r.id} className="rounded-xl border border-line p-3">
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-mint text-sage flex items-center justify-center shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-lilac text-plum flex items-center justify-center shrink-0">
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -585,7 +587,7 @@ function GalleryTab({ pet, onUpdate }: { pet: Pet; onUpdate: (patch: Partial<Pet
         <Card className="p-4">
           <div className="text-center py-8">
             <ImageIcon className="w-8 h-8 text-ink/30 mx-auto mb-2" />
-            <div className="text-sm text-ink/50">No photos yet. Add a photo URL to get started.</div>
+            <div className="text-sm text-ink/50">No photos yet. Upload one from your device, or paste an image URL.</div>
           </div>
         </Card>
       ) : (
@@ -608,11 +610,16 @@ function GalleryTab({ pet, onUpdate }: { pet: Pet; onUpdate: (patch: Partial<Pet
       )}
       <Modal open={showModal} onClose={() => setShowModal(false)} title="Add photo">
         <div className="space-y-4">
-          <Field label="Image URL">
-            <input className={inputCls} value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://…" />
-          </Field>
+          <ImagePicker
+            label="Photo"
+            hint="Upload from this device, or paste a link to an image."
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            aspect="aspect-[4/3]"
+            maxPx={1200}
+          />
           <Field label="Caption (optional)">
-            <input className={inputCls} value={caption} onChange={(e) => setCaption(e.target.value)} placeholder="After grooming session" />
+            <Input value={caption} onChange={(e) => setCaption(e.target.value)} placeholder="After grooming session" />
           </Field>
           <div className="flex justify-end gap-2">
             <Button variant="ghost" onClick={() => setShowModal(false)}>Cancel</Button>
@@ -674,7 +681,7 @@ function DocumentsTab({ pet, onUpdate }: { pet: Pet; onUpdate: (patch: Partial<P
                 <div className="text-[10px] text-ink/50">{d.type} · {d.date}</div>
               </div>
               {d.url && (
-                <a href={d.url} target="_blank" rel="noopener noreferrer" className="text-[11px] text-sage font-medium hover:underline">View</a>
+                <a href={d.url} target="_blank" rel="noopener noreferrer" className="text-[11px] text-plum font-medium hover:underline">View</a>
               )}
               <button
                 onClick={() => removeDoc(d.id)}
@@ -689,7 +696,7 @@ function DocumentsTab({ pet, onUpdate }: { pet: Pet; onUpdate: (patch: Partial<P
       <Modal open={showModal} onClose={() => setShowModal(false)} title="Add document">
         <div className="space-y-4">
           <Field label="Document name">
-            <input className={inputCls} value={name} onChange={(e) => setName(e.target.value)} placeholder="Blood panel results" />
+            <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Blood panel results" />
           </Field>
           <Field label="Type">
             <Select value={type} onChange={(e) => setType(e.target.value)}>
@@ -697,7 +704,7 @@ function DocumentsTab({ pet, onUpdate }: { pet: Pet; onUpdate: (patch: Partial<P
             </Select>
           </Field>
           <Field label="URL (optional)">
-            <input className={inputCls} value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://…" />
+            <Input type="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://…" />
           </Field>
           <div className="flex justify-end gap-2">
             <Button variant="ghost" onClick={() => setShowModal(false)}>Cancel</Button>
@@ -722,7 +729,7 @@ function PedigreeTab({ pet, onUpdate }: { pet: Pet; onUpdate: (patch: Partial<Pe
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <GitBranch className="w-4 h-4 text-sage" />
+          <GitBranch className="w-4 h-4 text-plum" />
           <span className="text-sm font-semibold text-ink">Pedigree Information</span>
         </div>
         {!editing ? (

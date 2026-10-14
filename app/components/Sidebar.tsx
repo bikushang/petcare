@@ -13,15 +13,15 @@ export default function Sidebar({ role, branch }: { role: Role; branch: string }
 
   return (
     <aside className="hidden lg:flex flex-col w-64 shrink-0 border-r border-line bg-white">
-      <div className="flex items-center gap-2.5 px-5 h-16 border-b border-line">
-        <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-sage text-white">
+      <Link href="/" className="hv-slide-parent group flex items-center gap-2.5 px-5 h-16 border-b border-line">
+        <div className="hv-tile flex items-center justify-center w-9 h-9 rounded-xl bg-plum text-white shadow-lift-sm">
           <PawPrint className="w-5 h-5" />
         </div>
         <div className="leading-tight">
-          <div className="text-sm font-semibold text-ink">PetCare Pro</div>
-          <div className="text-[11px] text-sage/80">{branch}</div>
+          <div className="text-sm font-semibold text-ink group-hover:text-plum transition-colors duration-200">PetCare Pro</div>
+          <div className="text-[11px] text-plum/80">{branch}</div>
         </div>
-      </div>
+      </Link>
       <nav className="flex-1 overflow-y-auto py-3 px-3">
         {items.map((item) => {
           const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
@@ -30,18 +30,23 @@ export default function Sidebar({ role, branch }: { role: Role; branch: string }
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                active ? 'bg-mint text-sage' : 'text-ink/70 hover:bg-mint/50 hover:text-ink'
+              className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ease-out-soft hover:translate-x-0.5 ${
+                active ? 'bg-lilac text-plum' : 'text-ink/70 hover:bg-lilac/50 hover:text-plum'
               }`}
             >
-              <Icon className={`w-5 h-5 ${active ? 'text-sage' : 'text-ink/45'}`} />
+              {active && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-plum" />}
+              <Icon
+                className={`w-5 h-5 shrink-0 transition-transform duration-200 ease-out-soft group-hover:scale-110 ${
+                  active ? 'text-plum' : 'text-ink/45 group-hover:text-plum'
+                }`}
+              />
               {item.label}
             </Link>
           );
         })}
       </nav>
-      <div className="m-3 rounded-xl bg-mint/70 p-3.5">
-        <div className="flex items-center gap-2 text-sage">
+      <div className="m-3 rounded-xl bg-lilac/70 p-3.5">
+        <div className="flex items-center gap-2 text-plum">
           {info?.scope === 'platform' ? <Shield className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
           <span className="text-xs font-semibold">System status</span>
         </div>

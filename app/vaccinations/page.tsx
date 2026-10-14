@@ -6,7 +6,7 @@ import {
   CalendarClock, FileCheck, BadgeCheck, AlertTriangle, Filter, X,
 } from 'lucide-react';
 import Shell from '../components/Shell';
-import { Card, Button, EmptyState, Modal, Field, inputCls, Select, DateInput, Textarea, NumberInput } from '../components/ui';
+import { Card, Button, EmptyState, Modal, Field, Input, Select, DateInput, Textarea, NumberInput, Checkbox } from '../components/ui';
 import { useDB, Vaccination, newId, today } from '../lib/store';
 import { AISuggestionButton, AISuggestionPanel } from '../components/ai-suggestion';
 import { generateVaccinationRecommendation } from '../lib/ai-engine';
@@ -18,7 +18,7 @@ const vets = ['Dr. Rivera', 'Dr. Okafor', 'Dr. Patel'];
 const manufacturers = ['BioPharm', 'Zoetis', 'Merck', 'MedGene', 'Boehringer Ingelheim', 'Elanco', 'Ceva'];
 
 const statusStyle: Record<Vaccination['status'], { bg: string; text: string; icon: typeof ShieldCheck }> = {
-  Completed: { bg: 'bg-mint', text: 'text-sage', icon: BadgeCheck },
+  Completed: { bg: 'bg-lilac', text: 'text-plum', icon: BadgeCheck },
   Pending: { bg: 'bg-amber-100', text: 'text-amber-700', icon: Clock },
   Overdue: { bg: 'bg-coral/15', text: 'text-coral', icon: ShieldAlert },
   Scheduled: { bg: 'bg-sky-100', text: 'text-sky-700', icon: CalendarClock },
@@ -27,8 +27,8 @@ const statusStyle: Record<Vaccination['status'], { bg: string; text: string; ico
 const scheduleStyle: Record<Vaccination['scheduleType'], string> = {
   Puppy: 'bg-amber-50 text-amber-700',
   Kitten: 'bg-sky-50 text-sky-700',
-  Adult: 'bg-mint text-sage',
-  Livestock: 'bg-teal-50 text-teal-700',
+  Adult: 'bg-lilac text-plum',
+  Livestock: 'bg-violet-50 text-violet-700',
   Custom: 'bg-violet-50 text-violet-700',
 };
 
@@ -168,7 +168,7 @@ export default function VaccinationsPage() {
     }
   };
 
-  if (!db) return <Shell title="Vaccinations"><div className="text-sm text-ink/50">Loading…</div></Shell>;
+  if (!db) return <Shell module="vaccinations" title="Vaccinations"><div className="text-sm text-ink/50">Loading…</div></Shell>;
 
   const hasFilters = petFilter !== 'all' || scheduleFilter !== 'all' || statusFilter !== 'all';
 
@@ -178,13 +178,13 @@ export default function VaccinationsPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
         <Card className="p-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-mint flex items-center justify-center"><Syringe className="w-5 h-5 text-sage" /></div>
+            <div className="w-10 h-10 rounded-xl bg-lilac flex items-center justify-center"><Syringe className="w-5 h-5 text-plum" /></div>
             <div><div className="text-2xl font-bold text-ink">{stats.total}</div><div className="text-[11px] text-ink/50">Total records</div></div>
           </div>
         </Card>
         <Card className="p-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-mint flex items-center justify-center"><BadgeCheck className="w-5 h-5 text-sage" /></div>
+            <div className="w-10 h-10 rounded-xl bg-lilac flex items-center justify-center"><BadgeCheck className="w-5 h-5 text-plum" /></div>
             <div><div className="text-2xl font-bold text-ink">{stats.completed}</div><div className="text-[11px] text-ink/50">Completed</div></div>
           </div>
         </Card>
@@ -235,7 +235,7 @@ export default function VaccinationsPage() {
             const SIcon = statusStyle[r.status]?.icon ?? Clock;
             const isOverdue = r.status === 'Overdue' || (r.status === 'Pending' && r.nextDueDate && r.nextDueDate < today());
             return (
-              <Card key={r.id} className="p-4 group hover:ring-2 hover:ring-sage/20 transition-all">
+              <Card key={r.id} className="p-4 group hover:ring-2 hover:ring-plum/20 transition-all">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 flex-1 min-w-0">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${statusStyle[r.status]?.bg || 'bg-canvas'}`}>
@@ -245,7 +245,7 @@ export default function VaccinationsPage() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-sm font-semibold text-ink truncate">{r.vaccineName}</span>
                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${scheduleStyle[r.scheduleType]}`}>{r.scheduleType}</span>
-                        {r.verified && <ShieldCheck className="w-3.5 h-3.5 text-sage" />}
+                        {r.verified && <ShieldCheck className="w-3.5 h-3.5 text-plum" />}
                       </div>
                       <div className="text-[11px] text-ink/50 mt-0.5">
                         {petName(r.petId)} · {ownerOf(r.petId)} · {r.vet}
@@ -261,7 +261,7 @@ export default function VaccinationsPage() {
                         )}
                         {r.batchNumber && <span>Batch: {r.batchNumber}</span>}
                         {r.manufacturer && <span>{r.manufacturer}</span>}
-                        {r.certificateId && <span className="text-sage font-medium flex items-center gap-0.5"><FileCheck className="w-3 h-3" /> {r.certificateId}</span>}
+                        {r.certificateId && <span className="text-plum font-medium flex items-center gap-0.5"><FileCheck className="w-3 h-3" /> {r.certificateId}</span>}
                       </div>
                     </div>
                   </div>
@@ -269,7 +269,7 @@ export default function VaccinationsPage() {
                     <span className={`text-[11px] px-2.5 py-1 rounded-full font-medium ${statusStyle[r.status]?.bg} ${statusStyle[r.status]?.text}`}>{r.status}</span>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       {r.status === 'Completed' && r.certificateId && (
-                        <button onClick={() => setCertRecord(r)} className="w-7 h-7 rounded-lg hover:bg-mint text-ink/40 hover:text-sage flex items-center justify-center transition-colors" title="View certificate">
+                        <button onClick={() => setCertRecord(r)} className="w-7 h-7 rounded-lg hover:bg-lilac text-ink/40 hover:text-plum flex items-center justify-center transition-colors" title="View certificate">
                           <FileCheck className="w-3.5 h-3.5" />
                         </button>
                       )}
@@ -322,7 +322,7 @@ export default function VaccinationsPage() {
                   <button
                     key={tpl.name}
                     onClick={() => { set('vaccineName', tpl.name); set('totalDoses', tpl.doses); }}
-                    className={`text-[11px] px-2.5 py-1 rounded-full border transition-colors ${form.vaccineName === tpl.name ? 'bg-sage text-white border-sage' : 'bg-white text-ink/60 border-line hover:border-sage/40'}`}
+                    className={`text-[11px] px-2.5 py-1 rounded-full border transition-colors ${form.vaccineName === tpl.name ? 'bg-plum text-white border-plum' : 'bg-white text-ink/60 border-line hover:border-plum/40'}`}
                   >
                     {tpl.name} ({tpl.doses} dose{tpl.doses > 1 ? 's' : ''})
                   </button>
@@ -332,7 +332,7 @@ export default function VaccinationsPage() {
           )}
 
           <Field label="Vaccine name">
-            <input className={inputCls} value={form.vaccineName} onChange={(e) => set('vaccineName', e.target.value)} placeholder="e.g. Rabies, DHPP, FVRCP" />
+            <Input value={form.vaccineName} onChange={(e) => set('vaccineName', e.target.value)} placeholder="e.g. Rabies, DHPP, FVRCP" />
           </Field>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -355,7 +355,7 @@ export default function VaccinationsPage() {
           <div className="border-t border-line pt-3">
             <div className="text-[11px] font-semibold text-ink/50 uppercase tracking-wide mb-3">Vaccine Verification</div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              <Field label="Batch number"><input className={inputCls} value={form.batchNumber} onChange={(e) => set('batchNumber', e.target.value)} placeholder="RB-2402" /></Field>
+              <Field label="Batch number"><Input value={form.batchNumber} onChange={(e) => set('batchNumber', e.target.value)} placeholder="RB-2402" /></Field>
               <Field label="Manufacturer">
                 <Select value={form.manufacturer} onChange={(e) => set('manufacturer', e.target.value)}>
                   {manufacturers.map((m) => <option key={m}>{m}</option>)}
@@ -369,16 +369,10 @@ export default function VaccinationsPage() {
           <div className="border-t border-line pt-3 space-y-3">
             <div className="text-[11px] font-semibold text-ink/50 uppercase tracking-wide">Certificate & Reminders</div>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Certificate ID"><input className={inputCls} value={form.certificateId} onChange={(e) => set('certificateId', e.target.value)} placeholder="Auto-generated if completed" /></Field>
+              <Field label="Certificate ID"><Input value={form.certificateId} onChange={(e) => set('certificateId', e.target.value)} placeholder="Auto-generated if completed" /></Field>
               <div className="flex items-end gap-4 pb-1">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={form.verified} onChange={(e) => set('verified', e.target.checked)} className="w-4 h-4 rounded accent-sage" />
-                  <span className="text-xs text-ink/70">Verified</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={form.reminderSent} onChange={(e) => set('reminderSent', e.target.checked)} className="w-4 h-4 rounded accent-sage" />
-                  <span className="text-xs text-ink/70">Reminder sent</span>
-                </label>
+                <Checkbox checked={form.verified} onChange={(e) => set('verified', e.target.checked)} label="Verified" />
+                <Checkbox checked={form.reminderSent} onChange={(e) => set('reminderSent', e.target.checked)} label="Reminder sent" />
               </div>
             </div>
           </div>
@@ -396,10 +390,10 @@ export default function VaccinationsPage() {
       <Modal open={!!certRecord} onClose={() => setCertRecord(null)} title="Vaccination Certificate" wide>
         {certRecord && (
           <div className="space-y-4">
-            <div className="rounded-2xl border-2 border-sage/30 bg-gradient-to-br from-mint/30 to-white p-6">
+            <div className="rounded-2xl border-2 border-plum/30 bg-gradient-to-br from-lilac/30 to-white p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-xl bg-sage flex items-center justify-center"><Syringe className="w-5 h-5 text-white" /></div>
+                  <div className="w-10 h-10 rounded-xl bg-plum flex items-center justify-center"><Syringe className="w-5 h-5 text-white" /></div>
                   <div>
                     <div className="text-sm font-bold text-ink">PetCare Pro</div>
                     <div className="text-[10px] text-ink/50">Vaccination Certificate</div>
@@ -407,11 +401,11 @@ export default function VaccinationsPage() {
                 </div>
                 <div className="text-right">
                   <div className="text-[10px] text-ink/40">Certificate ID</div>
-                  <div className="text-sm font-mono font-semibold text-sage">{certRecord.certificateId}</div>
+                  <div className="text-sm font-mono font-semibold text-plum">{certRecord.certificateId}</div>
                 </div>
               </div>
 
-              <div className="border-t border-sage/20 pt-4 space-y-3">
+              <div className="border-t border-plum/20 pt-4 space-y-3">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <div className="text-[10px] text-ink/40 uppercase tracking-wide">Patient</div>
@@ -480,10 +474,10 @@ export default function VaccinationsPage() {
                 )}
               </div>
 
-              <div className="border-t border-sage/20 mt-4 pt-4 flex items-center justify-between">
+              <div className="border-t border-plum/20 mt-4 pt-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   {certRecord.verified ? (
-                    <><ShieldCheck className="w-5 h-5 text-sage" /><span className="text-xs font-medium text-sage">Verified by {certRecord.vet}</span></>
+                    <><ShieldCheck className="w-5 h-5 text-plum" /><span className="text-xs font-medium text-plum">Verified by {certRecord.vet}</span></>
                   ) : (
                     <><ShieldAlert className="w-5 h-5 text-ink/40" /><span className="text-xs text-ink/50">Pending verification</span></>
                   )}

@@ -8,7 +8,7 @@ import {
   TestTube, ClipboardList, Stethoscope,
 } from 'lucide-react';
 import Shell from '../components/Shell';
-import { Card, Button, EmptyState, Modal, Field, inputCls, Select, Textarea, NumberInput, Checkbox, Badge } from '../components/ui';
+import { Card, Button, EmptyState, Modal, Field, Input, Select, Textarea, NumberInput, DatePicker, Checkbox, Badge, Tabs } from '../components/ui';
 import { useDB, LabTest, LabResultParameter, SampleTrackingEntry, LabImage, newId, today } from '../lib/store';
 import { AISuggestionButton, AISuggestionPanel } from '../components/ai-suggestion';
 import { generateLabExplanation } from '../lib/ai-engine';
@@ -63,12 +63,12 @@ const statusStyle: Record<LabTest['status'], { bg: string; text: string; dot: st
   Ordered: { bg: 'bg-sky-100', text: 'text-sky-700', dot: 'bg-sky-500' },
   'Sample collected': { bg: 'bg-amber-100', text: 'text-amber-700', dot: 'bg-amber-500' },
   'In analysis': { bg: 'bg-coral/15', text: 'text-coral', dot: 'bg-coral' },
-  Completed: { bg: 'bg-mint', text: 'text-sage', dot: 'bg-sage' },
+  Completed: { bg: 'bg-lilac', text: 'text-plum', dot: 'bg-plum' },
   Cancelled: { bg: 'bg-canvas', text: 'text-ink/40', dot: 'bg-ink/30' },
 };
 
 const flagStyle: Record<LabResultParameter['flag'], string> = {
-  Normal: 'text-sage',
+  Normal: 'text-plum',
   Low: 'text-sky-600',
   High: 'text-amber-600',
   Critical: 'text-coral font-semibold',
@@ -274,24 +274,24 @@ export default function LabPage() {
     <style>
       *{box-sizing:border-box;margin:0;padding:0;font-family:Georgia,serif;color:#1a1a1a}
       body{padding:40px;max-width:750px;margin:0 auto}
-      .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #2d7a5f;padding-bottom:16px;margin-bottom:20px}
-      .clinic-name{font-size:22px;font-weight:bold;color:#2d7a5f}
+      .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #4C1D95;padding-bottom:16px;margin-bottom:20px}
+      .clinic-name{font-size:22px;font-weight:bold;color:#4C1D95}
       .clinic-sub{font-size:12px;color:#666;margin-top:2px}
       .report-num{font-size:12px;color:#666;text-align:right}
-      .report-num b{font-size:14px;color:#2d7a5f;font-family:monospace}
+      .report-num b{font-size:14px;color:#4C1D95;font-family:monospace}
       .barcode{font-family:monospace;font-size:16px;letter-spacing:3px;color:#333;margin-top:4px}
       .patient-box{background:#f8f9fa;border:1px solid #e0e0e0;border-radius:8px;padding:14px;margin-bottom:18px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
       .patient-box .label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#999}
       .patient-box .value{font-size:14px;font-weight:bold}
       .section{margin-bottom:20px}
-      .section-title{font-size:14px;font-weight:bold;color:#2d7a5f;border-bottom:1px solid #ddd;padding-bottom:4px;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+      .section-title{font-size:14px;font-weight:bold;color:#4C1D95;border-bottom:1px solid #ddd;padding-bottom:4px;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
       .row{font-size:12px;margin-bottom:4px}
       .row b{color:#333}
       .notes{font-size:12px;color:#444;font-style:italic;padding:10px;background:#f8f9fa;border-radius:4px;margin-top:6px}
       table{width:100%;border-collapse:collapse;margin-bottom:12px}
       th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#999;padding:6px 4px;border-bottom:2px solid #e0e0e0}
       td{padding:8px 4px;border-bottom:1px solid #eee;font-size:12px;vertical-align:top}
-      .flag-normal{color:#2d7a5f}.flag-low{color:#0ea5e9}.flag-high{color:#f59e0b}.flag-critical{color:#ef4444;font-weight:bold}
+      .flag-normal{color:#4C1D95}.flag-low{color:#0ea5e9}.flag-high{color:#f59e0b}.flag-critical{color:#ef4444;font-weight:bold}
       .footer{margin-top:30px;padding-top:14px;border-top:1px solid #e0e0e0;text-align:right}
       .sig-line{border-top:1px solid #333;width:220px;margin:0 0 4px auto}
       .sig-name{font-size:13px;font-weight:bold}
@@ -339,7 +339,7 @@ export default function LabPage() {
     ${printT.interpretation ? `<div class="section"><div class="section-title">Interpretation</div><div class="notes">${printT.interpretation}</div></div>` : ''}
     ${printT.notes ? `<div class="section"><div class="section-title">Notes</div><div class="notes">${printT.notes}</div></div>` : ''}
     <div class="footer">
-      ${printT.digitallySigned ? `<div style="font-size:11px;color:#2d7a5f;margin-bottom:8px">Digitally signed by ${printT.signedBy} (${printT.signedRole}) on ${printT.signedDate}</div>` : ''}
+      ${printT.digitallySigned ? `<div style="font-size:11px;color:#4C1D95;margin-bottom:8px">Digitally signed by ${printT.signedBy} (${printT.signedRole}) on ${printT.signedDate}</div>` : ''}
       <div class="sig-line"></div>
       <div class="sig-name">${printT.digitallySigned ? printT.signedBy : '________________'}</div>
       <div class="sig-role">${printT.digitallySigned ? printT.signedRole : 'Laboratory Technician'}</div>
@@ -349,7 +349,7 @@ export default function LabPage() {
     setTimeout(() => { win.print(); }, 500);
   };
 
-  if (!db) return <Shell title="Laboratory"><div className="text-sm text-ink/50">Loading…</div></Shell>;
+  if (!db) return <Shell module="labTests" title="Laboratory"><div className="text-sm text-ink/50">Loading…</div></Shell>;
 
   const hasFilters = petFilter !== 'all' || statusFilter !== 'all' || typeFilter !== 'all';
 
@@ -357,9 +357,9 @@ export default function LabPage() {
     <Shell title="Laboratory" subtitle="Diagnostic workflow — blood, urine, stool, imaging, sample tracking, reports, and digital signatures">
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">
-        <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-mint flex items-center justify-center"><FlaskConical className="w-5 h-5 text-sage" /></div><div><div className="text-2xl font-bold text-ink">{stats.total}</div><div className="text-[11px] text-ink/50">Total tests</div></div></div></Card>
+        <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-lilac flex items-center justify-center"><FlaskConical className="w-5 h-5 text-plum" /></div><div><div className="text-2xl font-bold text-ink">{stats.total}</div><div className="text-[11px] text-ink/50">Total tests</div></div></div></Card>
         <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center"><Clock className="w-5 h-5 text-amber-600" /></div><div><div className="text-2xl font-bold text-amber-600">{stats.pending}</div><div className="text-[11px] text-ink/50">In progress</div></div></div></Card>
-        <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-mint flex items-center justify-center"><CheckCircle2 className="w-5 h-5 text-sage" /></div><div><div className="text-2xl font-bold text-sage">{stats.completed}</div><div className="text-[11px] text-ink/50">Completed</div></div></div></Card>
+        <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-lilac flex items-center justify-center"><CheckCircle2 className="w-5 h-5 text-plum" /></div><div><div className="text-2xl font-bold text-plum">{stats.completed}</div><div className="text-[11px] text-ink/50">Completed</div></div></div></Card>
         <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-coral/15 flex items-center justify-center"><AlertTriangle className="w-5 h-5 text-coral" /></div><div><div className="text-2xl font-bold text-coral">{stats.stat}</div><div className="text-[11px] text-ink/50">STAT priority</div></div></div></Card>
         <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center"><ImageIcon className="w-5 h-5 text-sky-600" /></div><div><div className="text-2xl font-bold text-sky-700">{stats.imaging}</div><div className="text-[11px] text-ink/50">Imaging studies</div></div></div></Card>
       </div>
@@ -401,7 +401,7 @@ export default function LabPage() {
             const pet = petOf(t.petId);
             const hasAbnormal = t.results.some((r) => r.flag !== 'Normal' && r.flag !== 'N/A');
             return (
-              <Card key={t.id} className="group hover:ring-2 hover:ring-sage/20 transition-all">
+              <Card key={t.id} className="group hover:ring-2 hover:ring-plum/20 transition-all">
                 <div className="p-4 flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 flex-1 min-w-0 cursor-pointer" onClick={() => setExpandedId(expanded ? null : t.id)}>
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${S.bg}`}>
@@ -412,7 +412,7 @@ export default function LabPage() {
                         <span className="text-sm font-semibold text-ink">{t.testName}</span>
                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${S.bg} ${S.text}`}>{t.status}</span>
                         {t.priority !== 'Routine' && <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${t.priority === 'STAT' ? 'bg-coral/15 text-coral' : 'bg-amber-100 text-amber-700'}`}>{t.priority}</span>}
-                        {t.digitallySigned && <span className="text-[10px] text-sage flex items-center gap-0.5"><ShieldCheck className="w-3 h-3" /> Signed</span>}
+                        {t.digitallySigned && <span className="text-[10px] text-plum flex items-center gap-0.5"><ShieldCheck className="w-3 h-3" /> Signed</span>}
                         {hasAbnormal && <span className="text-[10px] px-2 py-0.5 rounded-full bg-coral/15 text-coral font-medium flex items-center gap-0.5"><AlertTriangle className="w-2.5 h-2.5" /> Abnormal</span>}
                       </div>
                       <div className="text-[11px] text-ink/50 mt-0.5">
@@ -421,9 +421,9 @@ export default function LabPage() {
                       <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                         {t.barcode && <span className="text-[10px] px-2 py-0.5 rounded bg-canvas/60 text-ink/60 flex items-center gap-0.5 font-mono"><Barcode className="w-2.5 h-2.5" /> {t.barcode}</span>}
                         {t.sampleTracking.length > 0 && <span className="text-[10px] text-sky-600 flex items-center gap-0.5"><TestTube className="w-3 h-3" /> {t.sampleTracking.length} tracking steps</span>}
-                        {t.results.length > 0 && <span className="text-[10px] text-sage flex items-center gap-0.5"><Microscope className="w-3 h-3" /> {t.results.length} parameters</span>}
+                        {t.results.length > 0 && <span className="text-[10px] text-plum flex items-center gap-0.5"><Microscope className="w-3 h-3" /> {t.results.length} parameters</span>}
                         {t.testType === 'Imaging' && t.imagingRegion && <span className="text-[10px] text-sky-600 flex items-center gap-0.5"><ImageIcon className="w-3 h-3" /> {t.imagingRegion}</span>}
-                        {t.reportGenerated && <span className="text-[10px] text-sage flex items-center gap-0.5"><FileText className="w-3 h-3" /> Report ready</span>}
+                        {t.reportGenerated && <span className="text-[10px] text-plum flex items-center gap-0.5"><FileText className="w-3 h-3" /> Report ready</span>}
                       </div>
                     </div>
                     <button className="text-ink/30 hover:text-ink mt-1">
@@ -452,7 +452,7 @@ export default function LabPage() {
                         <div className="flex items-center gap-1 overflow-x-auto pb-1">
                           {t.sampleTracking.map((s, i) => (
                             <div key={i} className="flex items-center gap-1 shrink-0">
-                              <div className={`px-2.5 py-1 rounded-lg text-[10px] font-medium ${s.stage === 'Completed' ? 'bg-mint text-sage' : s.stage === 'Rejected' ? 'bg-coral/15 text-coral' : 'bg-canvas text-ink/60'}`}>
+                              <div className={`px-2.5 py-1 rounded-lg text-[10px] font-medium ${s.stage === 'Completed' ? 'bg-lilac text-plum' : s.stage === 'Rejected' ? 'bg-coral/15 text-coral' : 'bg-canvas text-ink/60'}`}>
                                 <div>{s.stage}</div>
                                 <div className="text-[9px] font-normal opacity-70">{s.timestamp}</div>
                                 <div className="text-[9px] font-normal opacity-60">{s.technician}</div>
@@ -491,17 +491,17 @@ export default function LabPage() {
                     {/* Impression / interpretation */}
                     {(t.impression || t.findings || t.interpretation) && (
                       <div className="rounded-lg border border-line bg-white p-3 space-y-2">
-                        {t.impression && <div><div className="text-[10px] font-semibold text-sage uppercase tracking-wide mb-0.5">Impression</div><div className="text-xs text-ink/60">{t.impression}</div></div>}
-                        {t.findings && <div><div className="text-[10px] font-semibold text-sage uppercase tracking-wide mb-0.5">Findings</div><div className="text-xs text-ink/60 whitespace-pre-wrap">{t.findings}</div></div>}
-                        {t.interpretation && <div><div className="text-[10px] font-semibold text-sage uppercase tracking-wide mb-0.5">Interpretation</div><div className="text-xs text-ink/60">{t.interpretation}</div></div>}
+                        {t.impression && <div><div className="text-[10px] font-semibold text-plum uppercase tracking-wide mb-0.5">Impression</div><div className="text-xs text-ink/60">{t.impression}</div></div>}
+                        {t.findings && <div><div className="text-[10px] font-semibold text-plum uppercase tracking-wide mb-0.5">Findings</div><div className="text-xs text-ink/60 whitespace-pre-wrap">{t.findings}</div></div>}
+                        {t.interpretation && <div><div className="text-[10px] font-semibold text-plum uppercase tracking-wide mb-0.5">Interpretation</div><div className="text-xs text-ink/60">{t.interpretation}</div></div>}
                       </div>
                     )}
 
                     {/* Digital signature */}
                     {t.digitallySigned && (
-                      <div className="rounded-lg border border-sage/30 bg-mint/20 p-3 flex items-center gap-2">
-                        <ShieldCheck className="w-4 h-4 text-sage" />
-                        <div className="text-xs"><span className="font-semibold text-sage">Digitally signed</span> <span className="text-ink/60">by {t.signedBy} ({t.signedRole}) on {t.signedDate}</span></div>
+                      <div className="rounded-lg border border-plum/30 bg-lilac/20 p-3 flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-plum" />
+                        <div className="text-xs"><span className="font-semibold text-plum">Digitally signed</span> <span className="text-ink/60">by {t.signedBy} ({t.signedRole}) on {t.signedDate}</span></div>
                       </div>
                     )}
                   </div>
@@ -522,13 +522,7 @@ export default function LabPage() {
       <Modal open={open} onClose={() => { setOpen(false); setEditT(null); }} title={editT ? `Edit ${editT.testNumber}` : 'New lab test'} wide>
         <div className="space-y-4">
           {/* Tabs */}
-          <div className="flex items-center gap-1 border-b border-line overflow-x-auto">
-            {tabs.map((t) => (
-              <button key={t.key} onClick={() => setActiveTab(t.key)} className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === t.key ? 'border-sage text-sage' : 'border-transparent text-ink/50 hover:text-ink'}`}>
-                <t.icon className="w-3.5 h-3.5" /> {t.label}
-              </button>
-            ))}
-          </div>
+          <Tabs tabs={tabs} value={activeTab} onChange={setActiveTab} size="sm" className="mb-1" />
 
           {/* Details tab */}
           {activeTab === 'details' && (
@@ -564,7 +558,7 @@ export default function LabPage() {
                 </Select>
               </Field>
 
-              <Field label="Test name"><input className={inputCls} value={form.testName} onChange={(e) => set('testName', e.target.value)} placeholder="e.g. Complete Blood Count" /></Field>
+              <Field label="Test name"><Input value={form.testName} onChange={(e) => set('testName', e.target.value)} placeholder="e.g. Complete Blood Count" /></Field>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <Field label="Requested by">
@@ -572,7 +566,7 @@ export default function LabPage() {
                     {vetNames.map((n) => <option key={n}>{n}</option>)}
                   </Select>
                 </Field>
-                <Field label="Date ordered"><input className={inputCls} type="date" value={form.dateOrdered} onChange={(e) => set('dateOrdered', e.target.value)} /></Field>
+                <Field label="Date ordered"><DatePicker value={form.dateOrdered} onChange={(e) => set('dateOrdered', e.target.value)} /></Field>
                 <Field label="Status">
                   <Select value={form.status} onChange={(e) => set('status', e.target.value as LabTest['status'])}>
                     {statuses.map((s) => <option key={s}>{s}</option>)}
@@ -581,15 +575,15 @@ export default function LabPage() {
                 <Field label="Cost"><NumberInput value={String(form.cost)} onChange={(e) => set('cost', parseFloat(e.target.value) || 0)} /></Field>
               </div>
 
-              <Field label="Barcode"><input className={`${inputCls} font-mono`} value={form.barcode} onChange={(e) => set('barcode', e.target.value)} placeholder="Auto-generated" /></Field>
+              <Field label="Barcode"><Input className="font-mono" value={form.barcode} onChange={(e) => set('barcode', e.target.value)} placeholder="Auto-generated" /></Field>
 
               {/* Imaging-specific fields */}
               {form.testType === 'Imaging' && (
                 <div className="border-t border-line pt-3 space-y-2">
                   <div className="text-[11px] font-semibold text-ink/50 uppercase tracking-wide flex items-center gap-1.5"><ImageIcon className="w-3.5 h-3.5" /> Imaging Details</div>
                   <div className="grid grid-cols-2 gap-3">
-                    <Field label="Region"><input className={inputCls} value={form.imagingRegion} onChange={(e) => set('imagingRegion', e.target.value)} placeholder="e.g. Abdomen, Pelvis" /></Field>
-                    <Field label="Modality"><input className={inputCls} value={form.imagingModality} onChange={(e) => set('imagingModality', e.target.value)} placeholder="e.g. Digital radiography" /></Field>
+                    <Field label="Region"><Input value={form.imagingRegion} onChange={(e) => set('imagingRegion', e.target.value)} placeholder="e.g. Abdomen, Pelvis" /></Field>
+                    <Field label="Modality"><Input value={form.imagingModality} onChange={(e) => set('imagingModality', e.target.value)} placeholder="e.g. Digital radiography" /></Field>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <Field label="Image count"><NumberInput value={String(form.imageCount)} onChange={(e) => set('imageCount', parseInt(e.target.value) || 0)} /></Field>
@@ -606,12 +600,12 @@ export default function LabPage() {
           {activeTab === 'sample' && (
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Sample type"><input className={inputCls} value={form.sampleType} onChange={(e) => set('sampleType', e.target.value)} placeholder="e.g. Whole blood (EDTA)" /></Field>
-                <Field label="Sample volume"><input className={inputCls} value={form.sampleVolume} onChange={(e) => set('sampleVolume', e.target.value)} placeholder="e.g. 1.5 ml" /></Field>
-                <Field label="Collection method"><input className={inputCls} value={form.collectionMethod} onChange={(e) => set('collectionMethod', e.target.value)} placeholder="e.g. Jugular venipuncture" /></Field>
-                <Field label="Collected by"><input className={inputCls} value={form.collectedBy} onChange={(e) => set('collectedBy', e.target.value)} placeholder="Technician name" /></Field>
-                <Field label="Collection date"><input className={inputCls} type="date" value={form.collectionDate} onChange={(e) => set('collectionDate', e.target.value)} /></Field>
-                <Field label="Storage condition"><input className={inputCls} value={form.storageCondition} onChange={(e) => set('storageCondition', e.target.value)} placeholder="e.g. Refrigerated 4°C" /></Field>
+                <Field label="Sample type"><Input value={form.sampleType} onChange={(e) => set('sampleType', e.target.value)} placeholder="e.g. Whole blood (EDTA)" /></Field>
+                <Field label="Sample volume"><Input value={form.sampleVolume} onChange={(e) => set('sampleVolume', e.target.value)} placeholder="e.g. 1.5 ml" /></Field>
+                <Field label="Collection method"><Input value={form.collectionMethod} onChange={(e) => set('collectionMethod', e.target.value)} placeholder="e.g. Jugular venipuncture" /></Field>
+                <Field label="Collected by"><Input value={form.collectedBy} onChange={(e) => set('collectedBy', e.target.value)} placeholder="Technician name" /></Field>
+                <Field label="Collection date"><DatePicker value={form.collectionDate} onChange={(e) => set('collectionDate', e.target.value)} /></Field>
+                <Field label="Storage condition"><Input value={form.storageCondition} onChange={(e) => set('storageCondition', e.target.value)} placeholder="e.g. Refrigerated 4°C" /></Field>
               </div>
 
               {/* Sample tracking */}
@@ -626,9 +620,9 @@ export default function LabPage() {
                       <Select value={s.stage} onChange={(e) => setTrack(idx, 'stage', e.target.value)} className="w-36">
                         {trackStages.map((st) => <option key={st}>{st}</option>)}
                       </Select>
-                      <input className={`${inputCls} h-8 text-xs w-32`} value={s.timestamp} onChange={(e) => setTrack(idx, 'timestamp', e.target.value)} placeholder="Timestamp" />
-                      <input className={`${inputCls} h-8 text-xs w-36`} value={s.technician} onChange={(e) => setTrack(idx, 'technician', e.target.value)} placeholder="Technician" />
-                      <input className={`${inputCls} h-8 text-xs flex-1 min-w-[100px]`} value={s.notes} onChange={(e) => setTrack(idx, 'notes', e.target.value)} placeholder="Notes" />
+                      <Input className="w-32" value={s.timestamp} onChange={(e) => setTrack(idx, 'timestamp', e.target.value)} placeholder="Timestamp" />
+                      <Input className="w-36" value={s.technician} onChange={(e) => setTrack(idx, 'technician', e.target.value)} placeholder="Technician" />
+                      <Input className="flex-1 min-w-[100px]" value={s.notes} onChange={(e) => setTrack(idx, 'notes', e.target.value)} placeholder="Notes" />
                       <button onClick={() => removeTrack(idx)} className="w-7 h-7 rounded-lg hover:bg-coral/10 text-ink/40 hover:text-coral flex items-center justify-center transition-colors shrink-0"><X className="w-3.5 h-3.5" /></button>
                     </div>
                   ))}
@@ -647,10 +641,10 @@ export default function LabPage() {
               <div className="space-y-2 max-h-[250px] overflow-y-auto pr-1">
                 {form.results.map((r, idx) => (
                   <div key={idx} className="flex items-center gap-2 flex-wrap rounded-lg border border-line p-2 bg-canvas/30">
-                    <input className={`${inputCls} h-8 text-xs w-32`} value={r.name} onChange={(e) => setResult(idx, 'name', e.target.value)} placeholder="Parameter" />
-                    <input className={`${inputCls} h-8 text-xs w-20`} value={r.value} onChange={(e) => setResult(idx, 'value', e.target.value)} placeholder="Value" />
-                    <input className={`${inputCls} h-8 text-xs w-16`} value={r.unit} onChange={(e) => setResult(idx, 'unit', e.target.value)} placeholder="Unit" />
-                    <input className={`${inputCls} h-8 text-xs w-24`} value={r.refRange} onChange={(e) => setResult(idx, 'refRange', e.target.value)} placeholder="Ref range" />
+                    <Input className="w-32" value={r.name} onChange={(e) => setResult(idx, 'name', e.target.value)} placeholder="Parameter" />
+                    <Input className="w-24" value={r.value} onChange={(e) => setResult(idx, 'value', e.target.value)} placeholder="Value" />
+                    <Input className="w-20" value={r.unit} onChange={(e) => setResult(idx, 'unit', e.target.value)} placeholder="Unit" />
+                    <Input className="w-28" value={r.refRange} onChange={(e) => setResult(idx, 'refRange', e.target.value)} placeholder="Ref range" />
                     <Select value={r.flag} onChange={(e) => setResult(idx, 'flag', e.target.value)} className="w-24">
                       {flags.map((f) => <option key={f}>{f}</option>)}
                     </Select>
@@ -683,9 +677,9 @@ export default function LabPage() {
                   <Checkbox checked={form.digitallySigned} onChange={(e) => set('digitallySigned', e.target.checked)} label="Digitally sign this report" />
                   {form.digitallySigned && (
                     <div className="grid grid-cols-2 gap-3">
-                      <Field label="Signed by"><input className={inputCls} value={form.signedBy} onChange={(e) => set('signedBy', e.target.value)} placeholder="Name" /></Field>
-                      <Field label="Role"><input className={inputCls} value={form.signedRole} onChange={(e) => set('signedRole', e.target.value)} placeholder="e.g. Laboratory Technician" /></Field>
-                      <Field label="Signed date"><input className={inputCls} type="date" value={form.signedDate} onChange={(e) => set('signedDate', e.target.value)} /></Field>
+                      <Field label="Signed by"><Input value={form.signedBy} onChange={(e) => set('signedBy', e.target.value)} placeholder="Name" /></Field>
+                      <Field label="Role"><Input value={form.signedRole} onChange={(e) => set('signedRole', e.target.value)} placeholder="e.g. Laboratory Technician" /></Field>
+                      <Field label="Signed date"><DatePicker value={form.signedDate} onChange={(e) => set('signedDate', e.target.value)} /></Field>
                     </div>
                   )}
                 </div>
@@ -704,19 +698,19 @@ export default function LabPage() {
       <Modal open={!!printT} onClose={() => setPrintT(null)} title={`Lab Report ${printT?.testNumber ?? ''}`} wide>
         {printT && (
           <div className="space-y-4">
-            <div className="rounded-2xl border-2 border-sage/30 bg-gradient-to-br from-mint/20 to-white p-6">
+            <div className="rounded-2xl border-2 border-plum/30 bg-gradient-to-br from-lilac/20 to-white p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-xl bg-sage flex items-center justify-center"><FlaskConical className="w-5 h-5 text-white" /></div>
+                  <div className="w-10 h-10 rounded-xl bg-plum flex items-center justify-center"><FlaskConical className="w-5 h-5 text-white" /></div>
                   <div><div className="text-sm font-bold text-ink">PetCare Pro Laboratory</div><div className="text-[10px] text-ink/50">Diagnostic Report</div></div>
                 </div>
                 <div className="text-right">
                   <div className="text-[10px] text-ink/40">Report No</div>
-                  <div className="text-sm font-mono font-semibold text-sage">{printT.testNumber}</div>
+                  <div className="text-sm font-mono font-semibold text-plum">{printT.testNumber}</div>
                   <div className="text-[10px] text-ink/40 font-mono mt-1">|||{printT.barcode}|||</div>
                 </div>
               </div>
-              <div className="border-t border-sage/20 pt-3 space-y-1.5 text-xs">
+              <div className="border-t border-plum/20 pt-3 space-y-1.5 text-xs">
                 <div className="grid grid-cols-2 gap-3">
                   <div><span className="text-ink/40">Patient:</span> <span className="font-medium text-ink">{petName(printT.petId)}</span></div>
                   <div><span className="text-ink/40">Owner:</span> <span className="font-medium text-ink">{ownerOf(printT.petId)}</span></div>
@@ -731,8 +725,8 @@ export default function LabPage() {
                 </div>
               </div>
               {printT.results.length > 0 && (
-                <div className="border-t border-sage/20 mt-3 pt-3">
-                  <div className="text-[10px] font-semibold text-sage uppercase tracking-wide mb-1.5">Results</div>
+                <div className="border-t border-plum/20 mt-3 pt-3">
+                  <div className="text-[10px] font-semibold text-plum uppercase tracking-wide mb-1.5">Results</div>
                   <div className="space-y-0.5">
                     {printT.results.map((r, i) => (
                       <div key={i} className="flex items-center gap-2 text-[11px]">
@@ -747,15 +741,15 @@ export default function LabPage() {
                 </div>
               )}
               {printT.impression && (
-                <div className="border-t border-sage/20 mt-3 pt-3">
-                  <div className="text-[10px] font-semibold text-sage uppercase tracking-wide mb-1">Impression</div>
+                <div className="border-t border-plum/20 mt-3 pt-3">
+                  <div className="text-[10px] font-semibold text-plum uppercase tracking-wide mb-1">Impression</div>
                   <div className="text-[11px] text-ink/60">{printT.impression}</div>
                 </div>
               )}
               {printT.digitallySigned && (
-                <div className="border-t border-sage/20 mt-3 pt-3 flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-sage" />
-                  <span className="text-[10px] text-sage font-medium">Digitally signed by {printT.signedBy} ({printT.signedRole}) on {printT.signedDate}</span>
+                <div className="border-t border-plum/20 mt-3 pt-3 flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-plum" />
+                  <span className="text-[10px] text-plum font-medium">Digitally signed by {printT.signedBy} ({printT.signedRole}) on {printT.signedDate}</span>
                 </div>
               )}
             </div>

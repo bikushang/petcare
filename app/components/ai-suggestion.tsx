@@ -28,16 +28,16 @@ export function AISuggestionPanel({
   };
 
   return (
-    <div className="rounded-2xl border border-sage/20 bg-gradient-to-br from-mint/30 to-white shadow-soft overflow-hidden">
+    <div className="rounded-2xl border border-plum/20 bg-gradient-to-br from-lilac/30 to-white shadow-soft overflow-hidden">
       {/* Header */}
-      <div className="flex items-center gap-2.5 px-4 py-3 bg-mint/50 border-b border-sage/10">
-        <div className="w-7 h-7 rounded-lg bg-sage/15 text-sage flex items-center justify-center shrink-0">
+      <div className="flex items-center gap-2.5 px-4 py-3 bg-lilac/50 border-b border-plum/10">
+        <div className="w-7 h-7 rounded-lg bg-plum/15 text-plum flex items-center justify-center shrink-0">
           <Sparkles className="w-4 h-4" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-sm font-semibold text-ink truncate">{suggestion.title}</div>
           <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="text-[10px] text-sage font-medium">AI Suggestion</span>
+            <span className="text-[10px] text-plum font-medium">AI Suggestion</span>
             <span className="text-[10px] text-ink/30">·</span>
             <span className="text-[10px] text-ink/50">{(suggestion.confidence * 100).toFixed(0)}% confidence</span>
           </div>
@@ -70,18 +70,18 @@ export function AISuggestionPanel({
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 px-4 py-3 border-t border-sage/10 bg-white/40">
+          <div className="flex items-center gap-2 px-4 py-3 border-t border-plum/10 bg-white/40">
             <button
               onClick={handleCopy}
               className="flex items-center gap-1.5 px-3 h-8 rounded-lg text-xs font-medium text-ink/70 hover:bg-canvas transition-colors"
             >
-              {copied ? <CheckCircle2 className="w-3.5 h-3.5 text-sage" /> : <Copy className="w-3.5 h-3.5" />}
+              {copied ? <CheckCircle2 className="w-3.5 h-3.5 text-plum" /> : <Copy className="w-3.5 h-3.5" />}
               {copied ? 'Copied' : 'Copy'}
             </button>
             {onAccept && (
               <button
                 onClick={onAccept}
-                className="flex items-center gap-1.5 px-3 h-8 rounded-lg text-xs font-medium bg-sage text-white hover:bg-sage/90 transition-colors"
+                className="flex items-center gap-1.5 px-3 h-8 rounded-lg text-xs font-medium bg-plum text-white hover:bg-plum/90 transition-colors"
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 Accept &amp; Save
@@ -115,7 +115,7 @@ export function AISuggestionButton({
   return (
     <button
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 rounded-lg font-medium bg-mint text-sage hover:bg-sage hover:text-white transition-all ${
+      className={`inline-flex items-center gap-1.5 rounded-lg font-medium bg-lilac text-plum hover:bg-plum hover:text-white transition-all ${
         size === 'sm' ? 'h-7 px-2.5 text-[11px]' : 'h-9 px-3.5 text-sm'
       }`}
     >

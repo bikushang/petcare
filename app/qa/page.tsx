@@ -10,7 +10,7 @@ import {
   Sparkles, Megaphone, Lock, UserCog, Trash2, Plus, Save,
 } from 'lucide-react';
 import Shell from '../components/Shell';
-import { Card, SectionTitle, inputCls, Button, Badge, Select, Field, Textarea, Modal, EmptyState } from '../components/ui';
+import { Card, SectionTitle, Input, Button, Badge, Select, Field, Textarea, Modal, EmptyState, Tabs } from '../components/ui';
 import { allRoles, roleInfo, type Role } from '../lib/platform';
 
 type Tab = 'overview' | 'roles' | 'crud' | 'permissions' | 'workflows' | 'calculations' | 'timeline' | 'reporting' | 'audit' | 'boundaries' | 'demo' | 'docs' | 'checklist';
@@ -237,14 +237,14 @@ export default function QAPage() {
   ];
 
   const statusIcon = (status: TestStatus) => {
-    if (status === 'pass') return <CheckCircle2 className="w-4 h-4 text-sage" />;
+    if (status === 'pass') return <CheckCircle2 className="w-4 h-4 text-plum" />;
     if (status === 'fail') return <XCircle className="w-4 h-4 text-coral" />;
     if (status === 'warning') return <AlertTriangle className="w-4 h-4 text-amber-500" />;
     return <div className="w-4 h-4 rounded-full border-2 border-ink/20" />;
   };
 
   const statusBadge = (status: TestStatus) => {
-    if (status === 'pass') return <span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">Pass</span>;
+    if (status === 'pass') return <span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">Pass</span>;
     if (status === 'fail') return <span className="text-[10px] px-2 py-0.5 rounded-full bg-coral/15 text-coral font-medium">Fail</span>;
     if (status === 'warning') return <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium">Warning</span>;
     return <span className="text-[10px] px-2 py-0.5 rounded-full bg-ink/5 text-ink/40 font-medium">Pending</span>;
@@ -312,25 +312,18 @@ export default function QAPage() {
   ];
 
   return (
-    <Shell title="QA & Release Preparation" subtitle="Comprehensive testing, quality assurance, documentation, and release readiness">
-      <div className="flex items-center gap-1 border-b border-line mb-5 overflow-x-auto">
-        {tabs.map((t) => (
-          <button key={t.key} onClick={() => setTab(t.key)}
-            className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${tab === t.key ? 'border-sage text-sage' : 'border-transparent text-ink/50 hover:text-ink'}`}>
-            <t.icon className="w-3.5 h-3.5" /> {t.label}
-          </button>
-        ))}
-      </div>
+    <Shell module="qa" title="QA & Release Preparation" subtitle="Comprehensive testing, quality assurance, documentation, and release readiness">
+      <Tabs tabs={tabs} value={tab} onChange={setTab} />
 
       {/* ════════════ OVERVIEW ════════════ */}
       {tab === 'overview' && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-mint text-sage flex items-center justify-center"><CheckCircle2 className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{passCount}</div><div className="text-[11px] text-ink/50">Tests passed</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-lilac text-plum flex items-center justify-center"><CheckCircle2 className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{passCount}</div><div className="text-[11px] text-ink/50">Tests passed</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center"><AlertTriangle className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{warningCount}</div><div className="text-[11px] text-ink/50">Warnings</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-coral/15 text-coral flex items-center justify-center"><XCircle className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{failCount}</div><div className="text-[11px] text-ink/50">Failures</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-ink/5 text-ink/40 flex items-center justify-center"><div className="w-3 h-3 rounded-full border-2 border-ink/30" /></div><div><div className="text-2xl font-bold text-ink">{pendingCount}</div><div className="text-[11px] text-ink/50">Pending</div></div></div></Card>
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><BarChart3 className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{passRate}%</div><div className="text-[11px] text-ink/50">Pass rate</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><BarChart3 className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{passRate}%</div><div className="text-[11px] text-ink/50">Pass rate</div></div></div></Card>
           </div>
 
           <Card className="p-5 mb-4">
@@ -354,7 +347,7 @@ export default function QAPage() {
                 const catPass = catTests.filter((t) => t.status === 'pass').length;
                 return (
                   <button key={cat.label} onClick={() => setTab(cat.tab)}
-                    className="flex items-center gap-3 p-3 rounded-xl border border-line hover:border-sage/30 transition-colors text-left">
+                    className="flex items-center gap-3 p-3 rounded-xl border border-line hover:border-plum/30 transition-colors text-left">
                     <div className="w-9 h-9 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center shrink-0">
                       <cat.icon className="w-4 h-4" />
                     </div>
@@ -362,7 +355,7 @@ export default function QAPage() {
                       <div className="text-sm font-medium text-ink truncate">{cat.label}</div>
                       <div className="text-[11px] text-ink/50">{cat.count} test cases</div>
                     </div>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">{catPass}/{cat.count}</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">{catPass}/{cat.count}</span>
                   </button>
                 );
               })}
@@ -373,14 +366,14 @@ export default function QAPage() {
             <SectionTitle title="Release readiness" />
             <div className="flex items-center gap-4 mb-4">
               <div className="flex-1 h-3 rounded-full bg-canvas overflow-hidden">
-                <div className="h-full rounded-full bg-sage transition-all" style={{ width: `${releaseRate}%` }} />
+                <div className="h-full rounded-full bg-plum transition-all" style={{ width: `${releaseRate}%` }} />
               </div>
               <span className="text-2xl font-bold text-ink">{releaseRate}%</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div className="p-3 rounded-xl border border-line">
                 <div className="text-[11px] text-ink/50">Completed</div>
-                <div className="text-lg font-bold text-sage">{releasePassCount} / {releaseChecklist.length}</div>
+                <div className="text-lg font-bold text-plum">{releasePassCount} / {releaseChecklist.length}</div>
               </div>
               <div className="p-3 rounded-xl border border-line">
                 <div className="text-[11px] text-ink/50">Warnings</div>
@@ -401,7 +394,7 @@ export default function QAPage() {
           <div className="flex items-center gap-2 mb-4">
             {filterButtons.map((f) => (
               <button key={f.key} onClick={() => setFilterStatus(f.key)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${filterStatus === f.key ? 'bg-sage text-white' : 'bg-white border border-line text-ink/60 hover:bg-canvas'}`}>
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${filterStatus === f.key ? 'bg-plum text-white' : 'bg-white border border-line text-ink/60 hover:bg-canvas'}`}>
                 {f.label}
               </button>
             ))}
@@ -495,7 +488,7 @@ export default function QAPage() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
                   <Field label="Document title">
-                    <input className={inputCls} value={editingDoc.title} onChange={(e) => setEditingDoc({ ...editingDoc, title: e.target.value })} />
+                    <Input value={editingDoc.title} onChange={(e) => setEditingDoc({ ...editingDoc, title: e.target.value })} />
                   </Field>
                   <Field label="Audience">
                     <Select value={editingDoc.audience} onChange={(e) => setEditingDoc({ ...editingDoc, audience: e.target.value as 'user' | 'admin' })}>
@@ -524,7 +517,7 @@ export default function QAPage() {
             <SectionTitle title="Release checklist" />
             <div className="flex items-center gap-4 mb-4">
               <div className="flex-1 h-3 rounded-full bg-canvas overflow-hidden">
-                <div className="h-full rounded-full bg-sage transition-all" style={{ width: `${releaseRate}%` }} />
+                <div className="h-full rounded-full bg-plum transition-all" style={{ width: `${releaseRate}%` }} />
               </div>
               <span className="text-2xl font-bold text-ink">{releaseRate}%</span>
             </div>
@@ -555,14 +548,14 @@ export default function QAPage() {
                 { name: 'Sample inventory', desc: 'Stock across 2 branches with low-stock items', icon: Package, status: 'Ready' },
               ].map((item) => (
                 <div key={item.name} className="flex items-center gap-3 p-3 rounded-xl border border-line">
-                  <div className="w-9 h-9 rounded-lg bg-mint text-sage flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-lg bg-lilac text-plum flex items-center justify-center shrink-0">
                     <item.icon className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-ink">{item.name}</div>
                     <div className="text-[11px] text-ink/50">{item.desc}</div>
                   </div>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">{item.status}</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">{item.status}</span>
                 </div>
               ))}
             </div>

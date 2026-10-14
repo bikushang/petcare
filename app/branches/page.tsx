@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import {
   Building2, TrendingUp, Users, PawPrint, Phone, Mail, MapPin,
-  DollarSign, CalendarDays, FlaskConical, Scissors, Hotel,
+  DollarSign, CalendarDays, FlaskConical, Scissors, Hotel, Stethoscope,
   Package, ArrowRightLeft, BarChart2, CheckCircle2, Clock, AlertTriangle,
 } from 'lucide-react';
 import Shell from '../components/Shell';
@@ -112,7 +112,7 @@ export default function BranchesPage() {
   }
 
   
-  if (!db) return <Shell title="Branches"><div className="text-sm text-ink/50">Loading...</div></Shell>;
+  if (!db) return <Shell module="branches" title="Branches"><div className="text-sm text-ink/50">Loading...</div></Shell>;
 
   const d = branchDataMap[selectedBranch];
   if (!d) return null;
@@ -151,14 +151,14 @@ export default function BranchesPage() {
               onClick={() => setSelectedBranch(b)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all whitespace-nowrap ${
                 selectedBranch === b
-                  ? 'bg-sage text-white border-sage shadow-sm'
-                  : 'bg-white text-ink/70 border-line hover:border-sage/40 hover:bg-canvas'
+                  ? 'bg-plum text-white border-plum shadow-sm'
+                  : 'bg-white text-ink/70 border-line hover:border-plum/40 hover:bg-canvas'
               }`}
             >
               <Building2 className="w-4 h-4" />
               <span className="text-sm font-medium">{b}</span>
               <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
-                selectedBranch === b ? 'bg-white/20 text-white' : 'bg-mint text-sage'
+                selectedBranch === b ? 'bg-white/20 text-white' : 'bg-lilac text-plum'
               }`}>{bd.branch.status}</span>
             </button>
           );
@@ -171,8 +171,10 @@ export default function BranchesPage() {
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${
-              tab === t.id ? 'bg-sage text-white' : 'text-ink/60 hover:bg-canvas'
+            className={`hv-lift flex items-center gap-1.5 shrink-0 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap ${
+              tab === t.id
+                ? 'bg-plum text-white shadow-lift-sm'
+                : 'bg-white text-ink/60 border border-line hover:border-plum/40 hover:bg-lilac/40 hover:text-plum'
             }`}
           >
             <t.icon className="w-4 h-4" />
@@ -185,8 +187,8 @@ export default function BranchesPage() {
       {tab === 'overview' && (
         <div className="space-y-5">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard icon={Users} label="Staff members" value={String(d.staff.length)} tone="sage" sub={`${d.activeStaff} active`} />
-            <StatCard icon={DollarSign} label="Revenue collected" value={fmtMoney(d.revenue)} tone="sage" />
+            <StatCard icon={Users} label="Staff members" value={String(d.staff.length)} tone="plum" sub={`${d.activeStaff} active`} />
+            <StatCard icon={DollarSign} label="Revenue collected" value={fmtMoney(d.revenue)} tone="plum" />
             <StatCard icon={CalendarDays} label="Appointments" value={String(d.appointments.length)} tone="sky" sub={`${d.apptPending} pending`} />
             <StatCard icon={FlaskConical} label="Lab tests" value={String(d.labs.length)} tone="amber" />
           </div>
@@ -195,12 +197,12 @@ export default function BranchesPage() {
             {/* Branch info */}
             <Card className="p-5">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-mint text-sage flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-lilac text-plum flex items-center justify-center">
                   <Building2 className="w-6 h-6" />
                 </div>
                 <div>
                   <h2 className="text-base font-semibold text-ink">{d.branch.name} Branch</h2>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${d.branch.status === 'Active' ? 'bg-mint text-sage' : 'bg-ink/10 text-ink/50'}`}>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${d.branch.status === 'Active' ? 'bg-lilac text-plum' : 'bg-ink/10 text-ink/50'}`}>
                     {d.branch.status}
                   </span>
                 </div>
@@ -212,12 +214,12 @@ export default function BranchesPage() {
               </div>
               <div className="mt-4 pt-4 border-t border-line grid grid-cols-3 gap-3">
                 {[
-                  { label: 'Surgeries', value: d.surgeries.length, icon: '🔬' },
-                  { label: 'Grooming', value: d.grooming.length, icon: '✂️' },
-                  { label: 'Boarding', value: d.boarding.length, icon: '🏨' },
+                  { label: 'Surgeries', value: d.surgeries.length, icon: Stethoscope },
+                  { label: 'Grooming', value: d.grooming.length, icon: Scissors },
+                  { label: 'Boarding', value: d.boarding.length, icon: Hotel },
                 ].map((item) => (
-                  <div key={item.label} className="text-center py-2 rounded-xl bg-canvas/60">
-                    <div className="text-lg">{item.icon}</div>
+                  <div key={item.label} className="group text-center py-2 rounded-xl bg-canvas/60">
+                    <div className="hv-tile mx-auto mb-1 w-8 h-8 rounded-lg bg-lilac text-plum flex items-center justify-center"><item.icon className="w-4 h-4" /></div>
                     <div className="text-sm font-semibold text-ink">{item.value}</div>
                     <div className="text-[10px] text-ink/50">{item.label}</div>
                   </div>
@@ -231,7 +233,7 @@ export default function BranchesPage() {
               <div className="space-y-3 mt-3">
                 <div className="flex items-center justify-between py-2 border-b border-line">
                   <span className="text-sm text-ink/70">Revenue collected</span>
-                  <span className="text-sm font-semibold text-sage">{fmtMoney(d.revenue)}</span>
+                  <span className="text-sm font-semibold text-plum">{fmtMoney(d.revenue)}</span>
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-line">
                   <span className="text-sm text-ink/70">Outstanding balance</span>
@@ -278,7 +280,7 @@ export default function BranchesPage() {
       {tab === 'revenue' && (
         <div className="space-y-5">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard icon={DollarSign} label="Total collected" value={fmtMoney(d.revenue)} tone="sage" />
+            <StatCard icon={DollarSign} label="Total collected" value={fmtMoney(d.revenue)} tone="plum" />
             <StatCard icon={AlertTriangle} label="Outstanding" value={fmtMoney(d.outstanding)} tone="amber" />
             <StatCard icon={TrendingUp} label="Monthly payroll" value={fmtMoney(d.monthlyPayroll)} tone="coral" />
             <StatCard icon={CheckCircle2} label="Paid invoices" value={String(d.paidInvoices.filter((i) => i.status === 'Paid').length)} tone="sky" />
@@ -289,7 +291,7 @@ export default function BranchesPage() {
             data={revenueByMonth}
             dataKey="revenue"
             xKey="month"
-            color="#2d7766"
+            color="#4C1D95"
             height={220}
           />
 
@@ -341,7 +343,7 @@ export default function BranchesPage() {
                   <div key={key} className="flex items-center gap-3">
                     <span className="text-sm text-ink/70 w-32">{label}</span>
                     <div className="flex-1 h-2 rounded-full bg-canvas overflow-hidden">
-                      <div className="h-full rounded-full bg-sage transition-all" style={{ width: `${pct}%` }} />
+                      <div className="h-full rounded-full bg-plum transition-all" style={{ width: `${pct}%` }} />
                     </div>
                     <span className="text-sm font-medium text-ink w-16 text-right">{fmtMoney(total)}</span>
                     <span className="text-[11px] text-ink/40 w-10 text-right">{fmtPct(pct)}</span>
@@ -357,7 +359,7 @@ export default function BranchesPage() {
       {tab === 'patients' && (
         <div className="space-y-5">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard icon={PawPrint} label="Patients seen" value={String(new Set(d.medRecords.map((m) => m.petId)).size)} tone="sage" />
+            <StatCard icon={PawPrint} label="Patients seen" value={String(new Set(d.medRecords.map((m) => m.petId)).size)} tone="plum" />
             <StatCard icon={Users} label="Pet owners" value={String(new Set(d.appointments.map((a) => a.ownerId)).size)} tone="sky" />
             <StatCard icon={FlaskConical} label="Lab tests" value={String(d.labs.length)} tone="amber" />
             <StatCard icon={CheckCircle2} label="Vaccinations" value={String(d.vaccinations.length)} tone="coral" />
@@ -435,7 +437,7 @@ export default function BranchesPage() {
       {tab === 'appointments' && (
         <div className="space-y-5">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard icon={CalendarDays} label="Total" value={String(d.appointments.length)} tone="sage" />
+            <StatCard icon={CalendarDays} label="Total" value={String(d.appointments.length)} tone="plum" />
             <StatCard icon={CheckCircle2} label="Completed" value={String(d.apptCompleted)} tone="sky" />
             <StatCard icon={Clock} label="Pending" value={String(d.apptPending)} tone="amber" />
             <StatCard icon={Scissors} label="Grooming" value={String(d.grooming.length)} tone="coral" />
@@ -515,7 +517,7 @@ export default function BranchesPage() {
       {tab === 'staff' && (
         <div className="space-y-5">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard icon={Users} label="Total staff" value={String(d.staff.length)} tone="sage" />
+            <StatCard icon={Users} label="Total staff" value={String(d.staff.length)} tone="plum" />
             <StatCard icon={CheckCircle2} label="Active" value={String(d.activeStaff)} tone="sky" />
             <StatCard icon={Clock} label="On leave" value={String(d.onLeaveStaff)} tone="amber" />
             <StatCard icon={DollarSign} label="Monthly payroll" value={fmtMoney(d.monthlyPayroll)} tone="coral" />
@@ -528,7 +530,7 @@ export default function BranchesPage() {
                 const latestPayroll = s.payroll?.[s.payroll.length - 1];
                 const pendingLeave = s.leaveRequests?.filter((l) => l.status === 'Pending').length || 0;
                 return (
-                  <div key={s.id} className="p-3 rounded-xl border border-line hover:border-sage/30 transition-colors">
+                  <div key={s.id} className="p-3 rounded-xl border border-line hover:border-plum/30 transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-xl bg-coral/15 text-coral flex items-center justify-center text-sm font-semibold">
                         {s.name.split(' ').map((n) => n[0]).slice(0, 2).join('')}
@@ -567,7 +569,7 @@ export default function BranchesPage() {
       {tab === 'inventory' && (
         <div className="space-y-5">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard icon={Package} label="Stock items" value={String(db.medStock.length)} tone="sage" />
+            <StatCard icon={Package} label="Stock items" value={String(db.medStock.length)} tone="plum" />
             <StatCard icon={AlertTriangle} label="Low stock" value={String(db.medStock.filter((s) => s.stock <= s.reorderLevel).length)} tone="amber" />
             <StatCard icon={CheckCircle2} label="Transfers" value={String(db.stockTransfers.filter((t) => {
               const fromWh = db.warehouses.find((w) => w.id === t.fromWarehouseId);
@@ -597,7 +599,7 @@ export default function BranchesPage() {
                     </div>
                   ))}
                 {db.medStock.filter((s) => s.stock <= s.reorderLevel).length === 0 && (
-                  <p className="text-sm text-sage py-4 text-center">All stock levels are healthy</p>
+                  <p className="text-sm text-plum py-4 text-center">All stock levels are healthy</p>
                 )}
               </div>
             </Card>
@@ -644,14 +646,14 @@ export default function BranchesPage() {
                       <div className="text-xs font-medium text-ink">{item.name}</div>
                       <div className="flex items-center gap-2 mt-1">
                         <div className="flex-1 h-1.5 rounded-full bg-line overflow-hidden">
-                          <div className={`h-full rounded-full ${low ? 'bg-coral' : 'bg-sage'}`} style={{ width: `${pct}%` }} />
+                          <div className={`h-full rounded-full ${low ? 'bg-coral' : 'bg-plum'}`} style={{ width: `${pct}%` }} />
                         </div>
                         <span className={`text-[10px] font-medium ${low ? 'text-coral' : 'text-ink/50'}`}>
                           {item.stock}/{item.reorderLevel * 2} {item.unit}
                         </span>
                       </div>
                     </div>
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${low ? 'bg-coral/10 text-coral' : 'bg-mint text-sage'}`}>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${low ? 'bg-coral/10 text-coral' : 'bg-lilac text-plum'}`}>
                       {low ? 'Low' : 'OK'}
                     </span>
                   </div>
@@ -671,7 +673,7 @@ export default function BranchesPage() {
               data={revenueByMonth}
               dataKey="revenue"
               xKey="month"
-              color="#2d7766"
+              color="#4C1D95"
             />
             <BarChartCard
               title="Appointment volume"
@@ -687,7 +689,7 @@ export default function BranchesPage() {
               <SectionTitle title="Service mix" />
               <div className="mt-3 space-y-2">
                 {[
-                  { label: 'Consultations', count: d.medRecords.filter((m) => m.type === 'Consultation').length, color: 'bg-sage' },
+                  { label: 'Consultations', count: d.medRecords.filter((m) => m.type === 'Consultation').length, color: 'bg-plum' },
                   { label: 'Vaccinations', count: d.vaccinations.length, color: 'bg-sky-400' },
                   { label: 'Surgeries', count: d.surgeries.length, color: 'bg-coral' },
                   { label: 'Lab tests', count: d.labs.length, color: 'bg-amber-400' },
@@ -724,7 +726,7 @@ export default function BranchesPage() {
                       </div>
                       <div className="flex gap-1">
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-sky-100 text-sky-700">{myAppts} appointments</span>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-mint text-sage">{myMeds} records</span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-lilac text-plum">{myMeds} records</span>
                       </div>
                     </div>
                   );
@@ -765,7 +767,7 @@ export default function BranchesPage() {
               data={comparisonData}
               dataKey="revenue"
               xKey="branch"
-              color="#2d7766"
+              color="#4C1D95"
             />
             <BarChartCard
               title="Staff count by branch"

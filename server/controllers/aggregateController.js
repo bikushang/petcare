@@ -24,11 +24,16 @@ const InventoryItem = require('../models/InventoryItem');
 const StockTransfer = require('../models/StockTransfer');
 const StockAdjustment = require('../models/StockAdjustment');
 const Expense = require('../models/Expense');
+const Campaign = require('../models/Campaign');
+const Segment = require('../models/Segment');
+const Message = require('../models/Message');
+const SiteReview = require('../models/SiteReview');
+const Subscriber = require('../models/Subscriber');
 
 const mapId = (d) => ({ ...d, id: d._id.toString() });
 
 const aggregate = asyncHandler(async (req, res) => {
-  const [owners, pets, appointments, medRecords, medStock, invoices, expenses, staff, boarding, grooming, vaccinations, prescriptions, surgeries, labTests, suppliers, purchases, pharmacySales, warehouses, inventoryItems, stockTransfers, stockAdjustments] =
+  const [owners, pets, appointments, medRecords, medStock, invoices, expenses, staff, boarding, grooming, vaccinations, prescriptions, surgeries, labTests, suppliers, purchases, pharmacySales, warehouses, inventoryItems, stockTransfers, stockAdjustments, campaigns, segments, messages, siteReviews, subscribers] =
     await Promise.all([
       Owner.find().lean(),
       Pet.find().lean(),
@@ -51,6 +56,11 @@ const aggregate = asyncHandler(async (req, res) => {
       InventoryItem.find().lean(),
       StockTransfer.find().lean(),
       StockAdjustment.find().lean(),
+      Campaign.find().lean(),
+      Segment.find().lean(),
+      Message.find().lean(),
+      SiteReview.find().lean(),
+      Subscriber.find().lean(),
     ]);
 
   res.json({
@@ -75,6 +85,11 @@ const aggregate = asyncHandler(async (req, res) => {
     inventoryItems: inventoryItems.map(mapId),
     stockTransfers: stockTransfers.map(mapId),
     stockAdjustments: stockAdjustments.map(mapId),
+    campaigns: campaigns.map(mapId),
+    segments: segments.map(mapId),
+    messages: messages.map(mapId),
+    siteReviews: siteReviews.map(mapId),
+    subscribers: subscribers.map(mapId),
   });
 });
 

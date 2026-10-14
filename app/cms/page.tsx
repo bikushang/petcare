@@ -8,7 +8,7 @@ import {
   Phone, Check, AlertCircle,
 } from 'lucide-react';
 import Shell from '../components/Shell';
-import { Card, SectionTitle, inputCls, Button, Select, Field, Textarea, Badge, Modal, EmptyState } from '../components/ui';
+import { Card, SectionTitle, Button, Input, Select, Field, Textarea, Badge, Modal, EmptyState, Tabs, ImagePicker } from '../components/ui';
 import { useCms, type CmsContent } from '../lib/cms';
 import Link from 'next/link';
 
@@ -22,7 +22,7 @@ export default function CmsPage() {
   const [saved, setSaved] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
 
-  if (!loaded) return <Shell title="Website & CMS"><div className="text-sm text-ink/50">Loading…</div></Shell>;
+  if (!loaded) return <Shell module="cms" title="Website & CMS"><div className="text-sm text-ink/50">Loading…</div></Shell>;
 
   const flashSaved = () => { setSaved(true); setTimeout(() => setSaved(false), 2500); };
   const set = <K extends keyof CmsContent>(key: K, value: CmsContent[K]) => { update((prev) => ({ ...prev, [key]: value })); flashSaved(); };
@@ -45,37 +45,32 @@ export default function CmsPage() {
           <Eye className="w-4 h-4" /> View live website
         </Link>
         <div className="flex items-center gap-3">
-          {saved && <span className="text-xs text-sage font-medium flex items-center gap-1"><Check className="w-4 h-4" /> Saved</span>}
+          {saved && <span className="text-xs text-plum font-medium flex items-center gap-1"><Check className="w-4 h-4" /> Saved</span>}
           <Button variant="outline" onClick={() => setResetOpen(true)}><RotateCcw className="w-4 h-4" /> Reset to defaults</Button>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 border-b border-line mb-5 overflow-x-auto">
-        {tabs.map((t) => (
-          <button key={t.key} onClick={() => setTab(t.key)}
-            className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${tab === t.key ? 'border-sage text-sage' : 'border-transparent text-ink/50 hover:text-ink'}`}>
-            <t.icon className="w-3.5 h-3.5" /> {t.label}
-          </button>
-        ))}
-      </div>
+      <Tabs tabs={tabs} value={tab} onChange={setTab} />
 
       {/* HERO */}
       {tab === 'hero' && (
         <Card className="p-5">
           <SectionTitle title="Hero section" />
           <div className="space-y-4">
-            <Field label="Badge text (small label above title)"><input className={inputCls} value={content.hero.badge} onChange={(e) => set('hero', { ...content.hero, badge: e.target.value })} /></Field>
+            <Field label="Badge text (small label above title)"><Input value={content.hero.badge} onChange={(e) => set('hero', { ...content.hero, badge: e.target.value })} /></Field>
             <Field label="Main headline"><Textarea value={content.hero.title} onChange={(e) => set('hero', { ...content.hero, title: e.target.value })} className="min-h-[60px]" /></Field>
             <Field label="Subtitle paragraph"><Textarea value={content.hero.subtitle} onChange={(e) => set('hero', { ...content.hero, subtitle: e.target.value })} className="min-h-[80px]" /></Field>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Primary button label"><input className={inputCls} value={content.hero.ctaPrimary} onChange={(e) => set('hero', { ...content.hero, ctaPrimary: e.target.value })} /></Field>
-              <Field label="Secondary button label"><input className={inputCls} value={content.hero.ctaSecondary} onChange={(e) => set('hero', { ...content.hero, ctaSecondary: e.target.value })} /></Field>
+              <Field label="Primary button label"><Input value={content.hero.ctaPrimary} onChange={(e) => set('hero', { ...content.hero, ctaPrimary: e.target.value })} /></Field>
+              <Field label="Secondary button label"><Input value={content.hero.ctaSecondary} onChange={(e) => set('hero', { ...content.hero, ctaSecondary: e.target.value })} /></Field>
             </div>
-            <Field label="Hero image URL">
-              <input className={inputCls} value={content.hero.heroImage} onChange={(e) => set('hero', { ...content.hero, heroImage: e.target.value })} />
-              {content.hero.heroImage && <img src={content.hero.heroImage} alt="Hero preview" className="mt-3 rounded-xl border border-line max-h-40 object-cover" />}
-            </Field>
+            <ImagePicker
+              label="Hero image"
+              hint="Shown beside the headline on the home page. Landscape works best."
+              value={content.hero.heroImage}
+              onChange={(e) => set('hero', { ...content.hero, heroImage: e.target.value })}
+            />
           </div>
         </Card>
       )}
@@ -86,8 +81,8 @@ export default function CmsPage() {
           <Card className="p-5 mb-4">
             <SectionTitle title="Services section header" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="Section title"><input className={inputCls} value={content.services.sectionTitle} onChange={(e) => set('services', { ...content.services, sectionTitle: e.target.value })} /></Field>
-              <Field label="Section subtitle"><input className={inputCls} value={content.services.sectionSubtitle} onChange={(e) => set('services', { ...content.services, sectionSubtitle: e.target.value })} /></Field>
+              <Field label="Section title"><Input value={content.services.sectionTitle} onChange={(e) => set('services', { ...content.services, sectionTitle: e.target.value })} /></Field>
+              <Field label="Section subtitle"><Input value={content.services.sectionSubtitle} onChange={(e) => set('services', { ...content.services, sectionSubtitle: e.target.value })} /></Field>
             </div>
           </Card>
           <Card className="p-5">
@@ -112,7 +107,7 @@ export default function CmsPage() {
                         {serviceIcons.map((ic) => <option key={ic} value={ic}>{ic}</option>)}
                       </Select>
                     </Field>
-                    <Field label="Title"><input className={inputCls} value={svc.title} onChange={(e) => set('services', { ...content.services, items: content.services.items.map((s) => s.id === svc.id ? { ...s, title: e.target.value } : s) })} /></Field>
+                    <Field label="Title"><Input value={svc.title} onChange={(e) => set('services', { ...content.services, items: content.services.items.map((s) => s.id === svc.id ? { ...s, title: e.target.value } : s) })} /></Field>
                   </div>
                   <div className="mt-3">
                     <Field label="Description"><Textarea value={svc.description} onChange={(e) => set('services', { ...content.services, items: content.services.items.map((s) => s.id === svc.id ? { ...s, description: e.target.value } : s) })} className="min-h-[50px]" /></Field>
@@ -130,13 +125,15 @@ export default function CmsPage() {
         <Card className="p-5">
           <SectionTitle title="About section" />
           <div className="space-y-4">
-            <Field label="Section title"><input className={inputCls} value={content.about.sectionTitle} onChange={(e) => set('about', { ...content.about, sectionTitle: e.target.value })} /></Field>
+            <Field label="Section title"><Input value={content.about.sectionTitle} onChange={(e) => set('about', { ...content.about, sectionTitle: e.target.value })} /></Field>
             <Field label="Paragraph 1"><Textarea value={content.about.paragraph1} onChange={(e) => set('about', { ...content.about, paragraph1: e.target.value })} className="min-h-[80px]" /></Field>
             <Field label="Paragraph 2"><Textarea value={content.about.paragraph2} onChange={(e) => set('about', { ...content.about, paragraph2: e.target.value })} className="min-h-[80px]" /></Field>
-            <Field label="About image URL">
-              <input className={inputCls} value={content.about.aboutImage} onChange={(e) => set('about', { ...content.about, aboutImage: e.target.value })} />
-              {content.about.aboutImage && <img src={content.about.aboutImage} alt="About preview" className="mt-3 rounded-xl border border-line max-h-40 object-cover" />}
-            </Field>
+            <ImagePicker
+              label="About image"
+              hint="Used in the clinic story section on the home and About pages."
+              value={content.about.aboutImage}
+              onChange={(e) => set('about', { ...content.about, aboutImage: e.target.value })}
+            />
             <div>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-[11px] font-semibold text-ink/55 uppercase tracking-wide">Stats</span>
@@ -147,8 +144,8 @@ export default function CmsPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {content.about.stats.map((stat) => (
                   <div key={stat.id} className="p-3 rounded-xl border border-line">
-                    <input className={`${inputCls} text-center text-lg font-bold`} value={stat.value} onChange={(e) => set('about', { ...content.about, stats: content.about.stats.map((s) => s.id === stat.id ? { ...s, value: e.target.value } : s) })} />
-                    <input className={`${inputCls} mt-2 text-center text-xs`} value={stat.label} onChange={(e) => set('about', { ...content.about, stats: content.about.stats.map((s) => s.id === stat.id ? { ...s, label: e.target.value } : s) })} />
+                    <Input className="text-center text-lg font-bold" value={stat.value} onChange={(e) => set('about', { ...content.about, stats: content.about.stats.map((s) => s.id === stat.id ? { ...s, value: e.target.value } : s) })} />
+                    <Input className="mt-2 text-center text-xs" value={stat.label} onChange={(e) => set('about', { ...content.about, stats: content.about.stats.map((s) => s.id === stat.id ? { ...s, label: e.target.value } : s) })} />
                     <button onClick={() => set('about', { ...content.about, stats: content.about.stats.filter((s) => s.id !== stat.id) })} className="mt-2 w-full text-[10px] text-coral hover:underline">Remove</button>
                   </div>
                 ))}
@@ -164,8 +161,8 @@ export default function CmsPage() {
           <Card className="p-5 mb-4">
             <SectionTitle title="Testimonials section header" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="Section title"><input className={inputCls} value={content.testimonials.sectionTitle} onChange={(e) => set('testimonials', { ...content.testimonials, sectionTitle: e.target.value })} /></Field>
-              <Field label="Section subtitle"><input className={inputCls} value={content.testimonials.sectionSubtitle} onChange={(e) => set('testimonials', { ...content.testimonials, sectionSubtitle: e.target.value })} /></Field>
+              <Field label="Section title"><Input value={content.testimonials.sectionTitle} onChange={(e) => set('testimonials', { ...content.testimonials, sectionTitle: e.target.value })} /></Field>
+              <Field label="Section subtitle"><Input value={content.testimonials.sectionSubtitle} onChange={(e) => set('testimonials', { ...content.testimonials, sectionSubtitle: e.target.value })} /></Field>
             </div>
           </Card>
           <Card className="p-5">
@@ -191,8 +188,8 @@ export default function CmsPage() {
                     </button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <Field label="Client name"><input className={inputCls} value={tst.name} onChange={(e) => set('testimonials', { ...content.testimonials, items: content.testimonials.items.map((t) => t.id === tst.id ? { ...t, name: e.target.value } : t) })} /></Field>
-                    <Field label="Pet info"><input className={inputCls} value={tst.pet} onChange={(e) => set('testimonials', { ...content.testimonials, items: content.testimonials.items.map((t) => t.id === tst.id ? { ...t, pet: e.target.value } : t) })} /></Field>
+                    <Field label="Client name"><Input value={tst.name} onChange={(e) => set('testimonials', { ...content.testimonials, items: content.testimonials.items.map((t) => t.id === tst.id ? { ...t, name: e.target.value } : t) })} /></Field>
+                    <Field label="Pet info"><Input value={tst.pet} onChange={(e) => set('testimonials', { ...content.testimonials, items: content.testimonials.items.map((t) => t.id === tst.id ? { ...t, pet: e.target.value } : t) })} /></Field>
                   </div>
                   <div className="mt-3">
                     <Field label="Review text"><Textarea value={tst.text} onChange={(e) => set('testimonials', { ...content.testimonials, items: content.testimonials.items.map((t) => t.id === tst.id ? { ...t, text: e.target.value } : t) })} className="min-h-[60px]" /></Field>
@@ -210,17 +207,19 @@ export default function CmsPage() {
         <Card className="p-5">
           <SectionTitle title="Contact section" />
           <div className="space-y-4">
-            <Field label="Section title"><input className={inputCls} value={content.contact.sectionTitle} onChange={(e) => set('contact', { ...content.contact, sectionTitle: e.target.value })} /></Field>
+            <Field label="Section title"><Input value={content.contact.sectionTitle} onChange={(e) => set('contact', { ...content.contact, sectionTitle: e.target.value })} /></Field>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="Phone"><input className={inputCls} value={content.contact.phone} onChange={(e) => set('contact', { ...content.contact, phone: e.target.value })} /></Field>
-              <Field label="Email"><input className={inputCls} value={content.contact.email} onChange={(e) => set('contact', { ...content.contact, email: e.target.value })} /></Field>
+              <Field label="Phone"><Input value={content.contact.phone} onChange={(e) => set('contact', { ...content.contact, phone: e.target.value })} /></Field>
+              <Field label="Email"><Input value={content.contact.email} onChange={(e) => set('contact', { ...content.contact, email: e.target.value })} /></Field>
             </div>
-            <Field label="Address"><input className={inputCls} value={content.contact.address} onChange={(e) => set('contact', { ...content.contact, address: e.target.value })} /></Field>
+            <Field label="Address"><Input value={content.contact.address} onChange={(e) => set('contact', { ...content.contact, address: e.target.value })} /></Field>
             <Field label="Opening hours (one per line)"><Textarea value={content.contact.hours} onChange={(e) => set('contact', { ...content.contact, hours: e.target.value })} className="min-h-[80px]" /></Field>
-            <Field label="Map / location image URL">
-              <input className={inputCls} value={content.contact.mapImage} onChange={(e) => set('contact', { ...content.contact, mapImage: e.target.value })} />
-              {content.contact.mapImage && <img src={content.contact.mapImage} alt="Map preview" className="mt-3 rounded-xl border border-line max-h-40 object-cover" />}
-            </Field>
+            <ImagePicker
+              label="Map / location image"
+              hint="Appears in the Find us section on the Contact page."
+              value={content.contact.mapImage}
+              onChange={(e) => set('contact', { ...content.contact, mapImage: e.target.value })}
+            />
           </div>
         </Card>
       )}
@@ -233,8 +232,8 @@ export default function CmsPage() {
             {content.nav.links.map((link, i) => (
               <div key={link.id} className="flex items-center gap-3 p-3 rounded-xl border border-line">
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-canvas text-ink/50">#{i + 1}</span>
-                <input className={`${inputCls} flex-1`} value={link.label} onChange={(e) => set('nav', { ...content.nav, links: content.nav.links.map((l) => l.id === link.id ? { ...l, label: e.target.value } : l) })} placeholder="Label" />
-                <input className={`${inputCls} flex-1`} value={link.url} onChange={(e) => set('nav', { ...content.nav, links: content.nav.links.map((l) => l.id === link.id ? { ...l, url: e.target.value } : l) })} placeholder="URL (#home, #services...)" />
+                <Input className="flex-1" value={link.label} onChange={(e) => set('nav', { ...content.nav, links: content.nav.links.map((l) => l.id === link.id ? { ...l, label: e.target.value } : l) })} placeholder="Label" />
+                <Input className="flex-1" value={link.url} onChange={(e) => set('nav', { ...content.nav, links: content.nav.links.map((l) => l.id === link.id ? { ...l, url: e.target.value } : l) })} placeholder="URL (#home, #services...)" />
                 <button onClick={() => set('nav', { ...content.nav, links: content.nav.links.filter((l) => l.id !== link.id) })} className="w-8 h-8 rounded-lg hover:bg-coral/10 text-ink/40 hover:text-coral flex items-center justify-center transition-colors shrink-0">
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -252,8 +251,8 @@ export default function CmsPage() {
         <Card className="p-5">
           <SectionTitle title="Footer content" />
           <div className="space-y-4">
-            <Field label="Tagline"><input className={inputCls} value={content.footer.tagline} onChange={(e) => set('footer', { ...content.footer, tagline: e.target.value })} /></Field>
-            <Field label="Copyright text"><input className={inputCls} value={content.footer.copyright} onChange={(e) => set('footer', { ...content.footer, copyright: e.target.value })} /></Field>
+            <Field label="Tagline"><Input value={content.footer.tagline} onChange={(e) => set('footer', { ...content.footer, tagline: e.target.value })} /></Field>
+            <Field label="Copyright text"><Input value={content.footer.copyright} onChange={(e) => set('footer', { ...content.footer, copyright: e.target.value })} /></Field>
             <div>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-[11px] font-semibold text-ink/55 uppercase tracking-wide">Social media links</span>
@@ -267,7 +266,7 @@ export default function CmsPage() {
                     <Select value={link.platform} onChange={(e) => set('footer', { ...content.footer, socialLinks: content.footer.socialLinks.map((s) => s.id === link.id ? { ...s, platform: e.target.value } : s) })} className="w-36">
                       <option value="Facebook">Facebook</option><option value="Instagram">Instagram</option><option value="X">X</option><option value="YouTube">YouTube</option><option value="LinkedIn">LinkedIn</option>
                     </Select>
-                    <input className={`${inputCls} flex-1`} value={link.url} onChange={(e) => set('footer', { ...content.footer, socialLinks: content.footer.socialLinks.map((s) => s.id === link.id ? { ...s, url: e.target.value } : s) })} placeholder="https://..." />
+                    <Input className="flex-1" value={link.url} onChange={(e) => set('footer', { ...content.footer, socialLinks: content.footer.socialLinks.map((s) => s.id === link.id ? { ...s, url: e.target.value } : s) })} placeholder="https://..." />
                     <button onClick={() => set('footer', { ...content.footer, socialLinks: content.footer.socialLinks.filter((s) => s.id !== link.id) })} className="w-8 h-8 rounded-lg hover:bg-coral/10 text-ink/40 hover:text-coral flex items-center justify-center transition-colors shrink-0">
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

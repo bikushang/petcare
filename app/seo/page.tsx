@@ -7,7 +7,7 @@ import {
   Link as LinkIcon, Bot, AlertCircle,
 } from 'lucide-react';
 import Shell from '../components/Shell';
-import { Card, SectionTitle, inputCls, Button, Select, Field, Textarea, Badge } from '../components/ui';
+import { Card, SectionTitle, Button, Input, Select, ColorInput, Switch, Field, Textarea, Badge, Tabs, ImagePicker } from '../components/ui';
 import { useSeo, type SeoSettings } from '../lib/cms';
 
 type Tab = 'meta' | 'opengraph' | 'twitter' | 'structured' | 'robots' | 'analytics' | 'favicon';
@@ -17,7 +17,7 @@ export default function SeoPage() {
   const [tab, setTab] = useState<Tab>('meta');
   const [saved, setSaved] = useState(false);
 
-  if (!loaded) return <Shell title="SEO & Favicon"><div className="text-sm text-ink/50">Loading…</div></Shell>;
+  if (!loaded) return <Shell module="seo" title="SEO & Favicon"><div className="text-sm text-ink/50">Loading…</div></Shell>;
 
   const flashSaved = () => { setSaved(true); setTimeout(() => setSaved(false), 2500); };
   const set = <K extends keyof SeoSettings>(key: K, value: SeoSettings[K]) => { update((prev) => ({ ...prev, [key]: value })); flashSaved(); };
@@ -38,18 +38,11 @@ export default function SeoPage() {
   return (
     <Shell title="SEO & Favicon" subtitle="Search engine optimization, social sharing, structured data, and favicon management">
       <div className="flex items-center justify-end mb-5">
-        {saved && <span className="text-xs text-sage font-medium flex items-center gap-1 mr-3"><Check className="w-4 h-4" /> Saved</span>}
+        {saved && <span className="text-xs text-plum font-medium flex items-center gap-1 mr-3"><Check className="w-4 h-4" /> Saved</span>}
         <Button variant="outline" onClick={() => { reset(); flashSaved(); }}><RotateCcw className="w-4 h-4" /> Reset to defaults</Button>
       </div>
 
-      <div className="flex items-center gap-1 border-b border-line mb-5 overflow-x-auto">
-        {tabs.map((t) => (
-          <button key={t.key} onClick={() => setTab(t.key)}
-            className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${tab === t.key ? 'border-sage text-sage' : 'border-transparent text-ink/50 hover:text-ink'}`}>
-            <t.icon className="w-3.5 h-3.5" /> {t.label}
-          </button>
-        ))}
-      </div>
+      <Tabs tabs={tabs} value={tab} onChange={setTab} />
 
       {/* META TAGS */}
       {tab === 'meta' && (
@@ -69,7 +62,7 @@ export default function SeoPage() {
                 <Textarea value={seo.keywords} onChange={(e) => set('keywords', e.target.value)} className="min-h-[50px]" />
               </Field>
               <Field label="Canonical URL">
-                <input className={inputCls} value={seo.canonicalUrl} onChange={(e) => set('canonicalUrl', e.target.value)} />
+                <Input value={seo.canonicalUrl} onChange={(e) => set('canonicalUrl', e.target.value)} />
               </Field>
             </div>
           </Card>
@@ -78,7 +71,7 @@ export default function SeoPage() {
             <h3 className="text-sm font-semibold text-ink mb-3">Search result preview</h3>
             <div className="rounded-xl border border-line p-4 max-w-2xl">
               <div className="flex items-center gap-2 text-[11px] text-ink/40 mb-1">
-                <div className="w-6 h-6 rounded-full bg-sage/10 flex items-center justify-center"><Globe className="w-3 h-3 text-sage" /></div>
+                <div className="w-6 h-6 rounded-full bg-plum/10 flex items-center justify-center"><Globe className="w-3 h-3 text-plum" /></div>
                 <span className="truncate">{seo.canonicalUrl.replace('https://', '').replace('http://', '')}</span>
               </div>
               <div className="text-lg text-sky-700 font-medium leading-snug truncate">{seo.metaTitle}</div>
@@ -94,16 +87,18 @@ export default function SeoPage() {
           <SectionTitle title="Open Graph (Facebook, LinkedIn, WhatsApp)" />
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="OG site name"><input className={inputCls} value={seo.ogSiteName} onChange={(e) => set('ogSiteName', e.target.value)} /></Field>
+              <Field label="OG site name"><Input value={seo.ogSiteName} onChange={(e) => set('ogSiteName', e.target.value)} /></Field>
               <Field label="OG type"><Select value={seo.ogType} onChange={(e) => set('ogType', e.target.value)}><option value="website">website</option><option value="article">article</option><option value="product">product</option></Select></Field>
             </div>
-            <Field label="OG title"><input className={inputCls} value={seo.ogTitle} onChange={(e) => set('ogTitle', e.target.value)} /></Field>
+            <Field label="OG title"><Input value={seo.ogTitle} onChange={(e) => set('ogTitle', e.target.value)} /></Field>
             <Field label="OG description"><Textarea value={seo.ogDescription} onChange={(e) => set('ogDescription', e.target.value)} className="min-h-[60px]" /></Field>
-            <Field label="OG image URL">
-              <input className={inputCls} value={seo.ogImage} onChange={(e) => set('ogImage', e.target.value)} />
-              {seo.ogImage && <img src={seo.ogImage} alt="OG preview" className="mt-3 rounded-xl border border-line max-h-48 object-cover" />}
-            </Field>
-            <Field label="OG locale"><input className={inputCls} value={seo.ogLocale} onChange={(e) => set('ogLocale', e.target.value)} /></Field>
+            <ImagePicker
+              label="OG image"
+              hint="Shown when a page is shared on Facebook, LinkedIn or WhatsApp. 1200x630 is ideal."
+              value={seo.ogImage}
+              onChange={(e) => set('ogImage', e.target.value)}
+            />
+            <Field label="OG locale"><Input value={seo.ogLocale} onChange={(e) => set('ogLocale', e.target.value)} /></Field>
           </div>
           <div className="mt-6 pt-6 border-t border-line">
             <h4 className="text-sm font-semibold text-ink mb-3">Social card preview</h4>
@@ -133,9 +128,9 @@ export default function SeoPage() {
                   <option value="player">player</option>
                 </Select>
               </Field>
-              <Field label="Twitter @site handle"><input className={inputCls} value={seo.twitterSite} onChange={(e) => set('twitterSite', e.target.value)} /></Field>
+              <Field label="Twitter @site handle"><Input value={seo.twitterSite} onChange={(e) => set('twitterSite', e.target.value)} /></Field>
             </div>
-            <Field label="Twitter @creator handle"><input className={inputCls} value={seo.twitterCreator} onChange={(e) => set('twitterCreator', e.target.value)} /></Field>
+            <Field label="Twitter @creator handle"><Input value={seo.twitterCreator} onChange={(e) => set('twitterCreator', e.target.value)} /></Field>
             <div className="p-3 rounded-xl bg-canvas text-xs text-ink/50">
               <span className="font-medium text-ink/70">Note:</span> Twitter cards reuse the Open Graph title, description, and image when twitter-specific tags are not set. The card type controls how the preview looks in tweets.
             </div>
@@ -157,7 +152,7 @@ export default function SeoPage() {
                 </Select>
               </Field>
               <Field label="JSON-LD structured data (Schema.org)">
-                <Textarea value={seo.structuredData} onChange={(e) => set('structuredData', e.target.value)} className="min-h-[280px] font-mono text-xs" />
+                <Textarea rows={16} value={seo.structuredData} onChange={(e) => set('structuredData', e.target.value)} className="min-h-[280px] font-mono text-xs" />
               </Field>
               <div className="p-3 rounded-xl bg-canvas text-xs text-ink/50">
                 <span className="font-medium text-ink/70">Tip:</span> Structured data helps Google understand your business type, hours, address, and ratings. This enables rich snippets in search results (star ratings, hours, phone number).
@@ -176,7 +171,7 @@ export default function SeoPage() {
                 { check: 'Website URL', status: true },
               ].map((c) => (
                 <div key={c.check} className="flex items-center gap-2 p-3 rounded-xl border border-line">
-                  <Check className="w-4 h-4 text-sage" />
+                  <Check className="w-4 h-4 text-plum" />
                   <span className="text-sm text-ink flex-1">{c.check}</span>
                   <Badge status="Active" />
                 </div>
@@ -194,15 +189,11 @@ export default function SeoPage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 rounded-xl border border-line">
                 <div><div className="text-sm font-medium text-ink">Allow search engines to index</div><div className="text-[11px] text-ink/50">When enabled, search engines can add your pages to their index</div></div>
-                <button onClick={() => set('robotsIndex', !seo.robotsIndex)} className={`relative w-11 h-6 rounded-full transition-colors ${seo.robotsIndex ? 'bg-sage' : 'bg-ink/20'}`}>
-                  <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${seo.robotsIndex ? 'translate-x-5' : 'translate-x-0.5'}`} />
-                </button>
+                <Switch checked={seo.robotsIndex} onChange={(v) => set('robotsIndex', v)} />
               </div>
               <div className="flex items-center justify-between p-3 rounded-xl border border-line">
                 <div><div className="text-sm font-medium text-ink">Allow search engines to follow links</div><div className="text-[11px] text-ink/50">When enabled, crawlers will follow links on your pages</div></div>
-                <button onClick={() => set('robotsFollow', !seo.robotsFollow)} className={`relative w-11 h-6 rounded-full transition-colors ${seo.robotsFollow ? 'bg-sage' : 'bg-ink/20'}`}>
-                  <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${seo.robotsFollow ? 'translate-x-5' : 'translate-x-0.5'}`} />
-                </button>
+                <Switch checked={seo.robotsFollow} onChange={(v) => set('robotsFollow', v)} />
               </div>
             </div>
           </Card>
@@ -210,9 +201,7 @@ export default function SeoPage() {
             <SectionTitle title="Sitemap configuration" />
             <div className="flex items-center justify-between p-3 rounded-xl border border-line mb-4">
               <div><div className="text-sm font-medium text-ink">Enable XML sitemap</div><div className="text-[11px] text-ink/50">Automatically generate and update sitemap.xml for search engines</div></div>
-              <button onClick={() => set('sitemapEnabled', !seo.sitemapEnabled)} className={`relative w-11 h-6 rounded-full transition-colors ${seo.sitemapEnabled ? 'bg-sage' : 'bg-ink/20'}`}>
-                <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${seo.sitemapEnabled ? 'translate-x-5' : 'translate-x-0.5'}`} />
-              </button>
+              <Switch checked={seo.sitemapEnabled} onChange={(v) => set('sitemapEnabled', v)} />
             </div>
             {seo.sitemapEnabled && (
               <div className="space-y-2">
@@ -223,7 +212,7 @@ export default function SeoPage() {
                   { url: `${seo.canonicalUrl}/login`, priority: '0.6', freq: 'monthly' },
                 ].map((u) => (
                   <div key={u.url} className="flex items-center gap-3 p-2.5 rounded-xl bg-canvas">
-                    <LinkIcon className="w-4 h-4 text-sage shrink-0" />
+                    <LinkIcon className="w-4 h-4 text-plum shrink-0" />
                     <code className="text-xs font-mono text-ink flex-1 truncate">{u.url}</code>
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-white border border-line text-ink/50">Priority: {u.priority}</span>
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-white border border-line text-ink/50">{u.freq}</span>
@@ -250,10 +239,10 @@ export default function SeoPage() {
           <SectionTitle title="Analytics & verification" />
           <div className="space-y-4">
             <Field label="Google Analytics 4 Measurement ID">
-              <input className={inputCls} value={seo.googleAnalyticsId} onChange={(e) => set('googleAnalyticsId', e.target.value)} placeholder="G-XXXXXXXXXX" />
+              <Input value={seo.googleAnalyticsId} onChange={(e) => set('googleAnalyticsId', e.target.value)} placeholder="G-XXXXXXXXXX" />
             </Field>
             <Field label="Google Search Console verification code">
-              <input className={inputCls} value={seo.googleSearchConsole} onChange={(e) => set('googleSearchConsole', e.target.value)} placeholder="google-site-verification=..." />
+              <Input value={seo.googleSearchConsole} onChange={(e) => set('googleSearchConsole', e.target.value)} placeholder="google-site-verification=..." />
             </Field>
             <div className="p-3 rounded-xl bg-canvas text-xs text-ink/50">
               <span className="font-medium text-ink/70">How to verify:</span> Add your domain in Google Search Console, copy the verification token, and paste it here. This proves ownership and unlocks search performance data.
@@ -267,19 +256,38 @@ export default function SeoPage() {
         <>
           <Card className="p-5 mb-4">
             <SectionTitle title="Favicon & app icons" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="Favicon (.ico, 32x32+)">
-                <input className={inputCls} value={seo.faviconUrl} onChange={(e) => set('faviconUrl', e.target.value)} />
-              </Field>
-              <Field label="Apple Touch Icon (180x180 PNG)">
-                <input className={inputCls} value={seo.appleTouchIconUrl} onChange={(e) => set('appleTouchIconUrl', e.target.value)} />
-              </Field>
-              <Field label="Favicon 32x32 (PNG)">
-                <input className={inputCls} value={seo.favicon32Url} onChange={(e) => set('favicon32Url', e.target.value)} />
-              </Field>
-              <Field label="Favicon 16x16 (PNG)">
-                <input className={inputCls} value={seo.favicon16Url} onChange={(e) => set('favicon16Url', e.target.value)} />
-              </Field>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <ImagePicker
+                label="Favicon (.ico or PNG, 32x32+)"
+                hint="Upload a square icon, or point at one already hosted on your domain."
+                value={seo.faviconUrl}
+                onChange={(e) => set('faviconUrl', e.target.value)}
+                aspect="aspect-square"
+                maxPx={64}
+                accept="image/png,image/x-icon,image/vnd.microsoft.icon,image/svg+xml"
+              />
+              <ImagePicker
+                label="Apple Touch Icon (180x180 PNG)"
+                hint="Used when someone adds the site to an iOS home screen."
+                value={seo.appleTouchIconUrl}
+                onChange={(e) => set('appleTouchIconUrl', e.target.value)}
+                aspect="aspect-square"
+                maxPx={180}
+              />
+              <ImagePicker
+                label="Favicon 32x32 (PNG)"
+                value={seo.favicon32Url}
+                onChange={(e) => set('favicon32Url', e.target.value)}
+                aspect="aspect-square"
+                maxPx={32}
+              />
+              <ImagePicker
+                label="Favicon 16x16 (PNG)"
+                value={seo.favicon16Url}
+                onChange={(e) => set('favicon16Url', e.target.value)}
+                aspect="aspect-square"
+                maxPx={16}
+              />
             </div>
           </Card>
           <Card className="p-5 mb-4">
@@ -302,13 +310,10 @@ export default function SeoPage() {
           <Card className="p-5 mb-4">
             <SectionTitle title="Web App Manifest" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Field label="App name"><input className={inputCls} value={seo.webManifestName} onChange={(e) => set('webManifestName', e.target.value)} /></Field>
-              <Field label="Short name"><input className={inputCls} value={seo.webManifestShortName} onChange={(e) => set('webManifestShortName', e.target.value)} /></Field>
+              <Field label="App name"><Input value={seo.webManifestName} onChange={(e) => set('webManifestName', e.target.value)} /></Field>
+              <Field label="Short name"><Input value={seo.webManifestShortName} onChange={(e) => set('webManifestShortName', e.target.value)} /></Field>
               <Field label="Theme color">
-                <div className="flex items-center gap-2">
-                  <input type="color" className="w-12 h-10 rounded-lg border border-line cursor-pointer" value={seo.themeColor} onChange={(e) => set('themeColor', e.target.value)} />
-                  <input className={inputCls} value={seo.themeColor} onChange={(e) => set('themeColor', e.target.value)} />
-                </div>
+                <ColorInput value={seo.themeColor} onChange={(e) => set('themeColor', e.target.value)} />
               </Field>
             </div>
           </Card>

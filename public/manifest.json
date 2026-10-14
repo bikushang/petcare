@@ -4,8 +4,8 @@
   "description": "Compassionate veterinary care for the Bay Area community.",
   "start_url": "/site",
   "display": "standalone",
-  "background_color": "#f7faf8",
-  "theme_color": "#2d7766",
+  "background_color": "#FAF9FD",
+  "theme_color": "#4C1D95",
   "icons": [
     {
       "src": "/favicon-32x32.png",

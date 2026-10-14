@@ -8,7 +8,7 @@ import {
   CheckCircle2, Circle, ArrowUpRight, ArrowDownRight, PawPrint,
   Receipt, Gift, Award, Cake, Briefcase,
 } from 'lucide-react';
-import { Card, Badge, Button, Modal, Field, inputCls, Select, DateInput, Textarea } from './ui';
+import { Card, Badge, Button, Modal, Field, Input, Select, DateInput, Textarea } from './ui';
 import type { Owner, Pet, MedRecord, Appointment, Invoice, BoardingPet, GroomingAppt,
   FamilyMember, EmergencyContact, CommunicationLog, NotificationItem, FeedbackRecord } from '../lib/api';
 import { newId, today } from '../lib/store';
@@ -18,7 +18,7 @@ const invTotal = (i: Invoice) => i.items.reduce((s, it) => s + it.qty * it.unitP
 const membershipBadge: Record<string, string> = {
   None: 'bg-ink/10 text-ink/50',
   Basic: 'bg-sky-100 text-sky-700',
-  Premium: 'bg-mint text-sage',
+  Premium: 'bg-lilac text-plum',
   VIP: 'bg-amber-100 text-amber-700',
 };
 
@@ -56,16 +56,16 @@ export function OwnerCRMDrawer({ owner, pets, records, appointments, invoices, b
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-line px-5 h-14 flex items-center justify-between z-10">
           <div className="flex items-center gap-2">
-            <User className="w-4 h-4 text-sage" />
+            <User className="w-4 h-4 text-plum" />
             <h3 className="text-sm font-semibold text-ink">{owner.name} · Owner CRM</h3>
           </div>
           <button onClick={onClose} className="text-ink/50 hover:text-ink"><X className="w-5 h-5" /></button>
         </div>
 
         {/* Owner identity banner */}
-        <div className="px-5 py-4 border-b border-line bg-gradient-to-b from-mint/30 to-white">
+        <div className="px-5 py-4 border-b border-line bg-gradient-to-b from-lilac/30 to-white">
           <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-mint text-sage flex items-center justify-center text-xl font-semibold shrink-0">
+            <div className="w-16 h-16 rounded-2xl bg-lilac text-plum flex items-center justify-center text-xl font-semibold shrink-0">
               {owner.name.slice(0, 2).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
@@ -81,7 +81,7 @@ export function OwnerCRMDrawer({ owner, pets, records, appointments, invoices, b
                 {owner.customerId || owner.id} · {pets.length} pet{pets.length !== 1 ? 's' : ''}
               </div>
               <div className="flex items-center gap-3 mt-2 flex-wrap">
-                <span className="inline-flex items-center gap-1 text-[10px] text-sage font-medium">
+                <span className="inline-flex items-center gap-1 text-[10px] text-plum font-medium">
                   <Award className="w-3 h-3" /> {owner.loyaltyPoints} pts
                 </span>
                 <span className="inline-flex items-center gap-1 text-[10px] text-ink/60 font-medium">
@@ -93,14 +93,16 @@ export function OwnerCRMDrawer({ owner, pets, records, appointments, invoices, b
         </div>
 
         {/* Tab bar */}
-        <div className="sticky top-14 bg-white border-b border-line px-5 z-10">
-          <div className="flex gap-1 overflow-x-auto -mb-px">
+        <div className="sticky top-14 bg-white border-b border-line px-5 py-2.5 z-10">
+          <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
             {tabs.map((t) => (
               <button
                 key={t.id}
                 onClick={() => setTab(t.id)}
-                className={`px-3 h-10 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${
-                  tab === t.id ? 'border-sage text-sage' : 'border-transparent text-ink/50 hover:text-ink'
+                className={`hv-lift inline-flex items-center shrink-0 px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap ${
+                  tab === t.id
+                    ? 'bg-plum text-white shadow-lift-sm'
+                    : 'bg-white text-ink/60 border border-line hover:border-plum/40 hover:bg-lilac/40 hover:text-plum'
                 }`}
               >
                 {t.label}
@@ -210,7 +212,7 @@ function ProfileTab({ owner, onUpdate }: { owner: Owner; onUpdate: (patch: Parti
         <InfoCard title="Loyalty & Credit">
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-xl bg-canvas p-3 text-center">
-              <Award className="w-4 h-4 text-sage mx-auto" />
+              <Award className="w-4 h-4 text-plum mx-auto" />
               <div className="text-sm font-semibold text-ink mt-1">{owner.loyaltyPoints}</div>
               <div className="text-[10px] text-ink/50">Loyalty points</div>
             </div>
@@ -225,7 +227,7 @@ function ProfileTab({ owner, onUpdate }: { owner: Owner; onUpdate: (patch: Parti
 
       {/* Family members */}
       <InfoCard title="Family Members" action={
-        <button onClick={() => setShowFamModal(true)} className="text-[11px] text-sage font-medium hover:underline flex items-center gap-1">
+        <button onClick={() => setShowFamModal(true)} className="text-[11px] text-plum font-medium hover:underline flex items-center gap-1">
           <Plus className="w-3 h-3" /> Add
         </button>
       }>
@@ -235,7 +237,7 @@ function ProfileTab({ owner, onUpdate }: { owner: Owner; onUpdate: (patch: Parti
           <div className="space-y-2">
             {(owner.familyMembers || []).map((f) => (
               <div key={f.id} className="group flex items-center gap-3 rounded-lg bg-canvas p-2.5">
-                <div className="w-8 h-8 rounded-lg bg-mint text-sage flex items-center justify-center text-xs font-semibold shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-lilac text-plum flex items-center justify-center text-xs font-semibold shrink-0">
                   {f.name.slice(0, 2).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -253,7 +255,7 @@ function ProfileTab({ owner, onUpdate }: { owner: Owner; onUpdate: (patch: Parti
 
       {/* Emergency contacts */}
       <InfoCard title="Emergency Contacts" action={
-        <button onClick={() => setShowEmModal(true)} className="text-[11px] text-sage font-medium hover:underline flex items-center gap-1">
+        <button onClick={() => setShowEmModal(true)} className="text-[11px] text-plum font-medium hover:underline flex items-center gap-1">
           <Plus className="w-3 h-3" /> Add
         </button>
       }>
@@ -312,10 +314,10 @@ function ProfileTab({ owner, onUpdate }: { owner: Owner; onUpdate: (patch: Parti
       {/* Family member modal */}
       <Modal open={showFamModal} onClose={() => setShowFamModal(false)} title="Add family member">
         <div className="space-y-4">
-          <Field label="Full name"><input className={inputCls} value={famForm.name} onChange={(e) => setFamForm({ ...famForm, name: e.target.value })} placeholder="Theo Hayes" /></Field>
+          <Field label="Full name"><Input value={famForm.name} onChange={(e) => setFamForm({ ...famForm, name: e.target.value })} placeholder="Theo Hayes" /></Field>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Relationship"><input className={inputCls} value={famForm.relationship} onChange={(e) => setFamForm({ ...famForm, relationship: e.target.value })} placeholder="Spouse" /></Field>
-            <Field label="Phone"><input className={inputCls} value={famForm.phone} onChange={(e) => setFamForm({ ...famForm, phone: e.target.value })} placeholder="+1 415 555 0190" /></Field>
+            <Field label="Relationship"><Input value={famForm.relationship} onChange={(e) => setFamForm({ ...famForm, relationship: e.target.value })} placeholder="Spouse" /></Field>
+            <Field label="Phone"><Input type="tel" value={famForm.phone} onChange={(e) => setFamForm({ ...famForm, phone: e.target.value })} placeholder="+1 415 555 0190" /></Field>
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="ghost" onClick={() => setShowFamModal(false)}>Cancel</Button>
@@ -327,10 +329,10 @@ function ProfileTab({ owner, onUpdate }: { owner: Owner; onUpdate: (patch: Parti
       {/* Emergency contact modal */}
       <Modal open={showEmModal} onClose={() => setShowEmModal(false)} title="Add emergency contact">
         <div className="space-y-4">
-          <Field label="Full name"><input className={inputCls} value={emForm.name} onChange={(e) => setEmForm({ ...emForm, name: e.target.value })} placeholder="Theo Hayes" /></Field>
+          <Field label="Full name"><Input value={emForm.name} onChange={(e) => setEmForm({ ...emForm, name: e.target.value })} placeholder="Theo Hayes" /></Field>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Relationship"><input className={inputCls} value={emForm.relationship} onChange={(e) => setEmForm({ ...emForm, relationship: e.target.value })} placeholder="Spouse" /></Field>
-            <Field label="Phone"><input className={inputCls} value={emForm.phone} onChange={(e) => setEmForm({ ...emForm, phone: e.target.value })} placeholder="+1 415 555 0190" /></Field>
+            <Field label="Relationship"><Input value={emForm.relationship} onChange={(e) => setEmForm({ ...emForm, relationship: e.target.value })} placeholder="Spouse" /></Field>
+            <Field label="Phone"><Input type="tel" value={emForm.phone} onChange={(e) => setEmForm({ ...emForm, phone: e.target.value })} placeholder="+1 415 555 0190" /></Field>
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="ghost" onClick={() => setShowEmModal(false)}>Cancel</Button>
@@ -349,7 +351,7 @@ function PetsTab({ pets }: { pets: Pet[] }) {
       {pets.map((p) => (
         <Card key={p.id} className="p-4">
           <div className="flex items-start gap-3">
-            <div className="w-11 h-11 rounded-xl bg-mint text-sage flex items-center justify-center text-sm font-semibold shrink-0">
+            <div className="w-11 h-11 rounded-xl bg-lilac text-plum flex items-center justify-center text-sm font-semibold shrink-0">
               {p.name.slice(0, 2).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
@@ -360,7 +362,7 @@ function PetsTab({ pets }: { pets: Pet[] }) {
               <div className="text-[11px] text-ink/50">{p.species} · {p.breed || 'Mixed'} · {p.gender}</div>
               <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                 {p.microchipNumber && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-sky-50 text-sky-700 font-medium">Chip: {p.microchipNumber}</span>}
-                {p.qrCodeId && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-mint text-sage font-medium">QR: {p.qrCodeId}</span>}
+                {p.qrCodeId && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-lilac text-plum font-medium">QR: {p.qrCodeId}</span>}
                 {p.sterilized && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-ink/10 text-ink/60 font-medium">Neutered</span>}
               </div>
               {p.allergies && p.allergies !== 'None known' && (
@@ -390,9 +392,9 @@ function PortalTab({ owner, pets, records, appointments, invoices, boarding, gro
 
   return (
     <div className="space-y-4">
-      <Card className="p-4 bg-mint/20 border-sage/20">
+      <Card className="p-4 bg-lilac/20 border-plum/20">
         <div className="flex items-center gap-2 mb-1">
-          <Home className="w-4 h-4 text-sage" />
+          <Home className="w-4 h-4 text-plum" />
           <span className="text-sm font-semibold text-ink">Customer Portal Preview</span>
         </div>
         <div className="text-[11px] text-ink/60">
@@ -443,7 +445,7 @@ function PortalTab({ owner, pets, records, appointments, invoices, boarding, gro
 
       {/* Feedback */}
       <PortalSection icon={Heart} title="Feedback Records" items={(owner.feedback || []).map((f) => ({
-        id: f.id, left: `${'★'.repeat(f.rating)}${'☆'.repeat(5 - f.rating)}`, right: f.date, sub: f.comment,
+        id: f.id, left: `${f.rating} of 5 stars`, right: f.date, sub: f.comment,
       }))} empty="No feedback submitted" />
     </div>
   );
@@ -457,7 +459,7 @@ function PortalSection({ icon: Icon, title, items, empty }: {
   return (
     <Card className="p-4">
       <div className="flex items-center gap-2 mb-3">
-        <Icon className="w-4 h-4 text-sage" />
+        <Icon className="w-4 h-4 text-plum" />
         <span className="text-sm font-semibold text-ink">{title}</span>
         <span className="text-[10px] text-ink/40 ml-auto">{items.length}</span>
       </div>
@@ -491,8 +493,8 @@ function PaymentsTab({ owner, invoices }: { owner: Owner; invoices: Invoice[] })
     <div className="space-y-4">
       {/* Summary */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-xl bg-mint p-3 text-center">
-          <CheckCircle2 className="w-4 h-4 text-sage mx-auto" />
+        <div className="rounded-xl bg-lilac p-3 text-center">
+          <CheckCircle2 className="w-4 h-4 text-plum mx-auto" />
           <div className="text-sm font-semibold text-ink mt-1">${totalPaid.toFixed(2)}</div>
           <div className="text-[10px] text-ink/50">Total paid</div>
         </div>
@@ -534,12 +536,12 @@ function PaymentsTab({ owner, invoices }: { owner: Owner; invoices: Invoice[] })
       {/* Loyalty */}
       <Card className="p-4">
         <div className="flex items-center gap-2 mb-3">
-          <Gift className="w-4 h-4 text-sage" />
+          <Gift className="w-4 h-4 text-plum" />
           <span className="text-sm font-semibold text-ink">Loyalty Program</span>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="rounded-xl bg-canvas p-3 text-center">
-            <Award className="w-5 h-5 text-sage mx-auto" />
+            <Award className="w-5 h-5 text-plum mx-auto" />
             <div className="text-lg font-semibold text-ink mt-1">{owner.loyaltyPoints}</div>
             <div className="text-[10px] text-ink/50">Points earned</div>
           </div>
@@ -600,14 +602,14 @@ function CommunicationTab({ owner, onUpdate }: { owner: Owner; onUpdate: (patch:
               const Icon = channelIcon[log.channel] || MessageSquare;
               return (
                 <div key={log.id} className="group relative flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-mint text-sage flex items-center justify-center shrink-0 z-10">
+                  <div className="w-8 h-8 rounded-full bg-lilac text-plum flex items-center justify-center shrink-0 z-10">
                     <Icon className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0 pt-1">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-xs font-medium text-ink truncate">{log.subject}</span>
                       <div className="flex items-center gap-1.5 shrink-0">
-                        <span className={`inline-flex items-center gap-0.5 text-[9px] font-medium ${log.direction === 'Outgoing' ? 'text-sky-600' : 'text-sage'}`}>
+                        <span className={`inline-flex items-center gap-0.5 text-[9px] font-medium ${log.direction === 'Outgoing' ? 'text-sky-600' : 'text-plum'}`}>
                           {log.direction === 'Outgoing' ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
                           {log.direction}
                         </span>
@@ -641,7 +643,7 @@ function CommunicationTab({ owner, onUpdate }: { owner: Owner; onUpdate: (patch:
               </Select>
             </Field>
           </div>
-          <Field label="Subject"><input className={inputCls} value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder="Appointment reminder" /></Field>
+          <Field label="Subject"><Input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder="Appointment reminder" /></Field>
           <Field label="Notes">
             <Textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="Discussion details…" className="min-h-[80px]" />
           </Field>
@@ -677,7 +679,7 @@ function NotificationsTab({ owner, onUpdate }: { owner: Owner; onUpdate: (patch:
       <div className="flex items-center justify-between">
         <div className="text-sm font-semibold text-ink">Notification History ({notifications.length})</div>
         {unreadCount > 0 && (
-          <button onClick={markAllRead} className="text-[11px] text-sage font-medium hover:underline">
+          <button onClick={markAllRead} className="text-[11px] text-plum font-medium hover:underline">
             Mark all read ({unreadCount})
           </button>
         )}
@@ -695,15 +697,15 @@ function NotificationsTab({ owner, onUpdate }: { owner: Owner; onUpdate: (patch:
           {notifications.map((n) => {
             const Icon = typeIcon[n.type] || Bell;
             return (
-              <div key={n.id} className={`flex items-start gap-3 rounded-xl border p-3 transition-colors ${n.read ? 'border-line bg-white' : 'border-sage/20 bg-mint/20'}`}>
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${n.read ? 'bg-canvas text-ink/40' : 'bg-mint text-sage'}`}>
+              <div key={n.id} className={`flex items-start gap-3 rounded-xl border p-3 transition-colors ${n.read ? 'border-line bg-white' : 'border-plum/20 bg-lilac/20'}`}>
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${n.read ? 'bg-canvas text-ink/40' : 'bg-lilac text-plum'}`}>
                   <Icon className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <span className={`text-xs ${n.read ? 'text-ink/70' : 'text-ink font-medium'}`}>{n.title}</span>
                     {!n.read && (
-                      <button onClick={() => markRead(n.id)} className="text-[10px] text-sage font-medium hover:underline shrink-0">Mark read</button>
+                      <button onClick={() => markRead(n.id)} className="text-[10px] text-plum font-medium hover:underline shrink-0">Mark read</button>
                     )}
                   </div>
                   <div className="flex items-center gap-2 mt-0.5">
@@ -711,7 +713,7 @@ function NotificationsTab({ owner, onUpdate }: { owner: Owner; onUpdate: (patch:
                     <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-ink/10 text-ink/50 font-medium">{n.type}</span>
                   </div>
                 </div>
-                {!n.read && <Circle className="w-2 h-2 text-sage fill-sage shrink-0 mt-2" />}
+                {!n.read && <Circle className="w-2 h-2 text-plum fill-plum shrink-0 mt-2" />}
                 {n.read && <CheckCircle2 className="w-3.5 h-3.5 text-ink/20 shrink-0 mt-1.5" />}
               </div>
             );

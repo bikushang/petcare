@@ -181,12 +181,12 @@ function SuperAdminDashboard({ stats, db, petName = () => 'Unknown', ownerName =
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        <StatCard icon={Building2} label="Branches" value={2} sub="Northgate · Riverside" tone="sage" />
+        <StatCard icon={Building2} label="Branches" value={2} sub="Northgate · Riverside" tone="plum" />
         <StatCard icon={Users} label="Staff" value={stats.staff} sub={`${stats.activeStaff} active`} tone="sky" />
         <StatCard icon={PawPrint} label="Patients" value={stats.pets} sub={`${stats.owners} owners`} tone="amber" />
         <StatCard icon={TrendingUp} label="Revenue (paid)" value={`${stats.revenue.toLocaleString()}`} sub={`${stats.pendingRev.toLocaleString()} pending`} tone="coral" />
         <StatCard icon={AlertTriangle} label="Low stock" value={stats.lowStock.length} sub="Items" tone="coral" />
-        <StatCard icon={Hotel} label="Boarding" value={stats.boarding} sub="In house" tone="sage" />
+        <StatCard icon={Hotel} label="Boarding" value={stats.boarding} sub="In house" tone="plum" />
       </div>
       <BIDashboardGrid db={db} todays={todays} petName={petName} ownerName={ownerName} />
     </>
@@ -199,11 +199,11 @@ function ClinicOwnerDashboard({ stats, db, petName = () => 'Unknown', ownerName 
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        <StatCard icon={TrendingUp} label="Revenue (paid)" value={`${stats.revenue.toLocaleString()}`} sub={`${stats.pendingInvoices} pending`} tone="sage" />
+        <StatCard icon={TrendingUp} label="Revenue (paid)" value={`${stats.revenue.toLocaleString()}`} sub={`${stats.pendingInvoices} pending`} tone="plum" />
         <StatCard icon={PawPrint} label="Patients" value={stats.pets} sub={`${stats.owners} owners`} tone="sky" />
         <StatCard icon={CalendarDays} label="Today's appts" value={stats.appointments} sub={`${stats.activeConsults} active`} tone="amber" />
         <StatCard icon={Users} label="Team" value={stats.staff} sub={`${stats.activeStaff} active`} tone="coral" />
-        <StatCard icon={DollarSign} label="Monthly income" value={`${bi.monthlyIncome.toLocaleString()}`} sub="This month" tone="sage" />
+        <StatCard icon={DollarSign} label="Monthly income" value={`${bi.monthlyIncome.toLocaleString()}`} sub="This month" tone="plum" />
         <StatCard icon={AlertTriangle} label="Overdue" value={stats.overdueInvoices} sub="Invoices" tone="coral" />
       </div>
       <CompactBIWidgets db={db} todays={todays} petName={petName} ownerName={ownerName} />
@@ -230,11 +230,11 @@ function BranchManagerDashboard({ stats, db, petName = () => 'Unknown', ownerNam
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        <StatCard icon={CalendarDays} label="Today's appts" value={stats.appointments} sub={`${stats.activeConsults} active`} tone="sage" />
+        <StatCard icon={CalendarDays} label="Today's appts" value={stats.appointments} sub={`${stats.activeConsults} active`} tone="plum" />
         <StatCard icon={Users} label="Branch staff" value={stats.staff} sub={`${stats.activeStaff} active`} tone="sky" />
         <StatCard icon={PawPrint} label="Patients" value={stats.pets} sub={`${stats.boarding} boarding`} tone="amber" />
         <StatCard icon={AlertTriangle} label="Alerts" value={stats.lowStock.length + stats.overdueInvoices} sub="Stock + billing" tone="coral" />
-        <StatCard icon={DollarSign} label="Daily income" value={`${bi.dailyIncome.toLocaleString()}`} sub="Today" tone="sage" />
+        <StatCard icon={DollarSign} label="Daily income" value={`${bi.dailyIncome.toLocaleString()}`} sub="Today" tone="plum" />
         <StatCard icon={Scissors} label="Grooming" value={bi.groomingToday.length} sub="Today" tone="sky" />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
@@ -265,20 +265,20 @@ function VetDashboard({ stats, db, petName = () => 'Unknown', ownerName = () => 
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard icon={CalendarDays} label="My appts today" value={myAppts.length} sub={`${myAppts.filter((a) => a.status === 'In consultation').length} in consult`} tone="sage" />
+        <StatCard icon={CalendarDays} label="My appts today" value={myAppts.length} sub={`${myAppts.filter((a) => a.status === 'In consultation').length} in consult`} tone="plum" />
         <StatCard icon={Stethoscope} label="My patients" value={stats.pets} sub={`${stats.owners} owners`} tone="sky" />
         <StatCard icon={Syringe} label="Vaccines given" value={stats.vaccinesDue} sub="On record" tone="amber" />
         <StatCard icon={FlaskConical} label="Lab results" value={stats.labsPending} sub="Recent" tone="coral" />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5">
         <Card className="lg:col-span-2 p-5">
-          <SectionTitle title="My schedule today" action={<Link href="/appointments" className="text-xs text-sage font-medium flex items-center gap-1 hover:underline">All appts <ArrowRight className="w-3 h-3" /></Link>} />
+          <SectionTitle title="My schedule today" action={<Link href="/appointments" className="text-xs text-plum font-medium flex items-center gap-1 hover:underline">All appts <ArrowRight className="w-3 h-3" /></Link>} />
           <div className="space-y-2">
             {myAppts.length === 0 ? (
               <div className="text-center py-8 text-sm text-ink/50">No appointments assigned to you today.</div>
             ) : (
               myAppts.map((a) => (
-                <div key={a.id} className="flex items-center gap-3 px-3 py-3 rounded-xl border border-line hover:border-sage/30 transition-colors">
+                <div key={a.id} className="flex items-center gap-3 px-3 py-3 rounded-xl border border-line hover:border-plum/30 transition-colors">
                   <div className="flex flex-col items-center w-14 shrink-0">
                     <span className="text-sm font-semibold text-ink">{a.time}</span>
                     <span className="text-[10px] text-ink/40">{a.durationMin}min</span>
@@ -328,14 +328,14 @@ function ReceptionistDashboard({ stats, db, petName = () => 'Unknown', ownerName
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard icon={CalendarDays} label="Today's appts" value={stats.appointments} tone="sage" />
+        <StatCard icon={CalendarDays} label="Today's appts" value={stats.appointments} tone="plum" />
         <StatCard icon={UserCheck} label="Checked in" value={checkedIn.length} sub="In clinic now" tone="sky" />
         <StatCard icon={Clock} label="Waiting" value={waiting.length} sub="Not yet arrived" tone="amber" />
         <StatCard icon={PawPrint} label="New patients" value={stats.owners} sub="Total owners" tone="coral" />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5">
         <Card className="lg:col-span-2 p-5">
-          <SectionTitle title="Front desk queue" action={<Link href="/appointments" className="text-xs text-sage font-medium flex items-center gap-1 hover:underline">Manage <ArrowRight className="w-3 h-3" /></Link>} />
+          <SectionTitle title="Front desk queue" action={<Link href="/appointments" className="text-xs text-plum font-medium flex items-center gap-1 hover:underline">Manage <ArrowRight className="w-3 h-3" /></Link>} />
           <div className="space-y-2">
             {todays.map((a) => (
               <div key={a.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-line hover:bg-canvas transition-colors">
@@ -386,7 +386,7 @@ function NurseDashboard({ stats, db, petName = () => 'Unknown', ownerName = () =
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard icon={Heart} label="In care now" value={inCare.length} sub="Active patients" tone="sage" />
+        <StatCard icon={Heart} label="In care now" value={inCare.length} sub="Active patients" tone="plum" />
         <StatCard icon={Syringe} label="Treatments due" value={3} sub="Today" tone="sky" />
         <StatCard icon={Hotel} label="Boarding" value={stats.boarding} sub="Under care" tone="amber" />
         <StatCard icon={Stethoscope} label="Medical records" value={stats.medRecords} sub="Total" tone="coral" />
@@ -397,7 +397,7 @@ function NurseDashboard({ stats, db, petName = () => 'Unknown', ownerName = () =
           <div className="space-y-2">
             {inCare.map((a) => (
               <div key={a.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-line">
-                <div className="w-10 h-10 rounded-xl bg-mint text-sage flex items-center justify-center text-xs font-semibold">
+                <div className="w-10 h-10 rounded-xl bg-lilac text-plum flex items-center justify-center text-xs font-semibold">
                   {petName(a.petId).slice(0, 2).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -415,7 +415,7 @@ function NurseDashboard({ stats, db, petName = () => 'Unknown', ownerName = () =
           <div className="space-y-2">
             {db.boarding.filter((b: any) => b.status === 'Checked-in').map((b: any) => (
               <div key={b.id} className="flex items-start gap-3 px-3 py-2.5 rounded-xl bg-canvas">
-                <Package className="w-4 h-4 text-sage mt-0.5 shrink-0" />
+                <Package className="w-4 h-4 text-plum mt-0.5 shrink-0" />
                 <div className="text-xs">
                   <div className="font-medium text-ink">{b.petName} · {b.room}</div>
                   <div className="text-ink/50 mt-0.5">{b.feedingNotes}</div>
@@ -436,17 +436,17 @@ function LabDashboard({ stats, db, petName = () => 'Unknown' }: DashProps) {
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard icon={FlaskConical} label="Lab tests" value={labs.length} sub="On record" tone="sage" />
+        <StatCard icon={FlaskConical} label="Lab tests" value={labs.length} sub="On record" tone="plum" />
         <StatCard icon={Microscope} label="Pending results" value={2} sub="Awaiting analysis" tone="amber" />
         <StatCard icon={ClipboardList} label="Completed" value={labs.length - 2} sub="This month" tone="sky" />
         <StatCard icon={Package} label="Lab supplies" value={db.medStock.filter((m: any) => m.category === 'Equipment').length} sub="Items tracked" tone="coral" />
       </div>
       <Card className="mt-5 p-5">
-        <SectionTitle title="Recent lab tests" action={<Link href="/medical" className="text-xs text-sage font-medium flex items-center gap-1 hover:underline">All records <ArrowRight className="w-3 h-3" /></Link>} />
+        <SectionTitle title="Recent lab tests" action={<Link href="/medical" className="text-xs text-plum font-medium flex items-center gap-1 hover:underline">All records <ArrowRight className="w-3 h-3" /></Link>} />
         <div className="space-y-2">
           {labs.map((r: any) => (
             <div key={r.id} className="flex items-center gap-3 px-4 py-3 rounded-xl border border-line hover:bg-canvas transition-colors">
-              <div className="w-9 h-9 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center">
                 <FlaskConical className="w-4 h-4" />
               </div>
               <div className="flex-1 min-w-0">
@@ -469,11 +469,11 @@ function PharmacistDashboard({ stats, db }: DashProps) {
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        <StatCard icon={Pill} label="Total items" value={db.medStock.length} sub="In catalog" tone="sage" />
+        <StatCard icon={Pill} label="Total items" value={db.medStock.length} sub="In catalog" tone="plum" />
         <StatCard icon={AlertTriangle} label="Low stock" value={bi.lowStock.length} sub="Needs reorder" tone="coral" />
         <StatCard icon={Clock} label="Expiring soon" value={bi.expiring.length} sub="Within 4 months" tone="amber" />
         <StatCard icon={FileText} label="Prescriptions" value={prescriptions.length} sub="On record" tone="sky" />
-        <StatCard icon={Syringe} label="Vaccines" value={db.medStock.filter((m: any) => m.category === 'Vaccine').length} sub="In stock" tone="sage" />
+        <StatCard icon={Syringe} label="Vaccines" value={db.medStock.filter((m: any) => m.category === 'Vaccine').length} sub="In stock" tone="plum" />
         <StatCard icon={Package} label="Categories" value={new Set(db.medStock.map((m: any) => m.category)).size} sub="Active" tone="coral" />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-5">
@@ -496,14 +496,14 @@ function GroomerDashboard({ stats, db }: DashProps) {
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard icon={Scissors} label="Today's grooms" value={todayGrooms.length} tone="sage" />
+        <StatCard icon={Scissors} label="Today's grooms" value={todayGrooms.length} tone="plum" />
         <StatCard icon={Clock} label="Scheduled" value={todayGrooms.filter((g: any) => g.status === 'Scheduled').length} tone="amber" />
         <StatCard icon={UserCheck} label="Completed" value={todayGrooms.filter((g: any) => g.status === 'Completed').length} tone="sky" />
         <StatCard icon={PawPrint} label="Total clients" value={db.grooming.length} sub="All time" tone="coral" />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-5">
         <Card className="p-5">
-          <SectionTitle title="Today's grooming schedule" action={<Link href="/grooming" className="text-xs text-sage font-medium flex items-center gap-1 hover:underline">Manage <ArrowRight className="w-3 h-3" /></Link>} />
+          <SectionTitle title="Today's grooming schedule" action={<Link href="/grooming" className="text-xs text-plum font-medium flex items-center gap-1 hover:underline">Manage <ArrowRight className="w-3 h-3" /></Link>} />
           <div className="space-y-2">
             {todayGrooms.map((g: any) => (
               <div key={g.id} className="flex items-center gap-3 px-3 py-3 rounded-xl border border-line hover:bg-canvas transition-colors">
@@ -545,17 +545,17 @@ function BoardingDashboard({ stats, db }: DashProps) {
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard icon={Hotel} label="Pets boarding" value={active.length} sub="In-house" tone="sage" />
+        <StatCard icon={Hotel} label="Pets boarding" value={active.length} sub="In-house" tone="plum" />
         <StatCard icon={Clock} label="Check-outs today" value={active.filter((b: any) => b.checkOut === today()).length} tone="amber" />
         <StatCard icon={Utensils} label="Feeding due" value={active.length * 2} sub="Sessions" tone="sky" />
         <StatCard icon={Package} label="Rooms in use" value={new Set(active.map((b: any) => b.room)).size} tone="coral" />
       </div>
       <Card className="mt-5 p-5">
-        <SectionTitle title="Pets in boarding" action={<Link href="/boarding" className="text-xs text-sage font-medium flex items-center gap-1 hover:underline">Manage <ArrowRight className="w-3 h-3" /></Link>} />
+        <SectionTitle title="Pets in boarding" action={<Link href="/boarding" className="text-xs text-plum font-medium flex items-center gap-1 hover:underline">Manage <ArrowRight className="w-3 h-3" /></Link>} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {active.map((b: any) => (
             <div key={b.id} className="flex items-start gap-3 p-4 rounded-xl border border-line">
-              <div className="w-11 h-11 rounded-xl bg-mint text-sage flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-lilac text-plum flex items-center justify-center">
                 <Hotel className="w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0">
@@ -581,11 +581,11 @@ function AccountantDashboard({ stats, db, ownerName = () => 'Unknown' }: DashPro
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        <StatCard icon={DollarSign} label="Collected" value={`${stats.revenue.toLocaleString()}`} sub="Total paid" tone="sage" />
+        <StatCard icon={DollarSign} label="Collected" value={`${stats.revenue.toLocaleString()}`} sub="Total paid" tone="plum" />
         <StatCard icon={TrendingUp} label="Monthly" value={`${bi.monthlyIncome.toLocaleString()}`} sub="This month" tone="sky" />
         <StatCard icon={Clock} label="Outstanding" value={`${stats.pendingRev.toLocaleString()}`} sub={`${stats.pendingInvoices} pending`} tone="amber" />
         <StatCard icon={AlertTriangle} label="Overdue" value={`${bi.overdue.reduce((s: number, i: any) => s + i.items.reduce((a: number, it: any) => a + it.qty * it.unitPrice, 0), 0).toLocaleString()}`} sub={`${bi.overdue.length} invoices`} tone="coral" />
-        <StatCard icon={Receipt} label="Daily income" value={`${bi.dailyIncome.toLocaleString()}`} sub="Today" tone="sage" />
+        <StatCard icon={Receipt} label="Daily income" value={`${bi.dailyIncome.toLocaleString()}`} sub="Today" tone="plum" />
         <StatCard icon={TrendingUp} label="Total billed" value={`${db.invoices.reduce((s: number, i: any) => s + i.items.reduce((a: number, it: any) => a + it.qty * it.unitPrice, 0), 0).toLocaleString()}`} sub="All time" tone="sky" />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5">
@@ -611,11 +611,11 @@ function InventoryDashboard({ stats, db }: DashProps) {
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        <StatCard icon={Package} label="Total items" value={db.medStock.length} sub="SKUs tracked" tone="sage" />
+        <StatCard icon={Package} label="Total items" value={db.medStock.length} sub="SKUs tracked" tone="plum" />
         <StatCard icon={DollarSign} label="Stock value" value={`${totalValue.toLocaleString()}`} sub="At cost" tone="sky" />
         <StatCard icon={AlertTriangle} label="Low stock" value={bi.lowStock.length} sub="Needs reorder" tone="coral" />
         <StatCard icon={Clock} label="Expiring soon" value={bi.expiring.length} sub="< 4 months" tone="amber" />
-        <StatCard icon={Pill} label="Medicines" value={db.medStock.filter((m: any) => m.category === 'Medicine').length} sub="In catalog" tone="sage" />
+        <StatCard icon={Pill} label="Medicines" value={db.medStock.filter((m: any) => m.category === 'Medicine').length} sub="In catalog" tone="plum" />
         <StatCard icon={Syringe} label="Vaccines" value={db.medStock.filter((m: any) => m.category === 'Vaccine').length} sub="In catalog" tone="sky" />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
@@ -638,7 +638,7 @@ function PetOwnerDashboard({ stats, db, user }: DashPropsFull) {
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard icon={PawPrint} label="My pets" value={myPets.length} tone="sage" />
+        <StatCard icon={PawPrint} label="My pets" value={myPets.length} tone="plum" />
         <StatCard icon={CalendarDays} label="Appointments" value={myAppts.length} tone="sky" />
         <StatCard icon={Stethoscope} label="Health records" value={myRecords.length} tone="amber" />
         <StatCard icon={Receipt} label="Outstanding" value={`$${myInvoices.filter((i: any) => i.status !== 'Paid').reduce((s: number, i: any) => s + invTotal(i), 0).toFixed(2)}`} tone="coral" />
@@ -649,7 +649,7 @@ function PetOwnerDashboard({ stats, db, user }: DashPropsFull) {
           <div className="space-y-3">
             {myPets.map((p: any) => (
               <div key={p.id} className="flex items-start gap-3 p-3 rounded-xl border border-line">
-                <div className="w-11 h-11 rounded-xl bg-mint text-sage flex items-center justify-center">
+                <div className="w-11 h-11 rounded-xl bg-lilac text-plum flex items-center justify-center">
                   {p.species === 'Dog' ? <Dog className="w-5 h-5" /> : <Cat className="w-5 h-5" />}
                 </div>
                 <div className="flex-1">
@@ -706,7 +706,7 @@ function PetOwnerDashboard({ stats, db, user }: DashPropsFull) {
         <div className="space-y-2">
           {myRecords.map((r: any) => (
             <div key={r.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-canvas">
-              <div className="w-8 h-8 rounded-lg bg-mint text-sage flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-lilac text-plum flex items-center justify-center shrink-0">
                 {r.type === 'Vaccination' ? <Syringe className="w-4 h-4" /> : r.type === 'Lab' ? <FlaskConical className="w-4 h-4" /> : <Stethoscope className="w-4 h-4" />}
               </div>
               <div className="flex-1 min-w-0">
@@ -724,7 +724,7 @@ function PetOwnerDashboard({ stats, db, user }: DashPropsFull) {
 
 // --- Shared components ---
 function SystemRow({ icon: Icon, label, value, tone }: { icon: typeof Shield; label: string; value: string | number; tone: string }) {
-  const tones: Record<string, string> = { sage: 'text-sage', sky: 'text-sky-600', amber: 'text-amber-600', coral: 'text-coral' };
+  const tones: Record<string, string> = { plum: 'text-plum', sky: 'text-sky-600', amber: 'text-amber-600', coral: 'text-coral' };
   return (
     <div className="flex items-center gap-2.5">
       <Icon className={`w-4 h-4 ${tones[tone]}`} />
@@ -735,7 +735,7 @@ function SystemRow({ icon: Icon, label, value, tone }: { icon: typeof Shield; la
 }
 
 function AlertRow({ icon: Icon, text, tone }: { icon: typeof AlertTriangle; text: string; tone: string }) {
-  const tones: Record<string, string> = { sage: 'text-sage', sky: 'text-sky-600', amber: 'text-amber-600', coral: 'text-coral' };
+  const tones: Record<string, string> = { plum: 'text-plum', sky: 'text-sky-600', amber: 'text-amber-600', coral: 'text-coral' };
   return (
     <div className="flex items-start gap-2.5">
       <Icon className={`w-4 h-4 ${tones[tone]} mt-0.5 shrink-0`} />
@@ -746,8 +746,8 @@ function AlertRow({ icon: Icon, text, tone }: { icon: typeof AlertTriangle; text
 
 function QuickAction({ href, icon: Icon, label }: { href: string; icon: typeof Plus; label: string }) {
   return (
-    <Link href={href} className="flex flex-col items-start gap-2 p-3 rounded-xl border border-line hover:border-sage hover:bg-mint/40 transition-colors">
-      <Icon className="w-4 h-4 text-sage" />
+    <Link href={href} className="flex flex-col items-start gap-2 p-3 rounded-xl border border-line hover:border-plum hover:bg-lilac/40 transition-colors">
+      <Icon className="w-4 h-4 text-plum" />
       <span className="text-xs font-medium text-ink">{label}</span>
     </Link>
   );
@@ -775,7 +775,7 @@ function DashboardChart({ todaysCount, db }: { todaysCount: number; db?: any }) 
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5">
-      <BarChartCard title="Weekly appointments" data={weekData} dataKey="appts" xKey="day" color="#2d7766" height={220} />
+      <BarChartCard title="Weekly appointments" data={weekData} dataKey="appts" xKey="day" color="#4C1D95" height={220} />
       <AreaChartCard title="Revenue trend" data={weekData} dataKey="revenue" xKey="day" color="#f17f65" height={220} />
       {statusData.length > 0 && <DonutChartCard title="Appointment status" data={statusData} height={220} />}
     </div>

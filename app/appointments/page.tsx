@@ -8,7 +8,7 @@ import {
   DoorOpen, CalendarCheck, X, Activity, ArrowRight, Users,
 } from 'lucide-react';
 import Shell from '../components/Shell';
-import { Card, Badge, Button, EmptyState, Modal, Field, inputCls, Select, DateInput, NumberInput, Textarea } from '../components/ui';
+import { Card, Badge, Button, EmptyState, Modal, Field, Input, Checkbox, Select, DateInput, NumberInput, Textarea } from '../components/ui';
 import { useDB, Appointment, newId, today } from '../lib/store';
 import { useAuth } from '../lib/auth';
 import { AISuggestionButton, AISuggestionPanel } from '../components/ai-suggestion';
@@ -198,7 +198,7 @@ export default function AppointmentsPage() {
     setEditAppt(null);
   };
 
-  if (!db) return <Shell title="Appointments"><div className="text-sm text-ink/50">Loading…</div></Shell>;
+  if (!db) return <Shell module="appointments" title="Appointments"><div className="text-sm text-ink/50">Loading…</div></Shell>;
 
   return (
     <Shell title="Appointments" subtitle="Scheduling, queue management, and calendar">
@@ -213,12 +213,12 @@ export default function AppointmentsPage() {
             key={tb.id}
             onClick={() => setTab(tb.id)}
             className={`inline-flex items-center gap-1.5 px-3 h-8 rounded-md text-xs font-medium transition-colors ${
-              tab === tb.id ? 'bg-mint text-sage' : 'text-ink/60 hover:bg-canvas'
+              tab === tb.id ? 'bg-lilac text-plum' : 'text-ink/60 hover:bg-canvas'
             }`}
           >
             <tb.icon className="w-3.5 h-3.5" /> {tb.label}
             {tb.id === 'queue' && todayQueue.length > 0 && (
-              <span className="ml-0.5 text-[10px] bg-sage text-white rounded-full px-1.5 py-0.5 font-semibold">{todayQueue.length}</span>
+              <span className="ml-0.5 text-[10px] bg-plum text-white rounded-full px-1.5 py-0.5 font-semibold">{todayQueue.length}</span>
             )}
             {tb.id === 'waitlist' && (waitlist.length + followUps.length) > 0 && (
               <span className="ml-0.5 text-[10px] bg-coral text-white rounded-full px-1.5 py-0.5 font-semibold">{waitlist.length + followUps.length}</span>
@@ -238,7 +238,7 @@ export default function AppointmentsPage() {
                   key={vm}
                   onClick={() => setViewMode(vm)}
                   className={`px-3 h-8 rounded-md text-xs font-medium capitalize transition-colors ${
-                    viewMode === vm ? 'bg-mint text-sage' : 'text-ink/60 hover:bg-canvas'
+                    viewMode === vm ? 'bg-lilac text-plum' : 'text-ink/60 hover:bg-canvas'
                   }`}
                 >
                   {vm}
@@ -257,7 +257,7 @@ export default function AppointmentsPage() {
               <button onClick={() => setCurrentDate(addDays(currentDate, viewMode === 'day' ? 1 : viewMode === 'week' ? 7 : 30))} className="text-ink/50 hover:text-ink">
                 <ChevronRight className="w-4 h-4" />
               </button>
-              <button onClick={() => setCurrentDate(new Date())} className="ml-1 text-[11px] text-sage font-medium hover:underline">Today</button>
+              <button onClick={() => setCurrentDate(new Date())} className="ml-1 text-[11px] text-plum font-medium hover:underline">Today</button>
             </div>
             <div className="flex-1" />
             <AISuggestionButton onClick={() => { const a = db?.appointments[0]; const p = a ? db?.pets.find(pt => pt.id === a.petId) : undefined; const o = a ? db?.owners.find(ow => ow.id === a.ownerId) : undefined; if (a && p && o) setAiSuggestion(generateAppointmentSummary(a, p, o)); }} label="AI Summary" />
@@ -275,7 +275,7 @@ export default function AppointmentsPage() {
                 <div key={v} className="flex items-center gap-1.5">
                   <span className="text-[11px] text-ink/70 font-medium">{v}</span>
                   <div className="w-20 h-2 rounded-full bg-canvas overflow-hidden">
-                    <div className={`h-full rounded-full transition-all ${load >= 8 ? 'bg-coral' : load >= 5 ? 'bg-amber-500' : 'bg-sage'}`} style={{ width: `${Math.min(load * 12.5, 100)}%` }} />
+                    <div className={`h-full rounded-full transition-all ${load >= 8 ? 'bg-coral' : load >= 5 ? 'bg-amber-500' : 'bg-plum'}`} style={{ width: `${Math.min(load * 12.5, 100)}%` }} />
                   </div>
                   <span className="text-[10px] text-ink/50">{load} appts</span>
                 </div>
@@ -301,7 +301,7 @@ export default function AppointmentsPage() {
           <Card className="p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <ListOrdered className="w-4 h-4 text-sage" />
+                <ListOrdered className="w-4 h-4 text-plum" />
                 <span className="text-sm font-semibold text-ink">Active Queue — Today</span>
               </div>
               <span className="text-[11px] text-ink/50">{todayQueue.length} in queue</span>
@@ -314,7 +314,7 @@ export default function AppointmentsPage() {
                   const BTIcon = bookingTypeIcon[a.bookingType] || Globe;
                   return (
                     <div key={a.id} className={`flex items-center gap-3 rounded-xl border p-3 ${a.status === 'In consultation' ? 'border-coral/30 bg-coral/5' : 'border-line bg-white'}`}>
-                      <div className="w-10 h-10 rounded-xl bg-mint text-sage flex items-center justify-center text-sm font-bold shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-lilac text-plum flex items-center justify-center text-sm font-bold shrink-0">
                         {a.tokenNumber || i + 1}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -350,7 +350,7 @@ export default function AppointmentsPage() {
           {/* Room allocation */}
           <Card className="p-5">
             <div className="flex items-center gap-2 mb-3">
-              <DoorOpen className="w-4 h-4 text-sage" />
+              <DoorOpen className="w-4 h-4 text-plum" />
               <span className="text-sm font-semibold text-ink">Room Allocation — Today</span>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -358,10 +358,10 @@ export default function AppointmentsPage() {
                 const assigned = roomAssignments.filter((r) => r.room === room);
                 const active = assigned.find((r) => r.appt.status === 'In consultation');
                 return (
-                  <div key={room} className={`rounded-xl border p-3 ${active ? 'border-coral/30 bg-coral/5' : assigned.length > 0 ? 'border-sage/20 bg-mint/20' : 'border-line bg-canvas'}`}>
+                  <div key={room} className={`rounded-xl border p-3 ${active ? 'border-coral/30 bg-coral/5' : assigned.length > 0 ? 'border-plum/20 bg-lilac/20' : 'border-line bg-canvas'}`}>
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-semibold text-ink">{room}</span>
-                      <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${active ? 'bg-coral/15 text-coral' : assigned.length > 0 ? 'bg-mint text-sage' : 'bg-ink/10 text-ink/40'}`}>
+                      <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${active ? 'bg-coral/15 text-coral' : assigned.length > 0 ? 'bg-lilac text-plum' : 'bg-ink/10 text-ink/40'}`}>
                         {active ? 'In use' : assigned.length > 0 ? 'Booked' : 'Free'}
                       </span>
                     </div>
@@ -381,7 +381,7 @@ export default function AppointmentsPage() {
           {/* Token system summary */}
           <Card className="p-5">
             <div className="flex items-center gap-2 mb-3">
-              <ListOrdered className="w-4 h-4 text-sage" />
+              <ListOrdered className="w-4 h-4 text-plum" />
               <span className="text-sm font-semibold text-ink">Token System — Today</span>
             </div>
             <div className="grid grid-cols-4 gap-3">
@@ -394,7 +394,7 @@ export default function AppointmentsPage() {
                 <div className="text-[10px] text-ink/50">Total today</div>
               </div>
               <div className="rounded-xl bg-canvas p-3 text-center">
-                <div className="text-lg font-semibold text-sage">{sorted.filter((a) => a.date === today() && a.status === 'Completed').length}</div>
+                <div className="text-lg font-semibold text-plum">{sorted.filter((a) => a.date === today() && a.status === 'Completed').length}</div>
                 <div className="text-[10px] text-ink/50">Completed</div>
               </div>
               <div className="rounded-xl bg-canvas p-3 text-center">
@@ -457,7 +457,7 @@ export default function AppointmentsPage() {
           {/* Follow-up reminders */}
           <Card className="p-5">
             <div className="flex items-center gap-2 mb-3">
-              <Bell className="w-4 h-4 text-sage" />
+              <Bell className="w-4 h-4 text-plum" />
               <span className="text-sm font-semibold text-ink">Follow-up Reminders</span>
             </div>
             {followUps.length === 0 ? (
@@ -465,8 +465,8 @@ export default function AppointmentsPage() {
             ) : (
               <div className="space-y-2">
                 {followUps.map((a) => (
-                  <div key={a.id} className="flex items-center gap-3 rounded-xl border border-sage/20 bg-mint/20 p-3">
-                    <Bell className="w-4 h-4 text-sage shrink-0" />
+                  <div key={a.id} className="flex items-center gap-3 rounded-xl border border-plum/20 bg-lilac/20 p-3">
+                    <Bell className="w-4 h-4 text-plum shrink-0" />
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-ink">{petName(a.petId)} — Follow-up due {a.followUpDate}</div>
                       <div className="text-[11px] text-ink/50">{a.service} · {a.vet} · {a.notes}</div>
@@ -539,7 +539,7 @@ export default function AppointmentsPage() {
               </Select>
             </Field>
           </div>
-          <Field label="Reason"><input className={inputCls} value={form.reason} onChange={(e) => set('reason', e.target.value)} placeholder="Annual wellness + vaccine" /></Field>
+          <Field label="Reason"><Input value={form.reason} onChange={(e) => set('reason', e.target.value)} placeholder="Annual wellness + vaccine" /></Field>
           <div className="border-t border-line pt-3 space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <Field label="Recurrence">
@@ -550,14 +550,8 @@ export default function AppointmentsPage() {
               <Field label="Follow-up date"><DateInput value={form.followUpDate} onChange={(e) => set('followUpDate', e.target.value)} /></Field>
             </div>
             <div className="flex items-center gap-4">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={form.isRecurring} onChange={(e) => set('isRecurring', e.target.checked)} className="w-4 h-4 rounded accent-sage" />
-                <span className="text-xs text-ink/70">Recurring appointment</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={form.followUpReminder} onChange={(e) => set('followUpReminder', e.target.checked)} className="w-4 h-4 rounded accent-sage" />
-                <span className="text-xs text-ink/70">Follow-up reminder</span>
-              </label>
+              <Checkbox checked={form.isRecurring} onChange={(e) => set('isRecurring', e.target.checked)} label="Recurring appointment" />
+              <Checkbox checked={form.followUpReminder} onChange={(e) => set('followUpReminder', e.target.checked)} label="Follow-up reminder" />
             </div>
           </div>
           <Field label="Notes">
@@ -620,8 +614,8 @@ export default function AppointmentsPage() {
               </div>
             )}
             {detailAppt.followUpDate && (
-              <div className="rounded-lg bg-mint/20 border border-sage/20 p-3 flex items-center gap-2">
-                <Bell className="w-4 h-4 text-sage" />
+              <div className="rounded-lg bg-lilac/20 border border-plum/20 p-3 flex items-center gap-2">
+                <Bell className="w-4 h-4 text-plum" />
                 <span className="text-xs text-ink/70">Follow-up scheduled for {detailAppt.followUpDate}</span>
               </div>
             )}
@@ -651,7 +645,7 @@ export default function AppointmentsPage() {
                   const isActive = i <= currentIdx && detailAppt.status !== 'Cancelled' && detailAppt.status !== 'No-show';
                   return (
                     <div key={s} className="flex items-center gap-1">
-                      <span className={`px-2 py-0.5 rounded-full font-medium ${isActive ? 'bg-mint text-sage' : 'bg-ink/5 text-ink/40'}`}>{s}</span>
+                      <span className={`px-2 py-0.5 rounded-full font-medium ${isActive ? 'bg-lilac text-plum' : 'bg-ink/5 text-ink/40'}`}>{s}</span>
                       {i < 3 && <ArrowRight className="w-3 h-3 text-ink/20" />}
                     </div>
                   );
@@ -718,7 +712,7 @@ function DayView({ date, appts, petName, ownerName, onDetail, onAdvance, onCance
                 <span className={`inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full font-medium ${bookingTypeColor[a.bookingType] || 'bg-ink/10 text-ink/60'}`}>
                   <BTIcon className="w-2.5 h-2.5" /> {a.bookingType}
                 </span>
-                {a.isRecurring && <Repeat className="w-3 h-3 text-sage" />}
+                {a.isRecurring && <Repeat className="w-3 h-3 text-plum" />}
                 {a.followUpReminder && <Bell className="w-3 h-3 text-amber-500" />}
               </div>
               <div className="text-[11px] text-ink/50">{ownerName(a.ownerId)} · {a.vet} · {a.reason}</div>
@@ -765,14 +759,14 @@ function WeekView({ weekStart, byDate, petName, onDetail, onBook }: {
         const appts = byDate[dateStr] ?? [];
         const isToday = dateStr === today();
         return (
-          <div key={dateStr} className={`rounded-xl border ${isToday ? 'border-sage/30 bg-mint/10' : 'border-line bg-white'} min-h-[180px] overflow-hidden`}>
-            <div className={`px-3 py-2 border-b ${isToday ? 'border-sage/20' : 'border-line'} flex items-center justify-between`}>
+          <div key={dateStr} className={`rounded-xl border ${isToday ? 'border-plum/30 bg-lilac/10' : 'border-line bg-white'} min-h-[180px] overflow-hidden`}>
+            <div className={`px-3 py-2 border-b ${isToday ? 'border-plum/20' : 'border-line'} flex items-center justify-between`}>
               <div>
                 <div className="text-[10px] text-ink/50 uppercase font-medium">{dayNames[d.getDay()]}</div>
-                <div className={`text-sm font-semibold ${isToday ? 'text-sage' : 'text-ink'}`}>{d.getDate()}</div>
+                <div className={`text-sm font-semibold ${isToday ? 'text-plum' : 'text-ink'}`}>{d.getDate()}</div>
               </div>
               {appts.length === 0 && (
-                <button onClick={() => onBook(dateStr)} className="w-6 h-6 rounded-lg hover:bg-mint text-ink/30 hover:text-sage flex items-center justify-center transition-colors">
+                <button onClick={() => onBook(dateStr)} className="w-6 h-6 rounded-lg hover:bg-lilac text-ink/30 hover:text-plum flex items-center justify-center transition-colors">
                   <Plus className="w-3.5 h-3.5" />
                 </button>
               )}
@@ -784,9 +778,9 @@ function WeekView({ weekStart, byDate, petName, onDetail, onBook }: {
                   <button
                     key={a.id}
                     onClick={() => onDetail(a)}
-                    className={`w-full text-left rounded-lg p-1.5 text-[10px] transition-all hover:ring-2 hover:ring-sage/20 ${
+                    className={`w-full text-left rounded-lg p-1.5 text-[10px] transition-all hover:ring-2 hover:ring-plum/20 ${
                       a.status === 'Cancelled' ? 'bg-ink/5 opacity-50' :
-                      a.status === 'Completed' ? 'bg-mint/30' :
+                      a.status === 'Completed' ? 'bg-lilac/30' :
                       a.status === 'In consultation' ? 'bg-coral/10' :
                       a.bookingType === 'Emergency' ? 'bg-coral/10' :
                       a.bookingType === 'Walk-in' ? 'bg-amber-50' : 'bg-sky-50'
@@ -841,13 +835,13 @@ function MonthView({ current, byDate, onDayClick }: {
             <button
               key={i}
               onClick={() => onDayClick(dateStr)}
-              className={`min-h-[80px] border-r border-b border-line p-1.5 text-left transition-colors hover:bg-mint/10 ${isToday ? 'bg-mint/20' : 'bg-white'}`}
+              className={`min-h-[80px] border-r border-b border-line p-1.5 text-left transition-colors hover:bg-lilac/10 ${isToday ? 'bg-lilac/20' : 'bg-white'}`}
             >
-              <div className={`text-xs font-medium ${isToday ? 'text-sage' : 'text-ink/70'}`}>{d.getDate()}</div>
+              <div className={`text-xs font-medium ${isToday ? 'text-plum' : 'text-ink/70'}`}>{d.getDate()}</div>
               <div className="mt-1 space-y-0.5">
                 {appts.slice(0, 3).map((a) => (
                   <div key={a.id} className={`text-[9px] rounded px-1 py-0.5 truncate ${
-                    a.status === 'Completed' ? 'bg-mint/30 text-sage' :
+                    a.status === 'Completed' ? 'bg-lilac/30 text-plum' :
                     a.status === 'Cancelled' ? 'bg-ink/5 text-ink/40' :
                     a.bookingType === 'Emergency' ? 'bg-coral/10 text-coral' :
                     'bg-sky-50 text-sky-700'

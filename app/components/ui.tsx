@@ -1,13 +1,19 @@
 import { ReactNode } from 'react';
-import { LucideIcon, ChevronDown, Calendar, X } from 'lucide-react';
+import { LucideIcon, X } from 'lucide-react';
 import {
   ResponsiveContainer, BarChart, Bar, LineChart, Line, AreaChart, Area,
   PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 
 /* ---------- Card ---------- */
-export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`bg-white rounded-2xl border border-line shadow-soft ${className}`}>{children}</div>;
+export function Card({
+  children, className = '', hover,
+}: { children: ReactNode; className?: string; hover?: boolean }) {
+  return (
+    <div className={`bg-white rounded-2xl border border-line shadow-soft ${hover ? 'hv-card hover:border-plum/25' : ''} ${className}`}>
+      {children}
+    </div>
+  );
 }
 
 /* ---------- SectionTitle ---------- */
@@ -26,30 +32,30 @@ export function StatCard({
   label,
   value,
   sub,
-  tone = 'sage',
+  tone = 'plum',
 }: {
   icon: LucideIcon;
   label: string;
   value: string | number;
   sub?: string;
-  tone?: 'sage' | 'coral' | 'amber' | 'sky';
+  tone?: 'plum' | 'coral' | 'amber' | 'sky';
 }) {
   const tones: Record<string, string> = {
-    sage: 'bg-mint text-sage',
+    plum: 'bg-lilac text-plum',
     coral: 'bg-coral/15 text-coral',
     amber: 'bg-amber-100 text-amber-600',
     sky: 'bg-sky-100 text-sky-600',
   };
   const accent: Record<string, string> = {
-    sage: 'before:bg-sage',
+    plum: 'before:bg-plum',
     coral: 'before:bg-coral',
     amber: 'before:bg-amber-500',
     sky: 'before:bg-sky-500',
   };
   return (
-    <div className={`relative bg-white rounded-2xl border border-line shadow-soft p-4 overflow-hidden before:absolute before:top-0 before:left-0 before:w-full before:h-[3px] ${accent[tone]}`}>
+    <div className={`hv-card group relative bg-white rounded-2xl border border-line shadow-soft p-4 mb-5 overflow-hidden hover:border-plum/25 before:absolute before:top-0 before:left-0 before:w-full before:h-[3px] ${accent[tone]}`}>
       <div className="flex items-center gap-3">
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${tones[tone]}`}>
+        <div className={`hv-tile w-10 h-10 rounded-xl flex items-center justify-center ${tones[tone]}`}>
           <Icon className="w-5 h-5" />
         </div>
         <div className="min-w-0">
@@ -67,17 +73,17 @@ const badgeTones: Record<string, string> = {
   Scheduled: 'bg-sky-100 text-sky-700',
   'Checked-in': 'bg-amber-100 text-amber-700',
   'In consultation': 'bg-coral/15 text-coral',
-  Completed: 'bg-mint text-sage',
+  Completed: 'bg-lilac text-plum',
   Cancelled: 'bg-ink/10 text-ink/50',
-  Paid: 'bg-mint text-sage',
+  Paid: 'bg-lilac text-plum',
   Pending: 'bg-amber-100 text-amber-700',
   Overdue: 'bg-coral/15 text-coral',
   Refunded: 'bg-ink/10 text-ink/50',
-  Active: 'bg-mint text-sage',
+  Active: 'bg-lilac text-plum',
   'On leave': 'bg-amber-100 text-amber-700',
   Inactive: 'bg-ink/10 text-ink/50',
   'In progress': 'bg-coral/15 text-coral',
-  'Checked-in boarding': 'bg-mint text-sage',
+  'Checked-in boarding': 'bg-lilac text-plum',
 };
 
 export function Badge({ status }: { status: string }) {
@@ -90,19 +96,22 @@ export function Badge({ status }: { status: string }) {
 }
 
 /* ---------- EmptyState ---------- */
-export function EmptyState({ icon: Icon, title, hint }: { icon: LucideIcon; title: string; hint?: string }) {
+export function EmptyState({ icon: Icon, title, hint, action }: { icon: LucideIcon; title: string; hint?: string; action?: ReactNode }) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 text-center">
-      <div className="w-12 h-12 rounded-2xl bg-mint text-sage flex items-center justify-center mb-3">
+    <div className="group flex flex-col items-center justify-center py-12 text-center">
+      <div className="hv-tile w-12 h-12 rounded-2xl bg-lilac text-plum flex items-center justify-center mb-3">
         <Icon className="w-6 h-6" />
       </div>
       <p className="text-sm font-medium text-ink">{title}</p>
       {hint && <p className="text-xs text-ink/50 mt-1 max-w-xs">{hint}</p>}
+      {action && <div className="mt-4">{action}</div>}
     </div>
   );
 }
 
-/* ---------- Button ---------- */
+/* ---------- Button ----------
+   Hover: lifts 2px, shadow grows; any child marked `.hv-slide`
+   (e.g. a trailing arrow) slides 3px right. See globals.css. */
 export function Button({
   children,
   onClick,
@@ -110,32 +119,140 @@ export function Button({
   size = 'md',
   type = 'button',
   disabled = false,
+  icon: Icon,
+  iconRight: IconRight,
+  full,
   className = '',
 }: {
-  children: ReactNode;
+  children?: ReactNode;
   onClick?: () => void;
-  variant?: 'primary' | 'ghost' | 'outline' | 'danger';
-  size?: 'sm' | 'md';
+  variant?: 'primary' | 'ghost' | 'outline' | 'danger' | 'soft';
+  size?: 'sm' | 'md' | 'lg';
   type?: 'button' | 'submit';
   disabled?: boolean;
+  icon?: LucideIcon;
+  iconRight?: LucideIcon;
+  full?: boolean;
   className?: string;
 }) {
   const variants = {
-    primary: 'bg-sage text-white hover:bg-sage/90 active:scale-[0.98] shadow-sm shadow-sage/20',
-    ghost: 'text-ink/70 hover:bg-canvas active:scale-[0.98]',
-    outline: 'border border-line text-ink hover:bg-canvas hover:border-sage/40 active:scale-[0.98]',
-    danger: 'bg-coral/15 text-coral hover:bg-coral/25 active:scale-[0.98]',
+    primary: 'bg-plum text-white hover:bg-grape shadow-sm hover:shadow-lift',
+    soft: 'bg-lilac text-plum hover:bg-plum hover:text-white',
+    ghost: 'text-ink/70 hover:bg-lilac hover:text-plum',
+    outline: 'border border-line text-ink bg-white hover:border-plum hover:text-plum hover:shadow-lift-sm',
+    danger: 'bg-coral/15 text-coral hover:bg-coral hover:text-white hover:shadow-lift-sm',
   };
-  const sizes = { sm: 'h-8 px-3 text-xs', md: 'h-9 px-4 text-sm' };
+  const sizes = { sm: 'h-8 px-3 text-xs', md: 'h-9 px-4 text-sm', lg: 'h-11 px-6 text-sm' };
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-all ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''} ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`hv-lift inline-flex items-center justify-center gap-1.5 rounded-lg font-medium outline-none focus-visible:ring-4 focus-visible:ring-lilac
+        ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}
+        ${variants[variant]} ${sizes[size]} ${full ? 'w-full' : ''} ${className}`}
     >
+      {Icon && <Icon className="w-4 h-4 shrink-0" />}
       {children}
+      {IconRight && <IconRight className="w-4 h-4 shrink-0 hv-slide" />}
     </button>
+  );
+}
+
+/* ---------- IconButton ---------- */
+export function IconButton({
+  icon: Icon,
+  onClick,
+  label,
+  variant = 'ghost',
+  size = 'md',
+  disabled,
+  className = '',
+}: {
+  icon: LucideIcon;
+  onClick?: () => void;
+  label: string;
+  variant?: 'ghost' | 'soft' | 'outline' | 'danger';
+  size?: 'sm' | 'md';
+  disabled?: boolean;
+  className?: string;
+}) {
+  const variants = {
+    ghost: 'text-ink/50 hover:bg-lilac hover:text-plum',
+    soft: 'bg-lilac text-plum hover:bg-plum hover:text-white',
+    outline: 'border border-line text-ink/60 bg-white hover:border-plum hover:text-plum',
+    danger: 'text-ink/50 hover:bg-coral/15 hover:text-coral',
+  };
+  const sizes = { sm: 'w-7 h-7', md: 'w-9 h-9' };
+  const icons = { sm: 'w-3.5 h-3.5', md: 'w-4 h-4' };
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      title={label}
+      aria-label={label}
+      className={`hv-icon inline-flex items-center justify-center rounded-lg outline-none focus-visible:ring-4 focus-visible:ring-lilac
+        ${disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : ''}
+        ${variants[variant]} ${sizes[size]} ${className}`}
+    >
+      <Icon className={icons[size]} />
+    </button>
+  );
+}
+
+
+/* ---------- Tabs ----------
+   Pill-style tab bar used across every admin section. Active pill is
+   solid plum; inactive pills are outlined and lift on hover. */
+export function Tabs<T extends string>({
+  tabs,
+  value,
+  onChange,
+  size = 'md',
+  className = 'mb-5',
+}: {
+  tabs: { key: T; label: string; icon?: LucideIcon; count?: number }[];
+  value: T;
+  onChange: (key: T) => void;
+  size?: 'sm' | 'md';
+  className?: string;
+}) {
+  const pad = size === 'sm' ? 'px-3 py-1.5 text-xs gap-1' : 'px-4 py-2 text-sm gap-1.5';
+  const ico = size === 'sm' ? 'w-3.5 h-3.5' : 'w-4 h-4';
+  return (
+    <div
+      role="tablist"
+      className={`flex gap-1.5 overflow-x-auto pb-1.5 -mx-1 px-1 [scrollbar-width:thin] ${className}`}
+    >
+      {tabs.map((t) => {
+        const active = t.key === value;
+        return (
+          <button
+            key={t.key}
+            type="button"
+            role="tab"
+            aria-selected={active}
+            onClick={() => onChange(t.key)}
+            className={`hv-lift inline-flex items-center shrink-0 rounded-xl font-medium whitespace-nowrap outline-none focus-visible:ring-4 focus-visible:ring-lilac ${pad}
+              ${active
+                ? 'bg-plum text-white shadow-lift-sm'
+                : 'bg-white text-ink/60 border border-line hover:border-plum/40 hover:bg-lilac/40 hover:text-plum'}`}
+          >
+            {t.icon && <t.icon className={`${ico} shrink-0`} />}
+            {t.label}
+            {t.count !== undefined && (
+              <span
+                className={`ml-0.5 min-w-[18px] px-1 rounded-full text-[10px] font-semibold tabular-nums leading-[18px]
+                  ${active ? 'bg-white/20 text-white' : 'bg-lilac text-plum'}`}
+              >
+                {t.count}
+              </span>
+            )}
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
@@ -157,10 +274,10 @@ export function Modal({
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto">
       <div className="absolute inset-0 bg-ink/40 backdrop-blur-sm" onClick={onClose} />
-      <div className={`relative w-full ${wide ? 'max-w-3xl' : 'max-w-lg'} mt-10 mb-10 bg-white rounded-2xl shadow-soft border border-line animate-[fadeIn_0.15s_ease]`}>
+      <div className={`relative w-full ${wide ? 'max-w-3xl' : 'max-w-lg'} mt-10 mb-10 bg-white rounded-2xl shadow-soft border border-line animate-popIn`}>
         <div className="flex items-center justify-between px-5 h-14 border-b border-line">
           <h3 className="text-sm font-semibold text-ink">{title}</h3>
-          <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center text-ink/40 hover:text-ink hover:bg-canvas transition-colors">
+          <button onClick={onClose} aria-label="Close" className="hv-icon w-7 h-7 rounded-lg flex items-center justify-center text-ink/40 hover:text-coral hover:bg-coral/10">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -170,155 +287,23 @@ export function Modal({
   );
 }
 
-/* ---------- Field ---------- */
-export function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: ReactNode;
-}) {
-  return (
-    <label className="block">
-      <span className="text-[11px] font-semibold text-ink/55 uppercase tracking-wide">{label}</span>
-      <div className="mt-1.5">{children}</div>
-    </label>
-  );
-}
-
-/* ---------- Custom Input ---------- */
-export const inputCls =
-  'w-full h-10 px-3.5 rounded-xl border border-line bg-white text-sm text-ink placeholder:text-ink/30 outline-none transition-all focus:border-sage focus:ring-4 focus:ring-mint/60 hover:border-sage/30';
-
-/* ---------- Custom Select ---------- */
-export function Select({
-  value,
-  onChange,
-  children,
-  disabled,
-  className = '',
-}: {
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  children: ReactNode;
-  disabled?: boolean;
-  className?: string;
-}) {
-  return (
-    <div className={`relative ${disabled ? 'opacity-60' : ''}`}>
-      <select
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        className={`appearance-none w-full h-10 pl-3.5 pr-9 rounded-xl border border-line bg-white text-sm text-ink outline-none transition-all cursor-pointer focus:border-sage focus:ring-4 focus:ring-mint/60 hover:border-sage/30 ${className}`}
-      >
-        {children}
-      </select>
-      <ChevronDown className="w-4 h-4 text-ink/40 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-    </div>
-  );
-}
-
-/* ---------- Custom Textarea ---------- */
-export function Textarea({
-  value,
-  onChange,
-  placeholder,
-  className = '',
-}: {
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  placeholder?: string;
-  className?: string;
-}) {
-  return (
-    <textarea
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      className={`w-full px-3.5 py-2.5 rounded-xl border border-line bg-white text-sm text-ink placeholder:text-ink/30 outline-none transition-all focus:border-sage focus:ring-4 focus:ring-mint/60 hover:border-sage/30 resize-none ${className}`}
-    />
-  );
-}
-
-/* ---------- Custom Date Input ---------- */
-export function DateInput({
-  value,
-  onChange,
-  className = '',
-}: {
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  className?: string;
-}) {
-  return (
-    <div className={`relative ${className}`}>
-      <input
-        type="date"
-        value={value}
-        onChange={onChange}
-        className="appearance-none w-full h-10 pl-3.5 pr-9 rounded-xl border border-line bg-white text-sm text-ink outline-none transition-all focus:border-sage focus:ring-4 focus:ring-mint/60 hover:border-sage/30"
-      />
-      <Calendar className="w-4 h-4 text-ink/40 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-    </div>
-  );
-}
-
-/* ---------- Custom Number Input ---------- */
-export function NumberInput({
-  value,
-  onChange,
-  placeholder,
-  className = '',
-}: {
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  className?: string;
-}) {
-  return (
-    <input
-      type="number"
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      className={`w-full h-10 px-3.5 rounded-xl border border-line bg-white text-sm text-ink placeholder:text-ink/30 outline-none transition-all focus:border-sage focus:ring-4 focus:ring-mint/60 hover:border-sage/30 ${className}`}
-    />
-  );
-}
-
-/* ---------- Custom Checkbox ---------- */
-export function Checkbox({
-  checked,
-  onChange,
-  label,
-}: {
-  checked: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  label: string;
-}) {
-  return (
-    <label className="flex items-center gap-2.5 cursor-pointer group">
-      <span className="relative flex items-center justify-center w-5 h-5 rounded-md border-2 transition-all group-hover:border-sage" style={checked ? { borderColor: '#2d7766', backgroundColor: '#2d7766' } : { borderColor: '#e4ece8' }}>
-        {checked && (
-          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-          </svg>
-        )}
-        <input type="checkbox" checked={checked} onChange={onChange} className="absolute inset-0 opacity-0 cursor-pointer" />
-      </span>
-      <span className="text-xs text-ink/70 select-none">{label}</span>
-    </label>
-  );
-}
+/* ---------- Form controls ----------
+   All inputs live in ./form.tsx (fully custom: no native dropdowns,
+   no native date picker, custom radio/checkbox/switch). Re-exported
+   here so existing `from '../components/ui'` imports keep working. */
+export {
+  Field, Input, SearchInput, Textarea, Select, DatePicker, DateInput, TimeInput,
+  NumberInput, ColorInput, ImagePicker, Checkbox, Radio, RadioGroup, Switch,
+  SegmentedControl, FileInput, inputCls,
+} from './form';
 
 /* ---------- Chart Components ---------- */
-const CHART_COLORS = ['#2d7766', '#f17f65', '#f59e0b', '#0ea5e9', '#8b5cf6', '#ec4899'];
+const CHART_COLORS = ['#4C1D95', '#7C3AED', '#A78BFA', '#f17f65', '#f59e0b', '#0ea5e9', '#ec4899'];
 
 const tooltipStyle = {
   borderRadius: '12px',
-  border: '1px solid #e4ece8',
-  boxShadow: '0 8px 24px rgba(20,34,33,0.08)',
+  border: '1px solid #E8E3F3',
+  boxShadow: '0 8px 24px rgba(26,13,46,0.10)',
   fontSize: '12px',
   padding: '8px 12px',
 } as const;
@@ -328,7 +313,7 @@ export function BarChartCard({
   data,
   dataKey,
   xKey,
-  color = '#2d7766',
+  color = '#4C1D95',
   height = 240,
   action,
 }: {
@@ -345,10 +330,10 @@ export function BarChartCard({
       <SectionTitle title={title} action={action} />
       <ResponsiveContainer width="100%" height={height}>
         <BarChart data={data} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e4ece8" vertical={false} />
-          <XAxis dataKey={xKey} tick={{ fontSize: 11, fill: '#6b8079' }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fontSize: 11, fill: '#6b8079' }} axisLine={false} tickLine={false} />
-          <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(220,239,232,0.4)' }} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#E8E3F3" vertical={false} />
+          <XAxis dataKey={xKey} tick={{ fontSize: 11, fill: '#6E6484' }} axisLine={false} tickLine={false} />
+          <YAxis tick={{ fontSize: 11, fill: '#6E6484' }} axisLine={false} tickLine={false} />
+          <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(237,233,254,0.55)' }} />
           <Bar dataKey={dataKey} fill={color} radius={[6, 6, 0, 0]} maxBarSize={48} />
         </BarChart>
       </ResponsiveContainer>
@@ -361,7 +346,7 @@ export function LineChartCard({
   data,
   dataKey,
   xKey,
-  color = '#2d7766',
+  color = '#4C1D95',
   height = 240,
   action,
 }: {
@@ -378,9 +363,9 @@ export function LineChartCard({
       <SectionTitle title={title} action={action} />
       <ResponsiveContainer width="100%" height={height}>
         <LineChart data={data} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e4ece8" vertical={false} />
-          <XAxis dataKey={xKey} tick={{ fontSize: 11, fill: '#6b8079' }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fontSize: 11, fill: '#6b8079' }} axisLine={false} tickLine={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#E8E3F3" vertical={false} />
+          <XAxis dataKey={xKey} tick={{ fontSize: 11, fill: '#6E6484' }} axisLine={false} tickLine={false} />
+          <YAxis tick={{ fontSize: 11, fill: '#6E6484' }} axisLine={false} tickLine={false} />
           <Tooltip contentStyle={tooltipStyle} />
           <Line
             type="monotone"
@@ -401,7 +386,7 @@ export function AreaChartCard({
   data,
   dataKey,
   xKey,
-  color = '#2d7766',
+  color = '#4C1D95',
   height = 240,
   action,
 }: {
@@ -425,9 +410,9 @@ export function AreaChartCard({
               <stop offset="100%" stopColor={color} stopOpacity={0.02} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e4ece8" vertical={false} />
-          <XAxis dataKey={xKey} tick={{ fontSize: 11, fill: '#6b8079' }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fontSize: 11, fill: '#6b8079' }} axisLine={false} tickLine={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#E8E3F3" vertical={false} />
+          <XAxis dataKey={xKey} tick={{ fontSize: 11, fill: '#6E6484' }} axisLine={false} tickLine={false} />
+          <YAxis tick={{ fontSize: 11, fill: '#6E6484' }} axisLine={false} tickLine={false} />
           <Tooltip contentStyle={tooltipStyle} />
           <Area
             type="monotone"

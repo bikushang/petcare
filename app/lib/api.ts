@@ -31,6 +31,11 @@ export type DB = {
   inventoryItems: InventoryItem[];
   stockTransfers: StockTransfer[];
   stockAdjustments: StockAdjustment[];
+  campaigns: Campaign[];
+  segments: Segment[];
+  messages: SiteMessage[];
+  siteReviews: SiteReview[];
+  subscribers: Subscriber[];
 };
 
 export type FamilyMember = {
@@ -863,6 +868,16 @@ export type CollectionType<C extends Collection> = C extends 'owners'
   ? StockTransfer
   : C extends 'stockAdjustments'
   ? StockAdjustment
+  : C extends 'campaigns'
+  ? Campaign
+  : C extends 'segments'
+  ? Segment
+  : C extends 'messages'
+  ? SiteMessage
+  : C extends 'siteReviews'
+  ? SiteReview
+  : C extends 'subscribers'
+  ? Subscriber
   : never;
 
 export type StaffAssignment = {
@@ -1024,6 +1039,104 @@ export type LabTest = {
   createdAt: string;
 };
 
+/* ──────────────────────────────────────────────────────────────
+   Marketing + public-website collections
+   ────────────────────────────────────────────────────────────── */
+
+export type Campaign = {
+  id: string;
+  name: string;
+  channel: 'Email' | 'SMS' | 'WhatsApp' | 'Push' | 'Mixed';
+  status: 'Draft' | 'Scheduled' | 'Active' | 'Paused' | 'Completed';
+  targetSegment: string;
+  segmentId: string;
+  startDate: string;
+  endDate: string;
+  budget: number;
+  spent: number;
+  reach: number;
+  opens: number;
+  clicks: number;
+  conversions: number;
+  notes: string;
+  createdBy: string;
+  createdAt: string;
+};
+
+export type SegmentRuleField =
+  | 'loyaltyPoints'
+  | 'totalSpent'
+  | 'visitCount'
+  | 'daysSinceLastVisit'
+  | 'petAgeYears'
+  | 'petSpecies'
+  | 'vaccinationDue';
+
+export type SegmentRule = {
+  field: SegmentRuleField;
+  op: 'gt' | 'gte' | 'lt' | 'lte' | 'eq' | 'neq';
+  value: string;
+};
+
+export type Segment = {
+  id: string;
+  name: string;
+  description: string;
+  rules: SegmentRule[];
+  match: 'all' | 'any';
+  createdBy: string;
+  createdAt: string;
+};
+
+export type MessageAttachment = { name: string; size: number };
+
+export type SiteMessage = {
+  id: string;
+  reference: string;
+  source: 'Contact form' | 'FAQ question' | 'Booking request' | 'Other';
+  name: string;
+  email: string;
+  phone: string;
+  petName: string;
+  topic: string;
+  branch: string;
+  message: string;
+  attachments: MessageAttachment[];
+  consent: boolean;
+  status: 'New' | 'In progress' | 'Answered' | 'Closed';
+  assignedTo: string;
+  response: string;
+  receivedAt: string;
+  respondedAt: string;
+};
+
+export type SiteReview = {
+  id: string;
+  reference: string;
+  name: string;
+  email: string;
+  petName: string;
+  service: string;
+  rating: number;
+  text: string;
+  photos: { name: string }[];
+  consentToPublish: boolean;
+  status: 'Pending' | 'Published' | 'Rejected';
+  moderatedBy: string;
+  reply: string;
+  submittedAt: string;
+};
+
+export type Subscriber = {
+  id: string;
+  email: string;
+  source: string;
+  consent: boolean;
+  status: 'Subscribed' | 'Unsubscribed';
+  subscribedAt: string;
+  unsubscribedAt: string;
+};
+
 export type Collection =
   | 'owners'
   | 'pets'
@@ -1045,7 +1158,12 @@ export type Collection =
   | 'warehouses'
   | 'inventoryItems'
   | 'stockTransfers'
-  | 'stockAdjustments';
+  | 'stockAdjustments'
+  | 'campaigns'
+  | 'segments'
+  | 'messages'
+  | 'siteReviews'
+  | 'subscribers';
 
 const endpointMap: Record<Collection, string> = {
   owners: 'owners',
@@ -1069,6 +1187,11 @@ const endpointMap: Record<Collection, string> = {
   inventoryItems: 'inventory-items',
   stockTransfers: 'stock-transfers',
   stockAdjustments: 'stock-adjustments',
+  campaigns: 'campaigns',
+  segments: 'segments',
+  messages: 'messages',
+  siteReviews: 'site-reviews',
+  subscribers: 'subscribers',
 };
 
 export const todayISO = () => new Date().toISOString().slice(0, 10);

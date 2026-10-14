@@ -8,7 +8,7 @@ import {
   Clock, Shield,
 } from 'lucide-react';
 import Shell from '../components/Shell';
-import { Card, SectionTitle, inputCls, Button, Select, Field, Badge, Modal, EmptyState } from '../components/ui';
+import { Card, SectionTitle, Button, Input, Select, Field, Badge, Modal, EmptyState, Tabs } from '../components/ui';
 
 type Tab = 'overview' | 'tokens' | 'webhooks' | 'docs' | 'sdk' | 'import' | 'export';
 
@@ -143,7 +143,7 @@ export default function DeveloperPage() {
 
   const methodColor: Record<string, string> = {
     GET: 'bg-sky-100 text-sky-700',
-    POST: 'bg-mint text-sage',
+    POST: 'bg-lilac text-plum',
     PUT: 'bg-amber-100 text-amber-700',
     PATCH: 'bg-amber-100 text-amber-700',
     DELETE: 'bg-coral/15 text-coral',
@@ -214,21 +214,14 @@ export default function DeveloperPage() {
   };
 
   return (
-    <Shell title="API & Developer Tools" subtitle="REST API management, webhooks, documentation, SDK planning, and data import/export">
-      <div className="flex items-center gap-1 border-b border-line mb-5 overflow-x-auto">
-        {tabs.map((t) => (
-          <button key={t.key} onClick={() => setTab(t.key)}
-            className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${tab === t.key ? 'border-sage text-sage' : 'border-transparent text-ink/50 hover:text-ink'}`}>
-            <t.icon className="w-3.5 h-3.5" /> {t.label}
-          </button>
-        ))}
-      </div>
+    <Shell module="developer" title="API & Developer Tools" subtitle="REST API management, webhooks, documentation, SDK planning, and data import/export">
+      <Tabs tabs={tabs} value={tab} onChange={setTab} />
 
       {/* ════════════ OVERVIEW ════════════ */}
       {tab === 'overview' && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><Key className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{tokens.filter((t) => t.status === 'Active').length}</div><div className="text-[11px] text-ink/50">Active API tokens</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><Key className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{tokens.filter((t) => t.status === 'Active').length}</div><div className="text-[11px] text-ink/50">Active API tokens</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center"><Webhook className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{webhooks.filter((w) => w.status === 'Active').length}</div><div className="text-[11px] text-ink/50">Active webhooks</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center"><Terminal className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{apiEndpoints.length}</div><div className="text-[11px] text-ink/50">API endpoints</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-coral/15 text-coral flex items-center justify-center"><Zap className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{tokens.reduce((s, t) => s + t.requests, 0).toLocaleString()}</div><div className="text-[11px] text-ink/50">Total API requests</div></div></div></Card>
@@ -275,7 +268,7 @@ export default function DeveloperPage() {
                       <div className="text-sm font-medium text-ink">{res.name}</div>
                       <div className="text-[11px] text-ink/50">{res.desc}</div>
                     </div>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage">{res.status}</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum">{res.status}</span>
                   </div>
                 ))}
               </div>
@@ -287,7 +280,7 @@ export default function DeveloperPage() {
             <div className="space-y-2">
               {tokens.filter((t) => t.lastUsed).slice(0, 5).map((t) => (
                 <div key={t.id} className="flex items-center gap-3 p-2.5 rounded-xl bg-canvas">
-                  <div className="w-7 h-7 rounded-lg bg-sage/10 text-sage flex items-center justify-center shrink-0"><Code2 className="w-3.5 h-3.5" /></div>
+                  <div className="w-7 h-7 rounded-lg bg-plum/10 text-plum flex items-center justify-center shrink-0"><Code2 className="w-3.5 h-3.5" /></div>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs font-medium text-ink">{t.name}</div>
                     <div className="text-[10px] text-ink/50">{t.requests.toLocaleString()} requests · Last used {t.lastUsed.slice(0, 10)}</div>
@@ -331,7 +324,7 @@ export default function DeveloperPage() {
                     {t.masked ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
                   </button>
                   <button onClick={() => copyToClipboard(t.token, t.id)} className="w-8 h-8 rounded-lg hover:bg-canvas text-ink/40 hover:text-ink flex items-center justify-center transition-colors">
-                    {copiedId === t.id ? <Check className="w-3.5 h-3.5 text-sage" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedId === t.id ? <Check className="w-3.5 h-3.5 text-plum" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>
                   {t.status === 'Active' && (
                     <button onClick={() => revokeToken(t.id)} className="w-8 h-8 rounded-lg hover:bg-coral/10 text-ink/40 hover:text-coral flex items-center justify-center transition-colors" title="Revoke">
@@ -356,7 +349,7 @@ export default function DeveloperPage() {
                 { scope: 'admin', desc: 'Full access including token management and system config' },
               ].map((s) => (
                 <div key={s.scope} className="p-3 rounded-xl border border-line">
-                  <code className="text-xs font-mono text-sage font-semibold">{s.scope}</code>
+                  <code className="text-xs font-mono text-plum font-semibold">{s.scope}</code>
                   <p className="text-[11px] text-ink/50 mt-1">{s.desc}</p>
                 </div>
               ))}
@@ -365,13 +358,13 @@ export default function DeveloperPage() {
 
           <Modal open={tokenModalOpen} onClose={() => setTokenModalOpen(false)} title="Generate API token">
             <div className="space-y-4">
-              <Field label="Token name"><input className={inputCls} value={newTokenName} onChange={(e) => setNewTokenName(e.target.value)} placeholder="e.g. Production API" /></Field>
+              <Field label="Token name"><Input value={newTokenName} onChange={(e) => setNewTokenName(e.target.value)} placeholder="e.g. Production API" /></Field>
               <div>
                 <span className="text-[11px] font-semibold text-ink/55 uppercase tracking-wide">Scopes</span>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {scopeOptions.map((scope) => (
                     <button key={scope} onClick={() => toggleScope(scope)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all ${newTokenScopes.includes(scope) ? 'bg-sage text-white' : 'bg-canvas text-ink/60 hover:bg-mint'}`}>
+                      className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all ${newTokenScopes.includes(scope) ? 'bg-plum text-white' : 'bg-canvas text-ink/60 hover:bg-lilac'}`}>
                       {scope}
                     </button>
                   ))}
@@ -422,7 +415,7 @@ export default function DeveloperPage() {
                     ))}
                   </div>
                   <div className="flex items-center gap-4 text-[10px] text-ink/50">
-                    <span className="flex items-center gap-1"><Check className="w-3 h-3 text-sage" /> {w.deliveries.toLocaleString()} deliveries</span>
+                    <span className="flex items-center gap-1"><Check className="w-3 h-3 text-plum" /> {w.deliveries.toLocaleString()} deliveries</span>
                     {w.failures > 0 && <span className="flex items-center gap-1"><AlertCircle className="w-3 h-3 text-coral" /> {w.failures} failures</span>}
                     {w.lastDelivery && <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> Last: {w.lastDelivery.slice(0, 10)}</span>}
                   </div>
@@ -436,7 +429,7 @@ export default function DeveloperPage() {
             <div className="space-y-2 max-h-72 overflow-y-auto">
               {eventCatalog.map((e) => (
                 <div key={e.event} className="flex items-center gap-3 p-2.5 rounded-xl bg-canvas">
-                  <code className="text-xs font-mono text-sage font-semibold flex-1">{e.event}</code>
+                  <code className="text-xs font-mono text-plum font-semibold flex-1">{e.event}</code>
                   <span className="text-[11px] text-ink/50 flex-1">{e.desc}</span>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-white border border-line text-ink/50">{e.module}</span>
                 </div>
@@ -446,13 +439,13 @@ export default function DeveloperPage() {
 
           <Modal open={webhookModalOpen} onClose={() => setWebhookModalOpen(false)} title="Add webhook endpoint" wide>
             <div className="space-y-4">
-              <Field label="Endpoint URL"><input className={inputCls} value={newWebhookUrl} onChange={(e) => setNewWebhookUrl(e.target.value)} placeholder="https://your-service.com/petcare/webhook" /></Field>
+              <Field label="Endpoint URL"><Input value={newWebhookUrl} onChange={(e) => setNewWebhookUrl(e.target.value)} placeholder="https://your-service.com/petcare/webhook" /></Field>
               <div>
                 <span className="text-[11px] font-semibold text-ink/55 uppercase tracking-wide">Events to subscribe</span>
                 <div className="flex flex-wrap gap-2 mt-2 max-h-48 overflow-y-auto">
                   {eventOptions.map((ev) => (
                     <button key={ev} onClick={() => toggleWebhookEvent(ev)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all ${newWebhookEvents.includes(ev) ? 'bg-sage text-white' : 'bg-canvas text-ink/60 hover:bg-mint'}`}>
+                      className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all ${newWebhookEvents.includes(ev) ? 'bg-plum text-white' : 'bg-canvas text-ink/60 hover:bg-lilac'}`}>
                       {ev}
                     </button>
                   ))}
@@ -472,7 +465,7 @@ export default function DeveloperPage() {
         <>
           <Card className="p-5 mb-4">
             <SectionTitle title="REST API v1 — Endpoint reference" />
-            <p className="text-[11px] text-ink/50 mb-4">All endpoints are prefixed with <code className="text-xs font-mono text-sage bg-canvas px-1.5 py-0.5 rounded">/api/v1</code>. Authentication via <code className="text-xs font-mono text-sage bg-canvas px-1.5 py-0.5 rounded">Authorization: Bearer {`{token}`}</code> header.</p>
+            <p className="text-[11px] text-ink/50 mb-4">All endpoints are prefixed with <code className="text-xs font-mono text-plum bg-canvas px-1.5 py-0.5 rounded">/api/v1</code>. Authentication via <code className="text-xs font-mono text-plum bg-canvas px-1.5 py-0.5 rounded">Authorization: Bearer {`{token}`}</code> header.</p>
             <div className="space-y-1.5">
               {apiEndpoints.map((ep) => (
                 <div key={ep.path} className="flex items-center gap-3 p-2.5 rounded-xl border border-line hover:bg-canvas/30 transition-colors">
@@ -490,7 +483,7 @@ export default function DeveloperPage() {
               <h3 className="text-sm font-semibold text-ink mb-3">Authentication</h3>
               <div className="rounded-xl bg-ink text-white p-4 font-mono text-xs overflow-x-auto">
                 <div className="text-ink/40"># Example request with Bearer token</div>
-                <div className="mt-2"><span className="text-sky-300">curl</span> <span className="text-mint">https://api.petcare.pro/v1/patients</span></div>
+                <div className="mt-2"><span className="text-sky-300">curl</span> <span className="text-lilac">https://api.petcare.pro/v1/patients</span></div>
                 <div className="mt-1">  -H <span className="text-amber-300">"Authorization: Bearer pcp_live_..."</span></div>
                 <div className="mt-1">  -H <span className="text-amber-300">"Content-Type: application/json"</span></div>
               </div>
@@ -501,8 +494,8 @@ export default function DeveloperPage() {
               <h3 className="text-sm font-semibold text-ink mb-3">Error responses</h3>
               <div className="space-y-2">
                 {[
-                  { code: '200', desc: 'Success — request completed', tone: 'sage' },
-                  { code: '201', desc: 'Created — resource successfully created', tone: 'sage' },
+                  { code: '200', desc: 'Success — request completed', tone: 'plum' },
+                  { code: '201', desc: 'Created — resource successfully created', tone: 'plum' },
                   { code: '400', desc: 'Bad request — invalid parameters', tone: 'amber' },
                   { code: '401', desc: 'Unauthorized — missing or invalid token', tone: 'coral' },
                   { code: '403', desc: 'Forbidden — insufficient scope', tone: 'coral' },
@@ -511,7 +504,7 @@ export default function DeveloperPage() {
                   { code: '500', desc: 'Server error — internal failure', tone: 'coral' },
                 ].map((e) => (
                   <div key={e.code} className="flex items-center gap-3 p-2.5 rounded-xl bg-canvas">
-                    <code className={`text-xs font-mono font-bold px-2 py-1 rounded-lg ${e.tone === 'sage' ? 'bg-mint text-sage' : e.tone === 'amber' ? 'bg-amber-100 text-amber-700' : 'bg-coral/15 text-coral'}`}>{e.code}</code>
+                    <code className={`text-xs font-mono font-bold px-2 py-1 rounded-lg ${e.tone === 'plum' ? 'bg-lilac text-plum' : e.tone === 'amber' ? 'bg-amber-100 text-amber-700' : 'bg-coral/15 text-coral'}`}>{e.code}</code>
                     <span className="text-[11px] text-ink/60">{e.desc}</span>
                   </div>
                 ))}
@@ -526,14 +519,14 @@ export default function DeveloperPage() {
               <div className="mt-2"><span className="text-sky-300">{'{'}</span></div>
               <div className="pl-4"><span className="text-amber-300">"data"</span>: [</div>
               <div className="pl-8"><span className="text-sky-300">{'{'}</span></div>
-              <div className="pl-12"><span className="text-amber-300">"id"</span>: <span className="text-mint">"pet_001"</span>,</div>
-              <div className="pl-12"><span className="text-amber-300">"name"</span>: <span className="text-mint">"Buddy"</span>,</div>
-              <div className="pl-12"><span className="text-amber-300">"species"</span>: <span className="text-mint">"Dog"</span>,</div>
-              <div className="pl-12"><span className="text-amber-300">"breed"</span>: <span className="text-mint">"Golden Retriever"</span>,</div>
-              <div className="pl-12"><span className="text-amber-300">"owner_id"</span>: <span className="text-mint">"own_001"</span></div>
+              <div className="pl-12"><span className="text-amber-300">"id"</span>: <span className="text-lilac">"pet_001"</span>,</div>
+              <div className="pl-12"><span className="text-amber-300">"name"</span>: <span className="text-lilac">"Buddy"</span>,</div>
+              <div className="pl-12"><span className="text-amber-300">"species"</span>: <span className="text-lilac">"Dog"</span>,</div>
+              <div className="pl-12"><span className="text-amber-300">"breed"</span>: <span className="text-lilac">"Golden Retriever"</span>,</div>
+              <div className="pl-12"><span className="text-amber-300">"owner_id"</span>: <span className="text-lilac">"own_001"</span></div>
               <div className="pl-8"><span className="text-sky-300">{'}'}</span></div>
               <div className="pl-4">],</div>
-              <div className="pl-4"><span className="text-amber-300">"pagination"</span>: <span className="text-sky-300">{'{'}</span> <span className="text-amber-300">"cursor"</span>: <span className="text-mint">"eyJ..."</span>, <span className="text-amber-300">"has_more"</span>: <span className="text-sky-300">true</span> <span className="text-sky-300">{'}'}</span></div>
+              <div className="pl-4"><span className="text-amber-300">"pagination"</span>: <span className="text-sky-300">{'{'}</span> <span className="text-amber-300">"cursor"</span>: <span className="text-lilac">"eyJ..."</span>, <span className="text-amber-300">"has_more"</span>: <span className="text-sky-300">true</span> <span className="text-sky-300">{'}'}</span></div>
               <div><span className="text-sky-300">{'}'}</span></div>
             </div>
           </Card>
@@ -557,11 +550,11 @@ export default function DeveloperPage() {
                         <div className="text-[11px] text-ink/50">{sdk.desc}</div>
                       </div>
                     </div>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${sdk.status === 'Available' ? 'bg-mint text-sage' : sdk.status === 'In development' ? 'bg-amber-100 text-amber-700' : 'bg-ink/5 text-ink/40'}`}>{sdk.status}</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${sdk.status === 'Available' ? 'bg-lilac text-plum' : sdk.status === 'In development' ? 'bg-amber-100 text-amber-700' : 'bg-ink/5 text-ink/40'}`}>{sdk.status}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="flex-1 h-2 rounded-full bg-canvas overflow-hidden">
-                      <div className={`h-full rounded-full transition-all ${sdk.progress === 100 ? 'bg-sage' : 'bg-amber-400'}`} style={{ width: `${sdk.progress}%` }} />
+                      <div className={`h-full rounded-full transition-all ${sdk.progress === 100 ? 'bg-plum' : 'bg-amber-400'}`} style={{ width: `${sdk.progress}%` }} />
                     </div>
                     <span className="text-[10px] text-ink/50 w-8 text-right">{sdk.progress}%</span>
                   </div>
@@ -575,15 +568,15 @@ export default function DeveloperPage() {
               <h3 className="text-sm font-semibold text-ink mb-3">JavaScript SDK — example usage</h3>
               <div className="rounded-xl bg-ink text-white p-4 font-mono text-xs overflow-x-auto">
                 <div className="text-ink/40">// Install: npm install @petcare/sdk</div>
-                <div className="mt-2"><span className="text-sky-300">import</span> {'{ PetCare }'} <span className="text-sky-300">from</span> <span className="text-mint">'@petcare/sdk'</span>;</div>
+                <div className="mt-2"><span className="text-sky-300">import</span> {'{ PetCare }'} <span className="text-sky-300">from</span> <span className="text-lilac">'@petcare/sdk'</span>;</div>
                 <div className="mt-2"><span className="text-sky-300">const</span> client = <span className="text-sky-300">new</span> <span className="text-amber-300">PetCare</span>({'{'}</div>
-                <div className="pl-4">apiKey: <span className="text-mint">'pcp_live_...'</span>,</div>
-                <div className="pl-4">branch: <span className="text-mint">'northgate'</span></div>
+                <div className="pl-4">apiKey: <span className="text-lilac">'pcp_live_...'</span>,</div>
+                <div className="pl-4">branch: <span className="text-lilac">'northgate'</span></div>
                 <div>{'}'});</div>
                 <div className="mt-2"><span className="text-ink/40">// List patients</span></div>
                 <div><span className="text-sky-300">const</span> pets = <span className="text-sky-300">await</span> client.patients.list({'{'}</div>
                 <div className="pl-4">limit: <span className="text-sky-300">50</span>,</div>
-                <div className="pl-4">species: <span className="text-mint">'Dog'</span></div>
+                <div className="pl-4">species: <span className="text-lilac">'Dog'</span></div>
                 <div>{'}'});</div>
               </div>
             </Card>
@@ -594,12 +587,12 @@ export default function DeveloperPage() {
                 <div className="text-ink/40"># pip install petcare-sdk</div>
                 <div className="mt-2"><span className="text-sky-300">from</span> petcare <span className="text-sky-300">import</span> PetCareClient</div>
                 <div className="mt-2">client = <span className="text-amber-300">PetCareClient</span>(</div>
-                <div className="pl-4">api_key=<span className="text-mint">"pcp_live_..."</span>,</div>
-                <div className="pl-4">branch=<span className="text-mint">"northgate"</span></div>
+                <div className="pl-4">api_key=<span className="text-lilac">"pcp_live_..."</span>,</div>
+                <div className="pl-4">branch=<span className="text-lilac">"northgate"</span></div>
                 <div>)</div>
                 <div className="mt-2"><span className="text-ink/40"># List appointments</span></div>
                 <div>appts = client.appointments.list(</div>
-                <div className="pl-4">status=<span className="text-mint">"Scheduled"</span></div>
+                <div className="pl-4">status=<span className="text-lilac">"Scheduled"</span></div>
                 <div>)</div>
               </div>
             </Card>
@@ -611,9 +604,9 @@ export default function DeveloperPage() {
       {tab === 'import' && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><FileText className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">CSV</div><div className="text-[11px] text-ink/50">Comma-separated</div></div></div></Card>
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><FileSpreadsheet className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">Excel</div><div className="text-[11px] text-ink/50">.xlsx / .xls</div></div></div></Card>
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><FileJson className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">JSON</div><div className="text-[11px] text-ink/50">Structured data</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><FileText className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">CSV</div><div className="text-[11px] text-ink/50">Comma-separated</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><FileSpreadsheet className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">Excel</div><div className="text-[11px] text-ink/50">.xlsx / .xls</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><FileJson className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">JSON</div><div className="text-[11px] text-ink/50">Structured data</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center"><Upload className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{importJobs.length}</div><div className="text-[11px] text-ink/50">Import jobs</div></div></div></Card>
           </div>
 
@@ -631,7 +624,7 @@ export default function DeveloperPage() {
                 {importJobs.map((job) => (
                   <div key={job.id} className="flex items-center gap-3 p-3 rounded-xl border border-line">
                     <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-                      job.format === 'CSV' ? 'bg-sage/10 text-sage' :
+                      job.format === 'CSV' ? 'bg-plum/10 text-plum' :
                       job.format === 'Excel' ? 'bg-sky-100 text-sky-600' :
                       'bg-amber-100 text-amber-600'
                     }`}>
@@ -659,7 +652,7 @@ export default function DeveloperPage() {
               ].map((g) => (
                 <div key={g.format} className="p-3 rounded-xl border border-line">
                   <div className="flex items-center gap-2 mb-1">
-                    <g.icon className="w-4 h-4 text-sage" />
+                    <g.icon className="w-4 h-4 text-plum" />
                     <span className="text-sm font-medium text-ink">{g.format} requirements</span>
                   </div>
                   <p className="text-[11px] text-ink/50">{g.desc}</p>
@@ -671,7 +664,7 @@ export default function DeveloperPage() {
           <Modal open={importModalOpen} onClose={() => setImportModalOpen(false)} title="Start new import">
             <div className="space-y-4">
               <Field label="File name">
-                <input className={inputCls} value={importFileName} onChange={(e) => setImportFileName(e.target.value)} placeholder="e.g. patients_october.csv" />
+                <Input value={importFileName} onChange={(e) => setImportFileName(e.target.value)} placeholder="e.g. patients_october.csv" />
               </Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Format">
@@ -720,9 +713,9 @@ export default function DeveloperPage() {
                 { module: 'Inventory', desc: 'Stock levels, adjustments, and transfers', records: '~1,900', icon: FileJson },
                 { module: 'Staff', desc: 'Staff profiles, roles, and activity logs', records: '~38', icon: FileJson },
               ].map((exp) => (
-                <div key={exp.module} className="p-4 rounded-xl border border-line hover:border-sage/30 transition-colors">
+                <div key={exp.module} className="p-4 rounded-xl border border-line hover:border-plum/30 transition-colors">
                   <div className="flex items-center gap-2 mb-2">
-                    <exp.icon className="w-4 h-4 text-sage" />
+                    <exp.icon className="w-4 h-4 text-plum" />
                     <span className="text-sm font-medium text-ink flex-1">{exp.module}</span>
                   </div>
                   <p className="text-[11px] text-ink/50 mb-2">{exp.desc}</p>
@@ -739,7 +732,7 @@ export default function DeveloperPage() {
             <h3 className="text-sm font-semibold text-ink mb-3">Full system export</h3>
             <p className="text-[11px] text-ink/50 mb-4">Export all platform data as a single JSON archive. Useful for full backups, system migrations, or compliance audits.</p>
             <div className="flex items-center gap-3 p-4 rounded-xl border border-line bg-canvas">
-              <div className="w-12 h-12 rounded-xl bg-sage/10 text-sage flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-plum/10 text-plum flex items-center justify-center">
                 <Archive className="w-6 h-6" />
               </div>
               <div className="flex-1">

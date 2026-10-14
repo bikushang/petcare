@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
+import AppChrome from './components/AppChrome';
 
 const plusJakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-plus-jakarta' });
 
@@ -43,7 +44,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#2d7766',
+  themeColor: '#4C1D95',
   width: 'device-width',
   initialScale: 1,
 };
@@ -52,6 +53,36 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <head>
+        {/*
+          Apply the saved theme before first paint. Without this the page
+          renders with the default violet palette for a frame and then
+          snaps to the user's chosen colour / dark mode.
+          Kept in sync with themeVarsFor() in app/lib/settings.ts.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{
+var s=JSON.parse(localStorage.getItem('petcare-pro-settings')||'{}');
+var hex=(s.primaryColor||'#4C1D95').replace('#','');
+if(hex.length!==6)hex='4C1D95';
+var r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
+function mix(a){var t=a>0?255:0,k=Math.abs(a);return [Math.round(r+(t-r)*k),Math.round(g+(t-g)*k),Math.round(b+(t-b)*k)].join(' ');}
+var th=s.theme||'light';
+if(th==='auto')th=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+var d=document.documentElement,dark=th==='dark';
+d.style.setProperty('--c-plum',r+' '+g+' '+b);
+d.style.setProperty('--c-grape',mix(-0.38));
+d.style.setProperty('--c-iris',mix(0.26));
+d.style.setProperty('--c-lilac',mix(dark?-0.62:0.88));
+d.style.setProperty('--c-ink',dark?'237 233 254':'26 13 46');
+d.style.setProperty('--c-canvas',dark?'20 12 33':'250 249 253');
+d.style.setProperty('--c-line',dark?'54 38 82':'232 227 243');
+d.style.setProperty('--c-surface',dark?'30 20 48':'255 255 255');
+d.style.setProperty('--app-font-size',{small:'14px',medium:'16px',large:'18px'}[s.fontSize||'medium']||'16px');
+d.dataset.theme=th;d.style.colorScheme=dark?'dark':'light';
+}catch(e){}})();`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -82,7 +113,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           }}
         />
       </head>
-      <body className={plusJakarta.variable}>{children}</body>
+      <body className={plusJakarta.variable}>
+        <AppChrome />
+        {children}
+      </body>
     </html>
   );
 }

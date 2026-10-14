@@ -7,7 +7,7 @@ import {
   FlaskRound, Utensils, RefreshCw, ShieldCheck, Package,
 } from 'lucide-react';
 import Shell from '../components/Shell';
-import { Card, Button, EmptyState, Modal, Field, inputCls, Select, Textarea, NumberInput } from '../components/ui';
+import { Card, Button, EmptyState, Modal, Field, Input, Select, Textarea, NumberInput, DatePicker, Checkbox } from '../components/ui';
 import { useDB, Prescription, PrescriptionItem, newId, today } from '../lib/store';
 import { AISuggestionButton, AISuggestionPanel } from '../components/ai-suggestion';
 import { generatePrescriptionSuggestion } from '../lib/ai-engine';
@@ -22,7 +22,7 @@ const durationUnits = ['days', 'weeks', 'months', 'ongoing'] as const;
 const foodRestrictions = ['None', 'With food', 'Before food', 'After food', 'Empty stomach', 'With water'] as const;
 
 const statusStyle: Record<Prescription['status'], { bg: string; text: string; dot: string }> = {
-  Active: { bg: 'bg-mint', text: 'text-sage', dot: 'bg-sage' },
+  Active: { bg: 'bg-lilac', text: 'text-plum', dot: 'bg-plum' },
   Pending: { bg: 'bg-amber-100', text: 'text-amber-700', dot: 'bg-amber-500' },
   Completed: { bg: 'bg-sky-100', text: 'text-sky-700', dot: 'bg-sky-500' },
   Expired: { bg: 'bg-canvas', text: 'text-ink/40', dot: 'bg-ink/30' },
@@ -160,15 +160,15 @@ export default function PrescriptionsPage() {
     <style>
       *{box-sizing:border-box;margin:0;padding:0;font-family:Georgia,serif;color:#1a1a1a}
       body{padding:40px;max-width:700px;margin:0 auto}
-      .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #2d7a5f;padding-bottom:16px;margin-bottom:24px}
-      .clinic-name{font-size:22px;font-weight:bold;color:#2d7a5f}
+      .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #4C1D95;padding-bottom:16px;margin-bottom:24px}
+      .clinic-name{font-size:22px;font-weight:bold;color:#4C1D95}
       .clinic-sub{font-size:12px;color:#666;margin-top:2px}
       .rx-num{font-size:12px;color:#666;text-align:right}
-      .rx-num b{font-size:14px;color:#2d7a5f;font-family:monospace}
+      .rx-num b{font-size:14px;color:#4C1D95;font-family:monospace}
       .patient-box{background:#f8f9fa;border:1px solid #e0e0e0;border-radius:8px;padding:16px;margin-bottom:20px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
       .patient-box .label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#999}
       .patient-box .value{font-size:14px;font-weight:bold}
-      .rx-symbol{font-size:36px;color:#2d7a5f;font-style:italic;margin-bottom:12px}
+      .rx-symbol{font-size:36px;color:#4C1D95;font-style:italic;margin-bottom:12px}
       .diagnosis{font-size:13px;margin-bottom:16px;padding:12px;background:#fff8e6;border-left:3px solid #d4a017;border-radius:4px}
       .diagnosis b{color:#8a6d00}
       table{width:100%;border-collapse:collapse;margin-bottom:20px}
@@ -283,7 +283,7 @@ export default function PrescriptionsPage() {
     URL.revokeObjectURL(url);
   };
 
-  if (!db) return <Shell title="Prescriptions"><div className="text-sm text-ink/50">Loading…</div></Shell>;
+  if (!db) return <Shell module="prescriptions" title="Prescriptions"><div className="text-sm text-ink/50">Loading…</div></Shell>;
 
   const hasFilters = petFilter !== 'all' || statusFilter !== 'all';
 
@@ -291,8 +291,8 @@ export default function PrescriptionsPage() {
     <Shell title="Prescriptions" subtitle="Prescription management with medicine selection, dosage, frequency, food restrictions, repeats, and printable documents">
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-        <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-mint flex items-center justify-center"><FileText className="w-5 h-5 text-sage" /></div><div><div className="text-2xl font-bold text-ink">{stats.total}</div><div className="text-[11px] text-ink/50">Total prescriptions</div></div></div></Card>
-        <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-mint flex items-center justify-center"><CheckCircle2 className="w-5 h-5 text-sage" /></div><div><div className="text-2xl font-bold text-sage">{stats.active}</div><div className="text-[11px] text-ink/50">Active</div></div></div></Card>
+        <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-lilac flex items-center justify-center"><FileText className="w-5 h-5 text-plum" /></div><div><div className="text-2xl font-bold text-ink">{stats.total}</div><div className="text-[11px] text-ink/50">Total prescriptions</div></div></div></Card>
+        <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-lilac flex items-center justify-center"><CheckCircle2 className="w-5 h-5 text-plum" /></div><div><div className="text-2xl font-bold text-plum">{stats.active}</div><div className="text-[11px] text-ink/50">Active</div></div></div></Card>
         <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center"><Clock className="w-5 h-5 text-amber-600" /></div><div><div className="text-2xl font-bold text-amber-600">{stats.pending}</div><div className="text-[11px] text-ink/50">Pending</div></div></div></Card>
         <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center"><Repeat className="w-5 h-5 text-sky-600" /></div><div><div className="text-2xl font-bold text-sky-600">{stats.repeats}</div><div className="text-[11px] text-ink/50">Repeat prescriptions</div></div></div></Card>
       </div>
@@ -329,7 +329,7 @@ export default function PrescriptionsPage() {
             const S = statusStyle[r.status];
             const canRepeat = r.isRepeat && r.repeatCount < r.maxRepeats;
             return (
-              <Card key={r.id} className="group hover:ring-2 hover:ring-sage/20 transition-all">
+              <Card key={r.id} className="group hover:ring-2 hover:ring-plum/20 transition-all">
                 <div className="p-4 flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 flex-1 min-w-0 cursor-pointer" onClick={() => setExpandedId(expanded ? null : r.id)}>
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${S.bg}`}>
@@ -340,8 +340,8 @@ export default function PrescriptionsPage() {
                         <span className="text-sm font-semibold text-ink">{r.prescriptionNumber}</span>
                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${S.bg} ${S.text}`}>{r.status}</span>
                         {r.isRepeat && <span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-50 text-sky-600 font-medium flex items-center gap-0.5"><Repeat className="w-2.5 h-2.5" /> Repeat {r.repeatCount}/{r.maxRepeats}</span>}
-                        {r.dispensed && <span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium flex items-center gap-0.5"><Package className="w-2.5 h-2.5" /> Dispensed</span>}
-                        {r.verified && <ShieldCheck className="w-3.5 h-3.5 text-sage" />}
+                        {r.dispensed && <span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium flex items-center gap-0.5"><Package className="w-2.5 h-2.5" /> Dispensed</span>}
+                        {r.verified && <ShieldCheck className="w-3.5 h-3.5 text-plum" />}
                       </div>
                       <div className="text-[11px] text-ink/50 mt-0.5">
                         {petName(r.petId)} · {ownerOf(r.petId)} · {r.vet} · {r.date}
@@ -384,7 +384,7 @@ export default function PrescriptionsPage() {
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
-                              <FlaskRound className="w-4 h-4 text-sage shrink-0" />
+                              <FlaskRound className="w-4 h-4 text-plum shrink-0" />
                               <span className="text-sm font-semibold text-ink">{it.medicineName}</span>
                               {it.refillsRemaining > 0 && <span className="text-[10px] px-1.5 py-0.5 rounded bg-sky-50 text-sky-600 font-medium">{it.refillsRemaining} refills</span>}
                             </div>
@@ -410,7 +410,7 @@ export default function PrescriptionsPage() {
                     ))}
                     {r.notes && <div className="text-xs text-ink/50 border-l-2 border-line pl-3">{r.notes}</div>}
                     {r.expiresAt && <div className="text-[11px] text-ink/40 flex items-center gap-1"><Clock className="w-3 h-3" /> Expires: {r.expiresAt}</div>}
-                    {r.dispensed && r.dispensedBy && <div className="text-[11px] text-sage flex items-center gap-1"><Package className="w-3 h-3" /> Dispensed by {r.dispensedBy} on {r.dispensedDate}</div>}
+                    {r.dispensed && r.dispensedBy && <div className="text-[11px] text-plum flex items-center gap-1"><Package className="w-3 h-3" /> Dispensed by {r.dispensedBy} on {r.dispensedDate}</div>}
                   </div>
                 )}
               </Card>
@@ -440,7 +440,7 @@ export default function PrescriptionsPage() {
                 {vets.map((v) => <option key={v}>{v}</option>)}
               </Select>
             </Field>
-            <Field label="Date"><input className={inputCls} type="date" value={form.date} onChange={(e) => set('date', e.target.value)} /></Field>
+            <Field label="Date"><DatePicker value={form.date} onChange={(e) => set('date', e.target.value)} /></Field>
             <Field label="Status">
               <Select value={form.status} onChange={(e) => set('status', e.target.value)}>
                 {statuses.map((s) => <option key={s}>{s}</option>)}
@@ -448,7 +448,7 @@ export default function PrescriptionsPage() {
             </Field>
           </div>
 
-          <Field label="Diagnosis"><input className={inputCls} value={form.diagnosis} onChange={(e) => set('diagnosis', e.target.value)} placeholder="e.g. Acute otitis externa, bacterial" /></Field>
+          <Field label="Diagnosis"><Input value={form.diagnosis} onChange={(e) => set('diagnosis', e.target.value)} placeholder="e.g. Acute otitis externa, bacterial" /></Field>
 
           {/* Items */}
           <div className="border-t border-line pt-3">
@@ -470,31 +470,43 @@ export default function PrescriptionsPage() {
 
                   {/* Medicine selection from stock */}
                   <Field label="Medicine name">
-                    <input
-                      className={inputCls}
-                      list={`med-list-${idx}`}
-                      value={it.medicineName}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        const stockItem = db.medStock.find((s) => s.name === val);
-                        setItem(idx, 'medicineName', val);
-                        if (stockItem) {
+                    <div className="flex items-center gap-2">
+                      <Input
+                        className="flex-1"
+                        value={it.medicineName}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const stockItem = db.medStock.find((s) => s.name === val);
+                          setItem(idx, 'medicineName', val);
+                          if (stockItem) {
+                            setItem(idx, 'stockItemId', stockItem.id);
+                            setItem(idx, 'quantity', Math.max(it.quantity, 1));
+                          }
+                        }}
+                        placeholder="Type or select from pharmacy inventory"
+                      />
+                      <Select
+                        className="w-56 shrink-0"
+                        placeholder="From inventory…"
+                        value={it.stockItemId}
+                        onChange={(e) => {
+                          const stockItem = db.medStock.find((s) => s.id === e.target.value);
+                          if (!stockItem) return;
                           setItem(idx, 'stockItemId', stockItem.id);
+                          setItem(idx, 'medicineName', stockItem.name);
                           setItem(idx, 'quantity', Math.max(it.quantity, 1));
-                        }
-                      }}
-                      placeholder="Type or select from pharmacy inventory"
-                    />
-                    <datalist id={`med-list-${idx}`}>
-                      {db.medStock.filter((s) => s.category === 'Medicine' || s.category === 'Supplement').map((s) => (
-                        <option key={s.id} value={s.name}>{s.category} — Stock: {s.stock} {s.unit} — ${s.price}</option>
-                      ))}
-                    </datalist>
+                        }}
+                      >
+                        {db.medStock.filter((s) => s.category === 'Medicine' || s.category === 'Supplement').map((s) => (
+                          <option key={s.id} value={s.id}>{s.name} — Stock: {s.stock} {s.unit} — ${s.price}</option>
+                        ))}
+                      </Select>
+                    </div>
                   </Field>
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
                     <Field label="Dosage">
-                      <input className={inputCls} value={it.dosage} onChange={(e) => setItem(idx, 'dosage', e.target.value)} placeholder="0.1 mg/kg" />
+                      <Input value={it.dosage} onChange={(e) => setItem(idx, 'dosage', e.target.value)} placeholder="0.1 mg/kg" />
                     </Field>
                     <Field label="Dosage unit">
                       <Select value={it.dosageUnit} onChange={(e) => setItem(idx, 'dosageUnit', e.target.value)}>
@@ -530,14 +542,13 @@ export default function PrescriptionsPage() {
                         {foodRestrictions.map((f) => <option key={f}>{f}</option>)}
                       </Select>
                     </Field>
-                    <Field label="Food restriction notes"><input className={inputCls} value={it.foodRestrictionNotes} onChange={(e) => setItem(idx, 'foodRestrictionNotes', e.target.value)} placeholder="Give with morning meal" /></Field>
+                    <Field label="Food restriction notes"><Input value={it.foodRestrictionNotes} onChange={(e) => setItem(idx, 'foodRestrictionNotes', e.target.value)} placeholder="Give with morning meal" /></Field>
                   </div>
 
                   <div className="mt-2"><Field label="Instructions"><Textarea value={it.instructions} onChange={(e) => setItem(idx, 'instructions', e.target.value)} placeholder="Complete full course. Shake well before use…" className="min-h-[50px]" /></Field></div>
 
                   <div className="mt-2"><Field label="Alternative medicines (comma-separated)">
-                    <input
-                      className={inputCls}
+                    <Input
                       value={it.alternatives.join(', ')}
                       onChange={(e) => setItem(idx, 'alternatives', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))}
                       placeholder="Carprofen, Firocoxib, Robenacoxib"
@@ -553,14 +564,11 @@ export default function PrescriptionsPage() {
           <div className="border-t border-line pt-3">
             <div className="text-[11px] font-semibold text-ink/50 uppercase tracking-wide mb-3">Repeat prescription settings</div>
             <div className="flex items-center gap-4">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={form.isRepeat} onChange={(e) => set('isRepeat', e.target.checked)} className="w-4 h-4 rounded accent-sage" />
-                <span className="text-xs text-ink/70">Allow repeats</span>
-              </label>
+              <Checkbox checked={form.isRepeat} onChange={(e) => set('isRepeat', e.target.checked)} label="Allow repeats" className="shrink-0" />
               {form.isRepeat && (
-                <Field label="Max repeats"><NumberInput value={String(form.maxRepeats)} onChange={(e) => set('maxRepeats', parseInt(e.target.value) || 0)} /></Field>
+                <Field label="Max repeats" className="w-40 shrink-0"><NumberInput value={String(form.maxRepeats)} onChange={(e) => set('maxRepeats', parseInt(e.target.value) || 0)} /></Field>
               )}
-              <Field label="Expires at"><input className={inputCls} type="date" value={form.expiresAt} onChange={(e) => set('expiresAt', e.target.value)} /></Field>
+              <Field label="Expires at" className="w-48 shrink-0"><DatePicker value={form.expiresAt} onChange={(e) => set('expiresAt', e.target.value)} /></Field>
             </div>
           </div>
 
@@ -577,18 +585,18 @@ export default function PrescriptionsPage() {
       <Modal open={!!printRx} onClose={() => setPrintRx(null)} title={`Prescription ${printRx?.prescriptionNumber ?? ''}`} wide>
         {printRx && (
           <div className="space-y-4">
-            <div className="rounded-2xl border-2 border-sage/30 bg-gradient-to-br from-mint/20 to-white p-6">
+            <div className="rounded-2xl border-2 border-plum/30 bg-gradient-to-br from-lilac/20 to-white p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-xl bg-sage flex items-center justify-center"><FileText className="w-5 h-5 text-white" /></div>
+                  <div className="w-10 h-10 rounded-xl bg-plum flex items-center justify-center"><FileText className="w-5 h-5 text-white" /></div>
                   <div><div className="text-sm font-bold text-ink">PetCare Pro</div><div className="text-[10px] text-ink/50">Prescription Document</div></div>
                 </div>
                 <div className="text-right">
                   <div className="text-[10px] text-ink/40">Prescription No</div>
-                  <div className="text-sm font-mono font-semibold text-sage">{printRx.prescriptionNumber}</div>
+                  <div className="text-sm font-mono font-semibold text-plum">{printRx.prescriptionNumber}</div>
                 </div>
               </div>
-              <div className="border-t border-sage/20 pt-3 space-y-2 text-xs">
+              <div className="border-t border-plum/20 pt-3 space-y-2 text-xs">
                 <div className="grid grid-cols-2 gap-3">
                   <div><span className="text-ink/40">Patient:</span> <span className="font-medium text-ink">{petName(printRx.petId)}</span></div>
                   <div><span className="text-ink/40">Owner:</span> <span className="font-medium text-ink">{ownerOf(printRx.petId)}</span></div>
@@ -599,8 +607,8 @@ export default function PrescriptionsPage() {
                 </div>
                 {printRx.diagnosis && <div><span className="text-ink/40">Diagnosis:</span> <span className="font-medium text-ink">{printRx.diagnosis}</span></div>}
               </div>
-              <div className="border-t border-sage/20 mt-3 pt-3 space-y-2">
-                <div className="text-[10px] font-semibold text-sage uppercase tracking-wide">Prescribed Medications</div>
+              <div className="border-t border-plum/20 mt-3 pt-3 space-y-2">
+                <div className="text-[10px] font-semibold text-plum uppercase tracking-wide">Prescribed Medications</div>
                 {printRx.items.map((it, i) => (
                   <div key={i} className="text-xs text-ink/70">
                     <span className="font-semibold text-ink">{i + 1}. {it.medicineName}</span> — {it.dosage || `${it.dosageValue} ${it.dosageUnit}`}, {it.frequency}, {it.duration || `${it.durationValue} ${it.durationUnit}`}, {it.route}
@@ -610,7 +618,7 @@ export default function PrescriptionsPage() {
                   </div>
                 ))}
               </div>
-              {printRx.notes && <div className="border-t border-sage/20 mt-3 pt-2 text-[11px] text-ink/50">{printRx.notes}</div>}
+              {printRx.notes && <div className="border-t border-plum/20 mt-3 pt-2 text-[11px] text-ink/50">{printRx.notes}</div>}
             </div>
 
             <div className="flex justify-end gap-2">

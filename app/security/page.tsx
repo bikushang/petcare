@@ -10,7 +10,7 @@ import {
   Shield, Server, Fingerprint, Mail, MapPin, Monitor,
 } from 'lucide-react';
 import Shell from '../components/Shell';
-import { Card, Button, Badge, EmptyState, Select, inputCls, Modal, Field } from '../components/ui';
+import { Card, Button, Badge, EmptyState, Select, Input, Modal, Field, Tabs } from '../components/ui';
 import { useDB, today } from '../lib/store';
 import { rolePermissions, allRoles, roleInfo, type Role, type Module, type Action } from '../lib/platform';
 
@@ -61,7 +61,7 @@ export default function SecurityPage() {
     { id: 'd5', user: 'Hannah Kim', device: 'iPhone 15', os: 'iOS 17.6', browser: 'Safari 17', lastSeen: '2026-10-05T16:30:00', trusted: false, fingerprint: 'q7r8s9t0' },
   ]);
 
-  if (!db) return <Shell title="Security & Audit"><div className="text-sm text-ink/50">Loading…</div></Shell>;
+  if (!db) return <Shell module="security" title="Security & Audit"><div className="text-sm text-ink/50">Loading…</div></Shell>;
 
   // ── Derive audit logs from staff activity logs ──
   const allActivityLogs = db.staff.flatMap((s) =>
@@ -183,11 +183,11 @@ export default function SecurityPage() {
     critical: 'bg-coral/15 text-coral',
     high: 'bg-amber-100 text-amber-700',
     medium: 'bg-sky-100 text-sky-700',
-    low: 'bg-mint text-sage',
+    low: 'bg-lilac text-plum',
   };
 
   const statusIcon = (status: string) => {
-    if (status === 'active') return <CheckCircle2 className="w-4 h-4 text-sage" />;
+    if (status === 'active') return <CheckCircle2 className="w-4 h-4 text-plum" />;
     if (status === 'partial') return <AlertTriangle className="w-4 h-4 text-amber-500" />;
     return <XCircle className="w-4 h-4 text-coral" />;
   };
@@ -207,14 +207,7 @@ export default function SecurityPage() {
   return (
     <Shell title="Security & Audit" subtitle="Access control, audit trails, privacy compliance, and threat monitoring">
       {/* Tabs */}
-      <div className="flex items-center gap-1 border-b border-line mb-5 overflow-x-auto">
-        {tabs.map((t) => (
-          <button key={t.key} onClick={() => setTab(t.key)}
-            className={`inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium border-b-2 transition-colors whitespace-nowrap ${tab === t.key ? 'border-sage text-sage' : 'border-transparent text-ink/50 hover:text-ink'}`}>
-            <t.icon className="w-3.5 h-3.5" /> {t.label}
-          </button>
-        ))}
-      </div>
+      <Tabs tabs={tabs} value={tab} onChange={setTab} />
 
       {/* ════════════════════════════════════════════
           OVERVIEW
@@ -224,7 +217,7 @@ export default function SecurityPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
             <Card className="p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><ShieldCheck className="w-5 h-5" /></div>
+                <div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><ShieldCheck className="w-5 h-5" /></div>
                 <div><div className="text-2xl font-bold text-ink">{securityChecks.filter((s) => s.status === 'active').length}</div><div className="text-[11px] text-ink/50">Active controls</div></div>
               </div>
             </Card>
@@ -256,7 +249,7 @@ export default function SecurityPage() {
                   {statusIcon(check.status)}
                   <check.icon className="w-4 h-4 text-ink/40" />
                   <span className="text-sm text-ink flex-1">{check.label}</span>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${check.status === 'active' ? 'bg-mint text-sage' : check.status === 'partial' ? 'bg-amber-100 text-amber-700' : 'bg-coral/15 text-coral'}`}>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${check.status === 'active' ? 'bg-lilac text-plum' : check.status === 'partial' ? 'bg-amber-100 text-amber-700' : 'bg-coral/15 text-coral'}`}>
                     {check.status === 'active' ? 'Active' : check.status === 'partial' ? 'Partial' : 'Inactive'}
                   </span>
                 </div>
@@ -310,7 +303,7 @@ export default function SecurityPage() {
       {tab === 'rbac' && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><KeyRound className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{allRoles.length}</div><div className="text-[11px] text-ink/50">Roles defined</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><KeyRound className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{allRoles.length}</div><div className="text-[11px] text-ink/50">Roles defined</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center"><Shield className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{modules.length}</div><div className="text-[11px] text-ink/50">Secured modules</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center"><Eye className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{actions.length}</div><div className="text-[11px] text-ink/50">Action types</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-coral/15 text-coral flex items-center justify-center"><Users className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{totalStaff}</div><div className="text-[11px] text-ink/50">Users with access</div></div></div></Card>
@@ -344,7 +337,7 @@ export default function SecurityPage() {
                           <td key={role} className="py-2 px-1 text-center">
                             <div className="flex items-center justify-center gap-0.5">
                               {actions.map((act) => (
-                                <span key={act} className={`w-4 h-4 rounded flex items-center justify-center text-[8px] font-bold ${perms.includes(act) ? act === 'approve' ? 'bg-coral/15 text-coral' : act === 'delete' ? 'bg-coral/10 text-coral/70' : act === 'edit' ? 'bg-amber-100 text-amber-600' : act === 'create' ? 'bg-sky-100 text-sky-600' : 'bg-mint text-sage' : 'bg-line/50 text-ink/15'}`}>
+                                <span key={act} className={`w-4 h-4 rounded flex items-center justify-center text-[8px] font-bold ${perms.includes(act) ? act === 'approve' ? 'bg-coral/15 text-coral' : act === 'delete' ? 'bg-coral/10 text-coral/70' : act === 'edit' ? 'bg-amber-100 text-amber-600' : act === 'create' ? 'bg-sky-100 text-sky-600' : 'bg-lilac text-plum' : 'bg-line/50 text-ink/15'}`}>
                                   {perms.includes(act) ? act[0].toUpperCase() : '·'}
                                 </span>
                               ))}
@@ -359,7 +352,7 @@ export default function SecurityPage() {
             </div>
             <div className="flex items-center gap-4 mt-4 pt-3 border-t border-line">
               {[
-                { label: 'V', cls: 'bg-mint text-sage', desc: 'View' },
+                { label: 'V', cls: 'bg-lilac text-plum', desc: 'View' },
                 { label: 'C', cls: 'bg-sky-100 text-sky-600', desc: 'Create' },
                 { label: 'E', cls: 'bg-amber-100 text-amber-600', desc: 'Edit' },
                 { label: 'D', cls: 'bg-coral/10 text-coral/70', desc: 'Delete' },
@@ -393,7 +386,7 @@ export default function SecurityPage() {
                 <div className="flex items-center gap-2 mt-3">
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium">Preparation phase</span>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-100 text-sky-600 font-medium">TOTP ready</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">Backup codes supported</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">Backup codes supported</span>
                 </div>
               </div>
             </div>
@@ -413,14 +406,14 @@ export default function SecurityPage() {
                 const enrolled = twoFAEnabled[s.id] || false;
                 return (
                   <div key={s.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-line hover:bg-canvas/30 transition-colors">
-                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${enrolled ? 'bg-mint text-sage' : 'bg-ink/5 text-ink/30'}`}>
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${enrolled ? 'bg-lilac text-plum' : 'bg-ink/5 text-ink/30'}`}>
                       <Fingerprint className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-ink truncate">{s.name}</div>
                       <div className="text-[11px] text-ink/50">{s.role} · {s.email}</div>
                     </div>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${enrolled ? 'bg-mint text-sage' : 'bg-ink/5 text-ink/40'}`}>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${enrolled ? 'bg-lilac text-plum' : 'bg-ink/5 text-ink/40'}`}>
                       {enrolled ? 'Enrolled' : 'Not enrolled'}
                     </span>
                     <Button size="sm" variant={enrolled ? 'outline' : 'primary'} onClick={() => toggle2FA(s.id)}>
@@ -440,7 +433,7 @@ export default function SecurityPage() {
       {tab === 'audit' && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><ScrollText className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{allActivityLogs.length}</div><div className="text-[11px] text-ink/50">Total audit entries</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><ScrollText className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{allActivityLogs.length}</div><div className="text-[11px] text-ink/50">Total audit entries</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center"><Activity className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{new Set(allActivityLogs.map((l) => l.staffName)).size}</div><div className="text-[11px] text-ink/50">Users tracked</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center"><Clock className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{new Set(allActivityLogs.map((l) => l.module)).size}</div><div className="text-[11px] text-ink/50">Modules covered</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-coral/15 text-coral flex items-center justify-center"><Shield className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">7yr</div><div className="text-[11px] text-ink/50">Retention period</div></div></div></Card>
@@ -499,7 +492,7 @@ export default function SecurityPage() {
       {tab === 'activity' && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-5">
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><TrendingUp className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{allActivityLogs.filter((l) => l.date === today()).length}</div><div className="text-[11px] text-ink/50">Today's activities</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><TrendingUp className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{allActivityLogs.filter((l) => l.date === today()).length}</div><div className="text-[11px] text-ink/50">Today's activities</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center"><Activity className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{allActivityLogs.filter((l) => daysAgo(l.date) <= 7).length}</div><div className="text-[11px] text-ink/50">This week</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center"><Users className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{new Set(allActivityLogs.map((l) => l.staffName)).size}</div><div className="text-[11px] text-ink/50">Active users</div></div></div></Card>
           </div>
@@ -541,7 +534,7 @@ export default function SecurityPage() {
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-coral/15 text-coral flex items-center justify-center"><AlertTriangle className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{allSensitiveActions.filter((a) => a.severity === 'critical').length}</div><div className="text-[11px] text-ink/50">Critical</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center"><AlertTriangle className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{allSensitiveActions.filter((a) => a.severity === 'high').length}</div><div className="text-[11px] text-ink/50">High</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center"><Eye className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{allSensitiveActions.filter((a) => a.severity === 'medium').length}</div><div className="text-[11px] text-ink/50">Medium</div></div></div></Card>
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-mint text-sage flex items-center justify-center"><CheckCircle2 className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{allSensitiveActions.length}</div><div className="text-[11px] text-ink/50">Total tracked</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-lilac text-plum flex items-center justify-center"><CheckCircle2 className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{allSensitiveActions.length}</div><div className="text-[11px] text-ink/50">Total tracked</div></div></div></Card>
           </div>
 
           <div className="flex items-center gap-3 mb-4">
@@ -595,7 +588,7 @@ export default function SecurityPage() {
       {tab === 'ip' && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-5">
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><CheckCircle2 className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{ipRules.filter((r) => r.type === 'Allow').length}</div><div className="text-[11px] text-ink/50">Allowed ranges</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><CheckCircle2 className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{ipRules.filter((r) => r.type === 'Allow').length}</div><div className="text-[11px] text-ink/50">Allowed ranges</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-coral/15 text-coral flex items-center justify-center"><Ban className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{ipRules.filter((r) => r.type === 'Block').length}</div><div className="text-[11px] text-ink/50">Blocked ranges</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center"><Globe className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">Deny</div><div className="text-[11px] text-ink/50">Default policy</div></div></div></Card>
           </div>
@@ -609,13 +602,13 @@ export default function SecurityPage() {
             <div className="space-y-2">
               {ipRules.map((rule) => (
                 <div key={rule.id} className="flex items-center gap-3 px-3 py-3 rounded-xl border border-line hover:bg-canvas/30 transition-colors group">
-                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${rule.type === 'Allow' ? 'bg-mint text-sage' : 'bg-coral/15 text-coral'}`}>
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${rule.type === 'Allow' ? 'bg-lilac text-plum' : 'bg-coral/15 text-coral'}`}>
                     {rule.type === 'Allow' ? <CheckCircle2 className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-mono font-medium text-ink">{rule.ip}</span>
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${rule.type === 'Allow' ? 'bg-mint text-sage' : 'bg-coral/15 text-coral'}`}>{rule.type}</span>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${rule.type === 'Allow' ? 'bg-lilac text-plum' : 'bg-coral/15 text-coral'}`}>{rule.type}</span>
                     </div>
                     <div className="text-[11px] text-ink/50 mt-0.5">{rule.label}</div>
                   </div>
@@ -630,7 +623,7 @@ export default function SecurityPage() {
           <Card className="p-5 mt-4">
             <h3 className="text-sm font-semibold text-ink mb-2">Policy details</h3>
             <div className="space-y-2 text-xs text-ink/60 leading-relaxed">
-              <div className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-sage shrink-0 mt-0.5" /><span><strong className="text-ink">Default deny:</strong> All IP addresses are blocked by default unless explicitly allowed.</span></div>
+              <div className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-plum shrink-0 mt-0.5" /><span><strong className="text-ink">Default deny:</strong> All IP addresses are blocked by default unless explicitly allowed.</span></div>
               <div className="flex items-start gap-2"><Globe className="w-3.5 h-3.5 text-sky-500 shrink-0 mt-0.5" /><span><strong className="text-ink">CIDR support:</strong> Rules support both individual IPs (192.168.1.10) and ranges (192.168.1.0/24).</span></div>
               <div className="flex items-start gap-2"><MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" /><span><strong className="text-ink">Geo-blocking:</strong> Can restrict access by country/region for international threat prevention.</span></div>
               <div className="flex items-start gap-2"><Shield className="w-3.5 h-3.5 text-coral shrink-0 mt-0.5" /><span><strong className="text-ink">Block overrides:</strong> Blocked IPs receive an HTTP 403 and are logged for security review.</span></div>
@@ -639,8 +632,8 @@ export default function SecurityPage() {
 
           <Modal open={ipModalOpen} onClose={() => setIpModalOpen(false)} title="Add IP restriction rule">
             <div className="space-y-3">
-              <Field label="IP address / CIDR range"><input className={inputCls} value={ipForm.ip} onChange={(e) => setIpForm((f) => ({ ...f, ip: e.target.value }))} placeholder="192.168.1.0/24" /></Field>
-              <Field label="Label"><input className={inputCls} value={ipForm.label} onChange={(e) => setIpForm((f) => ({ ...f, label: e.target.value }))} placeholder="Office network — Northgate" /></Field>
+              <Field label="IP address / CIDR range"><Input value={ipForm.ip} onChange={(e) => setIpForm((f) => ({ ...f, ip: e.target.value }))} placeholder="192.168.1.0/24" /></Field>
+              <Field label="Label"><Input value={ipForm.label} onChange={(e) => setIpForm((f) => ({ ...f, label: e.target.value }))} placeholder="Office network — Northgate" /></Field>
               <Field label="Rule type">
                 <Select value={ipForm.type} onChange={(e) => setIpForm((f) => ({ ...f, type: e.target.value }))}>
                   <option>Allow</option><option>Block</option>
@@ -661,7 +654,7 @@ export default function SecurityPage() {
       {tab === 'sessions' && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><Monitor className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{activeSessions.length}</div><div className="text-[11px] text-ink/50">Active sessions</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><Monitor className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{activeSessions.length}</div><div className="text-[11px] text-ink/50">Active sessions</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-ink/5 text-ink/40 flex items-center justify-center"><Clock className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{sessions.filter((s) => s.status === 'Expired').length}</div><div className="text-[11px] text-ink/50">Expired</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-coral/15 text-coral flex items-center justify-center"><Ban className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{sessions.filter((s) => s.status === 'Revoked').length}</div><div className="text-[11px] text-ink/50">Revoked</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center"><Clock className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">8h</div><div className="text-[11px] text-ink/50">Session timeout</div></div></div></Card>
@@ -672,14 +665,14 @@ export default function SecurityPage() {
             <div className="space-y-2">
               {sessions.map((s) => (
                 <div key={s.id} className="flex items-center gap-3 px-3 py-3 rounded-xl border border-line hover:bg-canvas/30 transition-colors">
-                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${s.status === 'Active' ? 'bg-mint text-sage' : s.status === 'Revoked' ? 'bg-coral/15 text-coral' : 'bg-ink/5 text-ink/30'}`}>
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${s.status === 'Active' ? 'bg-lilac text-plum' : s.status === 'Revoked' ? 'bg-coral/15 text-coral' : 'bg-ink/5 text-ink/30'}`}>
                     <Monitor className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-sm font-medium text-ink">{s.user}</span>
                       <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-canvas text-ink/50">{s.role}</span>
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${s.status === 'Active' ? 'bg-mint text-sage' : s.status === 'Revoked' ? 'bg-coral/15 text-coral' : 'bg-ink/5 text-ink/40'}`}>{s.status}</span>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${s.status === 'Active' ? 'bg-lilac text-plum' : s.status === 'Revoked' ? 'bg-coral/15 text-coral' : 'bg-ink/5 text-ink/40'}`}>{s.status}</span>
                     </div>
                     <div className="text-[11px] text-ink/50 mt-0.5 flex items-center gap-3 flex-wrap">
                       <span>{s.device}</span>
@@ -714,8 +707,8 @@ export default function SecurityPage() {
       {tab === 'devices' && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><HardDrive className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{devices.length}</div><div className="text-[11px] text-ink/50">Registered devices</div></div></div></Card>
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-mint text-sage flex items-center justify-center"><Shield className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{trustedDevices.length}</div><div className="text-[11px] text-ink/50">Trusted</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><HardDrive className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{devices.length}</div><div className="text-[11px] text-ink/50">Registered devices</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-lilac text-plum flex items-center justify-center"><Shield className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{trustedDevices.length}</div><div className="text-[11px] text-ink/50">Trusted</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center"><AlertTriangle className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{devices.filter((d) => !d.trusted).length}</div><div className="text-[11px] text-ink/50">Unverified</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center"><Fingerprint className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{new Set(devices.map((d) => d.fingerprint)).size}</div><div className="text-[11px] text-ink/50">Unique fingerprints</div></div></div></Card>
           </div>
@@ -725,13 +718,13 @@ export default function SecurityPage() {
             <div className="space-y-2">
               {devices.map((d) => (
                 <div key={d.id} className="flex items-center gap-3 px-3 py-3 rounded-xl border border-line hover:bg-canvas/30 transition-colors">
-                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${d.trusted ? 'bg-mint text-sage' : 'bg-amber-100 text-amber-600'}`}>
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${d.trusted ? 'bg-lilac text-plum' : 'bg-amber-100 text-amber-600'}`}>
                     <Smartphone className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-sm font-medium text-ink">{d.device}</span>
-                      {d.trusted && <span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">Trusted</span>}
+                      {d.trusted && <span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">Trusted</span>}
                     </div>
                     <div className="text-[11px] text-ink/50 mt-0.5">{d.os} · {d.browser}</div>
                     <div className="text-[10px] text-ink/40 mt-0.5">Last seen: {new Date(d.lastSeen).toLocaleString()} · Fingerprint: <span className="font-mono">{d.fingerprint}</span></div>
@@ -754,13 +747,13 @@ export default function SecurityPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card className="p-5">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><Lock className="w-5 h-5" /></div>
+                <div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><Lock className="w-5 h-5" /></div>
                 <div><h3 className="text-sm font-semibold text-ink">Data encryption at rest</h3><p className="text-[11px] text-ink/50">Database & file storage encryption</p></div>
               </div>
               <div className="space-y-3">
-                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Database encryption</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">AES-256</span></div>
-                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">File storage encryption</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">AES-256</span></div>
-                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Backup encryption</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">AES-256</span></div>
+                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Database encryption</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">AES-256</span></div>
+                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">File storage encryption</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">AES-256</span></div>
+                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Backup encryption</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">AES-256</span></div>
                 <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Key management</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-100 text-sky-600 font-medium">KMS</span></div>
                 <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Key rotation</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-100 text-sky-600 font-medium">90 days</span></div>
               </div>
@@ -772,10 +765,10 @@ export default function SecurityPage() {
                 <div><h3 className="text-sm font-semibold text-ink">Encryption in transit</h3><p className="text-[11px] text-ink/50">Data transmission security</p></div>
               </div>
               <div className="space-y-3">
-                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">TLS version</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">TLS 1.3</span></div>
+                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">TLS version</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">TLS 1.3</span></div>
                 <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Certificate authority</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-100 text-sky-600 font-medium">Let's Encrypt</span></div>
-                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">HSTS enabled</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">Yes</span></div>
-                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Certificate pinning</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">Enabled</span></div>
+                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">HSTS enabled</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">Yes</span></div>
+                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Certificate pinning</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">Enabled</span></div>
                 <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Cipher suites</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-100 text-sky-600 font-medium">ChaCha20-Poly1305</span></div>
               </div>
             </Card>
@@ -786,11 +779,11 @@ export default function SecurityPage() {
                 <div><h3 className="text-sm font-semibold text-ink">Password & credential security</h3><p className="text-[11px] text-ink/50">Authentication data protection</p></div>
               </div>
               <div className="space-y-3">
-                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Password hashing</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">bcrypt (12 rounds)</span></div>
+                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Password hashing</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">bcrypt (12 rounds)</span></div>
                 <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Min password length</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-100 text-sky-600 font-medium">12 chars</span></div>
-                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Password complexity</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">Enforced</span></div>
+                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Password complexity</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">Enforced</span></div>
                 <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">JWT token expiry</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-100 text-sky-600 font-medium">8 hours</span></div>
-                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">API key encryption</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">Hashed at rest</span></div>
+                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">API key encryption</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">Hashed at rest</span></div>
               </div>
             </Card>
 
@@ -800,11 +793,11 @@ export default function SecurityPage() {
                 <div><h3 className="text-sm font-semibold text-ink">Sensitive data handling</h3><p className="text-[11px] text-ink/50">PHI & PII protection</p></div>
               </div>
               <div className="space-y-3">
-                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Field-level encryption</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">Enabled</span></div>
+                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Field-level encryption</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">Enabled</span></div>
                 <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">PII fields encrypted</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-100 text-sky-600 font-medium">SSN, DOB, Phone</span></div>
                 <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">PHI fields encrypted</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-100 text-sky-600 font-medium">Diagnosis, Rx</span></div>
-                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Data masking</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">Non-admin views</span></div>
-                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Secure delete</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">Crypto-shredding</span></div>
+                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Data masking</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">Non-admin views</span></div>
+                <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-canvas"><span className="text-xs text-ink/70">Secure delete</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">Crypto-shredding</span></div>
               </div>
             </Card>
           </div>
@@ -817,10 +810,10 @@ export default function SecurityPage() {
       {tab === 'backup' && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><Database className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">Daily</div><div className="text-[11px] text-ink/50">Backup frequency</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><Database className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">Daily</div><div className="text-[11px] text-ink/50">Backup frequency</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center"><Clock className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">30</div><div className="text-[11px] text-ink/50">Day retention</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center"><Server className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">3-2-1</div><div className="text-[11px] text-ink/50">Backup strategy</div></div></div></Card>
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-mint text-sage flex items-center justify-center"><CheckCircle2 className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">99.9%</div><div className="text-[11px] text-ink/50">Recovery success</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-lilac text-plum flex items-center justify-center"><CheckCircle2 className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">99.9%</div><div className="text-[11px] text-ink/50">Recovery success</div></div></div></Card>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -835,12 +828,12 @@ export default function SecurityPage() {
                   { name: 'Weekly archive', freq: 'Sundays at 04:00 UTC', size: '12 GB', status: 'Completed', time: '2d ago' },
                 ].map((b) => (
                   <div key={b.name} className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-line">
-                    <CheckCircle2 className="w-4 h-4 text-sage shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-plum shrink-0" />
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-ink">{b.name}</div>
                       <div className="text-[11px] text-ink/50">{b.freq} · {b.size}</div>
                     </div>
-                    <div className="text-right shrink-0"><span className="text-[10px] px-2 py-0.5 rounded-full bg-mint text-sage font-medium">{b.status}</span><div className="text-[10px] text-ink/40 mt-0.5">{b.time}</div></div>
+                    <div className="text-right shrink-0"><span className="text-[10px] px-2 py-0.5 rounded-full bg-lilac text-plum font-medium">{b.status}</span><div className="text-[10px] text-ink/40 mt-0.5">{b.time}</div></div>
                   </div>
                 ))}
               </div>
@@ -850,7 +843,7 @@ export default function SecurityPage() {
               <h3 className="text-sm font-semibold text-ink mb-4">Backup strategy (3-2-1 rule)</h3>
               <div className="space-y-3">
                 <div className="rounded-xl bg-canvas p-4">
-                  <div className="flex items-center gap-2 mb-1"><span className="text-sm font-semibold text-sage">3</span><span className="text-sm text-ink">Copies of data</span></div>
+                  <div className="flex items-center gap-2 mb-1"><span className="text-sm font-semibold text-plum">3</span><span className="text-sm text-ink">Copies of data</span></div>
                   <div className="text-[11px] text-ink/50">Primary database + 2 backup copies maintained at all times.</div>
                 </div>
                 <div className="rounded-xl bg-canvas p-4">
@@ -880,7 +873,7 @@ export default function SecurityPage() {
       {tab === 'privacy' && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><FileLock2 className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{db.owners.length}</div><div className="text-[11px] text-ink/50">Data subjects</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><FileLock2 className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">{db.owners.length}</div><div className="text-[11px] text-ink/50">Data subjects</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center"><Clock className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">30 days</div><div className="text-[11px] text-ink/50">DSAR response time</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-coral/15 text-coral flex items-center justify-center"><Trash2 className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">3</div><div className="text-[11px] text-ink/50">Deletion requests</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center"><Mail className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">7</div><div className="text-[11px] text-ink/50">Consent records</div></div></div></Card>
@@ -900,7 +893,7 @@ export default function SecurityPage() {
                   { right: 'Right to withdraw consent', desc: 'Data subjects can withdraw consent at any time.', status: 'Implemented' },
                 ].map((r) => (
                   <div key={r.right} className="flex items-start gap-3 px-3 py-2.5 rounded-xl border border-line">
-                    <CheckCircle2 className="w-4 h-4 text-sage shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-plum shrink-0 mt-0.5" />
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-ink">{r.right}</div>
                       <div className="text-[11px] text-ink/50 mt-0.5">{r.desc}</div>
@@ -925,7 +918,7 @@ export default function SecurityPage() {
                       <div className="text-sm font-medium text-ink">{d.subject}</div>
                       <div className="text-[11px] text-ink/50">{d.type} · {d.date}</div>
                     </div>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${d.status === 'Completed' ? 'bg-mint text-sage' : d.status === 'Pending' ? 'bg-amber-100 text-amber-600' : 'bg-sky-100 text-sky-600'}`}>{d.status}</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${d.status === 'Completed' ? 'bg-lilac text-plum' : d.status === 'Pending' ? 'bg-amber-100 text-amber-600' : 'bg-sky-100 text-sky-600'}`}>{d.status}</span>
                   </div>
                 ))}
               </div>
@@ -947,7 +940,7 @@ export default function SecurityPage() {
                   <div className="text-sm font-medium text-ink">{c.purpose}</div>
                   <div className="flex items-center gap-2 mt-2">
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-50 text-sky-600">{c.lawful}</span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full ${c.consent === 'Required' ? 'bg-coral/15 text-coral' : 'bg-mint text-sage'}`}>{c.consent}</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full ${c.consent === 'Required' ? 'bg-coral/15 text-coral' : 'bg-lilac text-plum'}`}>{c.consent}</span>
                   </div>
                 </div>
               ))}
@@ -962,10 +955,10 @@ export default function SecurityPage() {
       {tab === 'compliance' && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sage/10 text-sage flex items-center justify-center"><HeartPulse className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">All</div><div className="text-[11px] text-ink/50">Required safeguards</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-plum/10 text-plum flex items-center justify-center"><HeartPulse className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">All</div><div className="text-[11px] text-ink/50">Required safeguards</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center"><Shield className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">Encrypted</div><div className="text-[11px] text-ink/50">PHI at rest</div></div></div></Card>
             <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center"><ScrollText className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">7yr</div><div className="text-[11px] text-ink/50">Audit log retention</div></div></div></Card>
-            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-mint text-sage flex items-center justify-center"><CheckCircle2 className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">Compliant</div><div className="text-[11px] text-ink/50">Current status</div></div></div></Card>
+            <Card className="p-4"><div className="flex items-center gap-3"><div className="w-10 h-10 rounded-xl bg-lilac text-plum flex items-center justify-center"><CheckCircle2 className="w-5 h-5" /></div><div><div className="text-2xl font-bold text-ink">Compliant</div><div className="text-[11px] text-ink/50">Current status</div></div></div></Card>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -981,7 +974,7 @@ export default function SecurityPage() {
                   'Business associate agreements',
                 ].map((s) => (
                   <div key={s} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-canvas">
-                    <CheckCircle2 className="w-4 h-4 text-sage shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-plum shrink-0" />
                     <span className="text-xs text-ink/70">{s}</span>
                   </div>
                 ))}
@@ -1000,7 +993,7 @@ export default function SecurityPage() {
                   'Mobile device management',
                 ].map((s) => (
                   <div key={s} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-canvas">
-                    <CheckCircle2 className="w-4 h-4 text-sage shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-plum shrink-0" />
                     <span className="text-xs text-ink/70">{s}</span>
                   </div>
                 ))}
@@ -1019,7 +1012,7 @@ export default function SecurityPage() {
                   'Transmission security (TLS 1.3)',
                 ].map((s) => (
                   <div key={s} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-canvas">
-                    <CheckCircle2 className="w-4 h-4 text-sage shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-plum shrink-0" />
                     <span className="text-xs text-ink/70">{s}</span>
                   </div>
                 ))}
