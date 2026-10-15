@@ -37,6 +37,7 @@ const Subscriber = require('./models/Subscriber');
 const createCrudRoutes = require('./routes/crudRoutes');
 const aggregateRoutes = require('./routes/aggregateRoutes');
 const authRoutes = require('./routes/authRoutes');
+const configRoutes = require('./routes/configRoutes');
 
 const app = express();
 
@@ -90,6 +91,7 @@ app.use('/api/site-reviews', createCrudRoutes(SiteReview));
 app.use('/api/subscribers', createCrudRoutes(Subscriber));
 app.use('/api/stock-transfers', createCrudRoutes(StockTransfer));
 app.use('/api/stock-adjustments', createCrudRoutes(StockAdjustment));
+app.use('/api/config', configRoutes);
 
 app.use(errorHandler);
 

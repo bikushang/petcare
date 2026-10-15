@@ -2,17 +2,42 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { PawPrint, Activity, Shield } from 'lucide-react';
+import { PawPrint, Activity, Shield, X } from 'lucide-react';
 import { navForRole, roleInfo } from '../lib/platform';
 import type { Role } from '../lib/auth';
 
-export default function Sidebar({ role, branch }: { role: Role; branch: string }) {
+export default function Sidebar({
+  role,
+  branch,
+  mobileOpen = false,
+  onClose,
+}: {
+  role: Role;
+  branch: string;
+  mobileOpen?: boolean;
+  onClose?: () => void;
+}) {
   const pathname = usePathname();
   const items = navForRole(role);
   const info = roleInfo[role];
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 shrink-0 border-r border-line bg-white">
+    <>
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-ink/30 backdrop-blur-sm lg:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar — hidden on desktop via the className, rendered as drawer on mobile */}
+    <aside className={`
+      fixed lg:static inset-y-0 left-0 z-50 lg:z-auto
+      flex flex-col w-64 shrink-0 border-r border-line bg-white
+      transform transition-transform duration-300 ease-out-soft
+      ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+    `}>
       <Link href="/" className="hv-slide-parent group flex items-center gap-2.5 px-5 h-16 border-b border-line">
         <div className="hv-tile flex items-center justify-center w-9 h-9 rounded-xl bg-plum text-white shadow-lift-sm">
           <PawPrint className="w-5 h-5" />
@@ -54,6 +79,18 @@ export default function Sidebar({ role, branch }: { role: Role; branch: string }
           Signed in as {role}. {info?.scope === 'platform' ? 'Full platform access.' : info?.scope === 'clinic' ? 'All branches access.' : `${branch} branch.`}
         </p>
       </div>
+
+      {/* Close button — only visible in mobile drawer */}
+      {onClose && (
+        <button
+          onClick={onClose}
+          className="lg:hidden absolute top-3 right-3 w-8 h-8 rounded-lg hover:bg-lilac text-ink/60 flex items-center justify-center"
+          aria-label="Close menu"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      )}
     </aside>
+    </>
   );
 }

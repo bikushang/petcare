@@ -14,7 +14,7 @@ import type { AISuggestion } from '../lib/ai-engine';
 
 const scheduleTypes = ['Puppy', 'Kitten', 'Adult', 'Livestock', 'Custom'] as const;
 const statuses = ['Completed', 'Pending', 'Overdue', 'Scheduled'] as const;
-const vets = ['Dr. Rivera', 'Dr. Okafor', 'Dr. Patel'];
+const VET_ROLES = ['Veterinarian', 'Veterinary Nurse'];
 const manufacturers = ['BioPharm', 'Zoetis', 'Merck', 'MedGene', 'Boehringer Ingelheim', 'Elanco', 'Ceva'];
 
 const statusStyle: Record<Vaccination['status'], { bg: string; text: string; icon: typeof ShieldCheck }> = {
@@ -63,6 +63,10 @@ const vaccineScheduleTemplates: Record<string, { name: string; doses: number }[]
 
 export default function VaccinationsPage() {
   const { db, create, update, remove } = useDB();
+  const vets = useMemo(() => {
+    if (!db) return [] as string[];
+    return db.staff.filter((s) => VET_ROLES.includes(s.role) && s.status === 'Active').map((s) => s.name);
+  }, [db]);
   const [petFilter, setPetFilter] = useState('all');
   const [scheduleFilter, setScheduleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -73,7 +77,7 @@ export default function VaccinationsPage() {
   const [form, setForm] = useState({
     petId: '', vaccineName: '', scheduleType: 'Adult' as Vaccination['scheduleType'],
     doseNumber: 1, totalDoses: 1, dateGiven: '', nextDueDate: '', status: 'Pending' as Vaccination['status'],
-    vet: vets[0], batchNumber: '', manufacturer: manufacturers[0], expiryDate: '', verified: false,
+    vet: '', batchNumber: '', manufacturer: manufacturers[0], expiryDate: '', verified: false,
     certificateId: '', notes: '', reminderSent: false,
   });
 
@@ -117,7 +121,7 @@ export default function VaccinationsPage() {
     setEditRecord(null);
     setForm({
       petId: '', vaccineName: '', scheduleType: 'Adult', doseNumber: 1, totalDoses: 1,
-      dateGiven: '', nextDueDate: '', status: 'Pending', vet: vets[0],
+      dateGiven: '', nextDueDate: '', status: 'Pending', vet: vets[0] ?? '',
       batchNumber: '', manufacturer: manufacturers[0], expiryDate: '',
       verified: false, certificateId: '', notes: '', reminderSent: false,
     });

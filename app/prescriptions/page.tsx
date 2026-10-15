@@ -14,7 +14,7 @@ import { generatePrescriptionSuggestion } from '../lib/ai-engine';
 import type { AISuggestion } from '../lib/ai-engine';
 
 const statuses = ['Active', 'Pending', 'Completed', 'Expired', 'Cancelled'] as const;
-const vets = ['Dr. Rivera', 'Dr. Okafor', 'Dr. Patel'];
+const VET_ROLES = ['Veterinarian', 'Veterinary Nurse'];
 const routes = ['Oral', 'Topical', 'Injectable (SC)', 'Injectable (IM)', 'Injectable (IV)', 'Sublingual', 'Intranasal', 'Ophthalmic', 'Otic', 'Rectal', 'Inhalation'] as const;
 const frequencies = ['Once daily', 'Twice daily', 'Three times daily', 'Four times daily', 'Every other day', 'Weekly', 'As needed', 'Every 4 hours', 'Every 6 hours', 'Every 8 hours', 'Every 12 hours'] as const;
 const dosageUnits = ['mg', 'ml', 'tablet', 'capsule', 'drop', 'mg/kg', 'ml/kg', 'IU', 'spray', 'patch'] as const;
@@ -37,13 +37,17 @@ const blankItem = (): PrescriptionItem => ({
 });
 
 const blankForm = () => ({
-  petId: '', vet: vets[0], date: today(), status: 'Pending' as Prescription['status'],
+  petId: '', vet: '', date: today(), status: 'Pending' as Prescription['status'],
   diagnosis: '', notes: '', isRepeat: false, maxRepeats: 0, expiresAt: '',
   items: [blankItem()],
 });
 
 export default function PrescriptionsPage() {
   const { db, create, update, remove } = useDB();
+  const vets = useMemo(() => {
+    if (!db) return [] as string[];
+    return db.staff.filter((s) => VET_ROLES.includes(s.role) && s.status === 'Active').map((s) => s.name);
+  }, [db]);
   const [open, setOpen] = useState(false);
   const [editRx, setEditRx] = useState<Prescription | null>(null);
   const [form, setForm] = useState(blankForm());
@@ -92,7 +96,7 @@ export default function PrescriptionsPage() {
 
   const openNew = () => {
     setEditRx(null);
-    setForm(blankForm());
+    setForm({ ...blankForm(), vet: vets[0] ?? '' });
     setOpen(true);
   };
 

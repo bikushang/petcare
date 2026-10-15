@@ -16,7 +16,7 @@ import { generateAppointmentSummary } from '../lib/ai-engine';
 import type { AISuggestion } from '../lib/ai-engine';
 
 const services = ['Consultation', 'Vaccination', 'Surgery', 'Dental', 'Grooming', 'Lab', 'Boarding', 'Emergency', 'Walk-in', 'Follow-up', 'Other'];
-const vets = ['Dr. Rivera', 'Dr. Okafor', 'Dr. Patel'];
+const VET_ROLES = ['Veterinarian', 'Veterinary Nurse'];
 const rooms = ['Room 1', 'Room 2', 'Room 3', 'Dental', 'Surgery', 'Isolation'];
 const times = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','12:00','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30'];
 const recurrencePatterns = ['None', 'Weekly', 'Bi-weekly', 'Monthly'];
@@ -62,6 +62,10 @@ function startOfWeek(d: Date) { const r = new Date(d); r.setDate(r.getDate() - r
 export default function AppointmentsPage() {
   const { db, create, update, remove } = useDB();
   const { user } = useAuth();
+  const vets = useMemo(() => {
+    if (!db) return [] as string[];
+    return db.staff.filter((s) => VET_ROLES.includes(s.role) && s.status === 'Active').map((s) => s.name);
+  }, [db]);
   const [tab, setTab] = useState<TabId>('calendar');
   const [viewMode, setViewMode] = useState<ViewMode>('day');
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -69,7 +73,7 @@ export default function AppointmentsPage() {
   const [editAppt, setEditAppt] = useState<Appointment | null>(null);
   const [detailAppt, setDetailAppt] = useState<Appointment | null>(null);
   const [form, setForm] = useState({
-    petId: '', vet: vets[0], service: services[0], date: today(), time: '09:00', reason: '',
+    petId: '', vet: '', service: services[0], date: today(), time: '09:00', reason: '',
     durationMin: '30', bookingType: 'Online' as Appointment['bookingType'],
     room: '', isRecurring: false, recurrencePattern: 'None' as Appointment['recurrencePattern'],
     followUpDate: '', followUpReminder: false, notes: '',
@@ -164,7 +168,7 @@ export default function AppointmentsPage() {
   const openNew = (presetDate?: string, presetType?: Appointment['bookingType']) => {
     setEditAppt(null);
     setForm({
-      petId: '', vet: vets[0], service: presetType === 'Emergency' ? 'Emergency' : presetType === 'Walk-in' ? 'Walk-in' : services[0],
+      petId: '', vet: vets[0] ?? '', service: presetType === 'Emergency' ? 'Emergency' : presetType === 'Walk-in' ? 'Walk-in' : services[0],
       date: presetDate ?? today(), time: '09:00', reason: '', durationMin: '30',
       bookingType: presetType ?? 'Online', room: '', isRecurring: false, recurrencePattern: 'None',
       followUpDate: '', followUpReminder: false, notes: '',

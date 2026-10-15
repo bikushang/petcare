@@ -14,8 +14,10 @@
    ════════════════════════════════════════════════════════════════════ */
 
 import { useState, useEffect, useCallback } from 'react';
+import { fetchConfig, saveConfig } from './api';
 
 export const SETTINGS_KEY = 'petcare-pro-settings';
+export const SETTINGS_CONFIG_KEY = 'clinic-settings';
 
 export type ClinicSettings = {
   clinicName: string;
@@ -138,32 +140,61 @@ const rgbVar = (c: [number, number, number]) => `${c[0]} ${c[1]} ${c[2]}`;
 
 export type ThemeVars = Record<string, string>;
 
+type ThemeDef = {
+  neutrals: { ink: [number, number, number]; canvas: [number, number, number]; line: [number, number, number]; surface: [number, number, number] };
+  /** When true, derive brand colours from the user's primary; otherwise use fixed palette. */
+  usePrimary: boolean;
+  /** Fixed brand palette for named themes that ignore primaryColor. */
+  brand?: { plum: [number, number, number]; grape: [number, number, number]; iris: [number, number, number]; lilac: [number, number, number] };
+};
+
+const THEME_DEFS: Record<string, ThemeDef> = {
+  light: {
+    usePrimary: true,
+    neutrals: { ink: [26, 13, 46], canvas: [250, 249, 253], line: [232, 227, 243], surface: [255, 255, 255] },
+  },
+  dark: {
+    usePrimary: true,
+    neutrals: { ink: [237, 233, 254], canvas: [20, 12, 33], line: [54, 38, 82], surface: [30, 20, 48] },
+  },
+  plum: {
+    usePrimary: false,
+    brand: { plum: [76, 29, 149], grape: [59, 7, 100], iris: [124, 58, 237], lilac: [237, 233, 254] },
+    neutrals: { ink: [26, 13, 46], canvas: [250, 249, 253], line: [232, 227, 243], surface: [255, 255, 255] },
+  },
+  coral: {
+    usePrimary: false,
+    brand: { plum: [241, 127, 101], grape: [180, 83, 62], iris: [251, 146, 121], lilac: [255, 237, 230] },
+    neutrals: { ink: [42, 24, 20], canvas: [253, 250, 248], line: [245, 229, 222], surface: [255, 255, 255] },
+  },
+};
+
 /**
  * Build the CSS custom properties for a given primary colour and theme.
  * Mirrors the token names in tailwind.config.ts.
  */
 export function themeVarsFor(primary: string, theme: string): ThemeVars {
-  const base = hexToRgb(primary) ?? hexToRgb(defaultSettings.primaryColor)!;
-  const dark = theme === 'dark';
+  const def = THEME_DEFS[theme] ?? THEME_DEFS.light;
+  const vars: ThemeVars = {};
 
-  const vars: ThemeVars = {
-    '--c-plum': rgbVar(base),
-    '--c-grape': rgbVar(shift(base, -0.38)),
-    '--c-iris': rgbVar(shift(base, 0.26)),
-    '--c-lilac': rgbVar(shift(base, dark ? -0.62 : 0.88)),
-  };
-
-  if (dark) {
-    vars['--c-ink'] = '237 233 254';
-    vars['--c-canvas'] = '20 12 33';
-    vars['--c-line'] = '54 38 82';
-    vars['--c-surface'] = '30 20 48';
-  } else {
-    vars['--c-ink'] = '26 13 46';
-    vars['--c-canvas'] = '250 249 253';
-    vars['--c-line'] = '232 227 243';
-    vars['--c-surface'] = '255 255 255';
+  if (def.usePrimary) {
+    const base = hexToRgb(primary) ?? hexToRgb(defaultSettings.primaryColor)!;
+    const dark = theme === 'dark';
+    vars['--c-plum'] = rgbVar(base);
+    vars['--c-grape'] = rgbVar(shift(base, -0.38));
+    vars['--c-iris'] = rgbVar(shift(base, 0.26));
+    vars['--c-lilac'] = rgbVar(shift(base, dark ? -0.62 : 0.88));
+  } else if (def.brand) {
+    vars['--c-plum'] = rgbVar(def.brand.plum);
+    vars['--c-grape'] = rgbVar(def.brand.grape);
+    vars['--c-iris'] = rgbVar(def.brand.iris);
+    vars['--c-lilac'] = rgbVar(def.brand.lilac);
   }
+
+  vars['--c-ink'] = rgbVar(def.neutrals.ink);
+  vars['--c-canvas'] = rgbVar(def.neutrals.canvas);
+  vars['--c-line'] = rgbVar(def.neutrals.line);
+  vars['--c-surface'] = rgbVar(def.neutrals.surface);
   return vars;
 }
 
@@ -208,10 +239,23 @@ export function useSettings() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    const current = readSettings();
-    setSettings(current);
-    applySettingsToDocument(current);
-    setLoaded(true);
+    let mounted = true;
+    const localSettings = readSettings();
+    setSettings(localSettings);
+    applySettingsToDocument(localSettings);
+
+    fetchConfig<ClinicSettings>(SETTINGS_CONFIG_KEY)
+      .then((serverSettings) => {
+        if (!mounted || !serverSettings) return;
+        const merged = { ...defaultSettings, ...serverSettings };
+        setSettings(merged);
+        applySettingsToDocument(merged);
+        writeSettings(merged);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (mounted) setLoaded(true);
+      });
 
     const onChange = (e: Event) => {
       const next = (e as CustomEvent<ClinicSettings>).detail ?? readSettings();
@@ -224,6 +268,7 @@ export function useSettings() {
     window.addEventListener('petcare-settings-change', onChange);
     window.addEventListener('storage', onStorage);
     return () => {
+      mounted = false;
       window.removeEventListener('petcare-settings-change', onChange);
       window.removeEventListener('storage', onStorage);
     };
@@ -234,6 +279,7 @@ export function useSettings() {
       const next = { ...prev, ...patch };
       writeSettings(next);
       applySettingsToDocument(next);
+      saveConfig(SETTINGS_CONFIG_KEY, next).catch(() => {});
       return next;
     });
   }, []);
@@ -242,6 +288,7 @@ export function useSettings() {
     setSettings(defaultSettings);
     writeSettings(defaultSettings);
     applySettingsToDocument(defaultSettings);
+    saveConfig(SETTINGS_CONFIG_KEY, defaultSettings).catch(() => {});
   }, []);
 
   return { settings, update, reset, loaded };

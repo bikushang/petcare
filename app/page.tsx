@@ -261,7 +261,7 @@ function BranchManagerDashboard({ stats, db, petName = () => 'Unknown', ownerNam
 
 // --- Veterinarian ---
 function VetDashboard({ stats, db, petName = () => 'Unknown', ownerName = () => 'Unknown', todays = [], user }: DashPropsFull) {
-  const myAppts = todays.filter((a) => a.vet === user?.name || a.vet === 'Dr. Rivera');
+  const myAppts = todays.filter((a) => a.vet === user?.name);
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

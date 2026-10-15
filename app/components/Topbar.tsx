@@ -2,7 +2,7 @@
 
 import {
   Bell, ChevronDown, LogOut, KeyRound, User as UserIcon, Building2,
-  PawPrint, Users, Receipt, CalendarDays, Package, CircleAlert, Clock, Search,
+  PawPrint, Users, Receipt, CalendarDays, Package, CircleAlert, Clock, Search, Menu,
 } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
@@ -20,11 +20,12 @@ const roleInitials = (name: string) =>
 
 const PLATFORM_ROLES = ['Super Admin', 'Clinic Owner'];
 
-export default function Topbar({ title, subtitle, user, onPasswordChange }: {
+export default function Topbar({ title, subtitle, user, onPasswordChange, onOpenMobileNav }: {
   title: string;
   subtitle?: string;
   user: User;
   onPasswordChange?: () => void;
+  onOpenMobileNav?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [branchOpen, setBranchOpen] = useState(false);
@@ -153,7 +154,16 @@ export default function Topbar({ title, subtitle, user, onPasswordChange }: {
   };
 
   return (
-    <header className="sticky top-0 z-20 flex items-center gap-3 px-6 h-16 bg-white/90 backdrop-blur border-b border-line">
+    <header className="sticky top-0 z-20 flex items-center gap-3 px-4 md:px-6 h-16 bg-white/90 backdrop-blur border-b border-line">
+      {onOpenMobileNav && (
+        <button
+          onClick={onOpenMobileNav}
+          className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg text-ink/70 hover:bg-lilac hover:text-plum shrink-0"
+          aria-label="Open navigation menu"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+      )}
       <div className="min-w-0">
         <h1 className="text-[15px] font-semibold text-ink truncate">{title}</h1>
         {subtitle && <p className="text-[11px] text-ink/50 truncate">{subtitle}</p>}

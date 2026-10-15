@@ -23,7 +23,7 @@ const typeColor: Record<string, string> = {
   Consultation: 'bg-sky-100 text-sky-700', Vaccination: 'bg-lilac text-plum', Surgery: 'bg-coral/15 text-coral',
   Lab: 'bg-amber-100 text-amber-700', Prescription: 'bg-violet-100 text-violet-700', Imaging: 'bg-indigo-100 text-indigo-700',
 };
-const vets = ['Dr. Rivera', 'Dr. Okafor', 'Dr. Patel'];
+const VET_ROLES = ['Veterinarian', 'Veterinary Nurse'];
 const attachmentTypes: EMRAttachment['type'][] = ['Image', 'PDF', 'Audio', 'Video'];
 const attachmentIcon: Record<string, typeof ImageIcon> = {
   Image: ImageIcon, PDF: FileText, Audio: Headphones, Video: Video,
@@ -37,7 +37,7 @@ const emptyVitals: VitalSigns = {
 const emptySOAP: SOAPNotes = { subjective: '', objective: '', assessment: '', plan: '' };
 
 const defaultForm = {
-  petId: '', type: 'Consultation' as MedRecord['type'], title: '', vet: vets[0], date: today(),
+  petId: '', type: 'Consultation' as MedRecord['type'], title: '', vet: '', date: today(),
   findings: '', treatment: '',
   chiefComplaint: '', medicalHistory: '', physicalExamination: '',
   diagnosis: '', treatmentPlan: '',
@@ -49,6 +49,10 @@ const defaultForm = {
 export default function MedicalPage() {
   const { db, create, update, remove } = useDB();
   const { user } = useAuth();
+  const vets = useMemo(() => {
+    if (!db) return [] as string[];
+    return db.staff.filter((s) => VET_ROLES.includes(s.role) && s.status === 'Active').map((s) => s.name);
+  }, [db]);
   const [petFilter, setPetFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [open, setOpen] = useState(false);
@@ -78,7 +82,7 @@ export default function MedicalPage() {
 
   const openNew = () => {
     setEditRecord(null);
-    setForm({ ...defaultForm, date: today() });
+    setForm({ ...defaultForm, date: today(), vet: vets[0] ?? '' });
     setShowVitals(false); setShowSOAP(false); setShowAttachments(false);
     setOpen(true);
   };

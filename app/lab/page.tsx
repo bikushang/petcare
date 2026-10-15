@@ -20,7 +20,7 @@ const priorities = ['Routine', 'Urgent', 'STAT'] as const;
 const statuses = ['Ordered', 'Sample collected', 'In analysis', 'Completed', 'Cancelled'] as const;
 const trackStages = ['Collected', 'Received', 'In analysis', 'Completed', 'Rejected'] as const;
 const flags = ['Normal', 'Low', 'High', 'Critical', 'N/A'] as const;
-const vetNames = ['Dr. Rivera', 'Dr. Okafor', 'Dr. Patel', 'Grace Tan', 'Oscar Mbeki'];
+const VET_ROLES = ['Veterinarian', 'Veterinary Nurse'];
 
 const categoryForType: Record<LabTest['testType'], LabTest['testCategory'][]> = {
   'Blood test': ['CBC', 'Biochemistry', 'Cytology', 'Culture', 'Other'],
@@ -92,7 +92,7 @@ const blankForm = () => ({
   testCategory: 'CBC' as LabTest['testCategory'],
   testName: '',
   templateId: '',
-  requestedBy: vetNames[0],
+  requestedBy: '',
   dateOrdered: today(),
   priority: 'Routine' as LabTest['priority'],
   status: 'Ordered' as LabTest['status'],
@@ -123,6 +123,10 @@ const blankForm = () => ({
 
 export default function LabPage() {
   const { db, create, update, remove } = useDB();
+  const vetNames = useMemo(() => {
+    if (!db) return [] as string[];
+    return db.staff.filter((s) => VET_ROLES.includes(s.role) && s.status === 'Active').map((s) => s.name);
+  }, [db]);
   const [open, setOpen] = useState(false);
   const [editT, setEditT] = useState<LabTest | null>(null);
   const [form, setForm] = useState(blankForm());
@@ -196,7 +200,7 @@ export default function LabPage() {
 
   const openNew = () => {
     setEditT(null);
-    setForm({ ...blankForm(), barcode: `BC${Date.now().toString().slice(-6)}` });
+    setForm({ ...blankForm(), requestedBy: vetNames[0] ?? '', barcode: `BC${Date.now().toString().slice(-6)}` });
     setActiveTab('details');
     setOpen(true);
   };

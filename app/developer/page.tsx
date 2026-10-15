@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Code2, Key, Webhook, BookOpen, Package, Upload, Download, FileJson,
   FileSpreadsheet, FileText, Plus, Trash2, Copy, Eye, EyeOff, RefreshCw,
@@ -9,6 +9,36 @@ import {
 } from 'lucide-react';
 import Shell from '../components/Shell';
 import { Card, SectionTitle, Button, Input, Select, Field, Badge, Modal, EmptyState, Tabs } from '../components/ui';
+import { fetchConfig, saveConfig } from '../lib/api';
+
+type DeveloperConfig = {
+  tokens: ApiToken[];
+  webhooks: Webhook[];
+  importJobs: ImportJob[];
+};
+
+const DEV_KEY = 'developer-config';
+
+const defaultDevConfig: DeveloperConfig = {
+  tokens: [
+    { id: 'tok1', name: 'Production API', token: 'pcp_live_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6', masked: true, scopes: ['read', 'write'], status: 'Active', created: '2026-08-01', lastUsed: '2026-10-07T14:20:00', requests: 18432 },
+    { id: 'tok2', name: 'Analytics Read-Only', token: 'pcp_live_q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2', masked: true, scopes: ['read'], status: 'Active', created: '2026-09-15', lastUsed: '2026-10-07T12:00:00', requests: 4521 },
+    { id: 'tok3', name: 'Webhook Service', token: 'pcp_live_g3h4i5j6k7l8m9n0o1p2q3r4s5t6u7v8', masked: true, scopes: ['read', 'write', 'webhooks'], status: 'Active', created: '2026-07-20', lastUsed: '2026-10-07T14:25:00', requests: 9876 },
+    { id: 'tok4', name: 'Legacy Integration', token: 'pcp_live_w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l4', masked: true, scopes: ['read', 'write'], status: 'Revoked', created: '2026-03-10', lastUsed: '2026-09-28T10:00:00', requests: 2341 },
+  ],
+  webhooks: [
+    { id: 'wh1', url: 'https://hooks.example.com/petcare/appointments', events: ['appointment.created', 'appointment.updated', 'appointment.cancelled'], status: 'Active', secret: 'whsec_••••••••', createdAt: '2026-08-15', lastDelivery: '2026-10-07T14:20:00', deliveries: 3421, failures: 2 },
+    { id: 'wh2', url: 'https://api.billing-svc.net/petcare/invoices', events: ['invoice.created', 'invoice.paid', 'invoice.overdue'], status: 'Active', secret: 'whsec_••••••••', createdAt: '2026-07-01', lastDelivery: '2026-10-07T11:30:00', deliveries: 1876, failures: 0 },
+    { id: 'wh3', url: 'https://notify.slack.com/services/petcare-alerts', events: ['staff.hired', 'inventory.low_stock', 'security.alert'], status: 'Active', secret: 'whsec_••••••••', createdAt: '2026-09-01', lastDelivery: '2026-10-06T16:00:00', deliveries: 234, failures: 1 },
+    { id: 'wh4', url: 'https://staging.crm-sync.io/petcare/patients', events: ['patient.created', 'patient.updated'], status: 'Pending', secret: 'whsec_••••••••', createdAt: '2026-10-05', lastDelivery: '', deliveries: 0, failures: 0 },
+  ],
+  importJobs: [
+    { id: 'imp1', filename: 'patients_october.csv', format: 'CSV', module: 'Patients', records: 245, status: 'Completed', date: '2026-10-05T10:30:00', errors: 0 },
+    { id: 'imp2', filename: 'inventory_stock.xlsx', format: 'Excel', module: 'Inventory', records: 1890, status: 'Completed', date: '2026-10-03T14:00:00', errors: 3 },
+    { id: 'imp3', filename: 'owners_export.json', format: 'JSON', module: 'Owners (CRM)', records: 412, status: 'Completed', date: '2026-09-28T09:15:00', errors: 0 },
+    { id: 'imp4', filename: 'staff_contacts.csv', format: 'CSV', module: 'Staff', records: 38, status: 'Failed', date: '2026-10-06T16:20:00', errors: 12 },
+  ],
+};
 
 type Tab = 'overview' | 'tokens' | 'webhooks' | 'docs' | 'sdk' | 'import' | 'export';
 
@@ -61,26 +91,24 @@ export default function DeveloperPage() {
   const [importFileName, setImportFileName] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const [tokens, setTokens] = useState<ApiToken[]>([
-    { id: 'tok1', name: 'Production API', token: 'pcp_live_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6', masked: true, scopes: ['read', 'write'], status: 'Active', created: '2026-08-01', lastUsed: '2026-10-07T14:20:00', requests: 18432 },
-    { id: 'tok2', name: 'Analytics Read-Only', token: 'pcp_live_q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2', masked: true, scopes: ['read'], status: 'Active', created: '2026-09-15', lastUsed: '2026-10-07T12:00:00', requests: 4521 },
-    { id: 'tok3', name: 'Webhook Service', token: 'pcp_live_g3h4i5j6k7l8m9n0o1p2q3r4s5t6u7v8', masked: true, scopes: ['read', 'write', 'webhooks'], status: 'Active', created: '2026-07-20', lastUsed: '2026-10-07T14:25:00', requests: 9876 },
-    { id: 'tok4', name: 'Legacy Integration', token: 'pcp_live_w9x0y1z2a3b4c5d6e7f8g9h0i1j2k3l4', masked: true, scopes: ['read', 'write'], status: 'Revoked', created: '2026-03-10', lastUsed: '2026-09-28T10:00:00', requests: 2341 },
-  ]);
+  const [devConfig, setDevConfig] = useState<DeveloperConfig>(defaultDevConfig);
 
-  const [webhooks, setWebhooks] = useState<Webhook[]>([
-    { id: 'wh1', url: 'https://hooks.example.com/petcare/appointments', events: ['appointment.created', 'appointment.updated', 'appointment.cancelled'], status: 'Active', secret: 'whsec_••••••••', createdAt: '2026-08-15', lastDelivery: '2026-10-07T14:20:00', deliveries: 3421, failures: 2 },
-    { id: 'wh2', url: 'https://api.billing-svc.net/petcare/invoices', events: ['invoice.created', 'invoice.paid', 'invoice.overdue'], status: 'Active', secret: 'whsec_••••••••', createdAt: '2026-07-01', lastDelivery: '2026-10-07T11:30:00', deliveries: 1876, failures: 0 },
-    { id: 'wh3', url: 'https://notify.slack.com/services/petcare-alerts', events: ['staff.hired', 'inventory.low_stock', 'security.alert'], status: 'Active', secret: 'whsec_••••••••', createdAt: '2026-09-01', lastDelivery: '2026-10-06T16:00:00', deliveries: 234, failures: 1 },
-    { id: 'wh4', url: 'https://staging.crm-sync.io/petcare/patients', events: ['patient.created', 'patient.updated'], status: 'Pending', secret: 'whsec_••••••••', createdAt: '2026-10-05', lastDelivery: '', deliveries: 0, failures: 0 },
-  ]);
+  useEffect(() => {
+    let mounted = true;
+    fetchConfig<DeveloperConfig>(DEV_KEY)
+      .then((data) => { if (mounted && data) setDevConfig({ ...defaultDevConfig, ...data }); })
+      .catch(() => {});
+    return () => { mounted = false; };
+  }, []);
 
-  const [importJobs, setImportJobs] = useState<ImportJob[]>([
-    { id: 'imp1', filename: 'patients_october.csv', format: 'CSV', module: 'Patients', records: 245, status: 'Completed', date: '2026-10-05T10:30:00', errors: 0 },
-    { id: 'imp2', filename: 'inventory_stock.xlsx', format: 'Excel', module: 'Inventory', records: 1890, status: 'Completed', date: '2026-10-03T14:00:00', errors: 3 },
-    { id: 'imp3', filename: 'owners_export.json', format: 'JSON', module: 'Owners (CRM)', records: 412, status: 'Completed', date: '2026-09-28T09:15:00', errors: 0 },
-    { id: 'imp4', filename: 'staff_contacts.csv', format: 'CSV', module: 'Staff', records: 38, status: 'Failed', date: '2026-10-06T16:20:00', errors: 12 },
-  ]);
+  const persistDev = useCallback((next: DeveloperConfig) => {
+    setDevConfig(next);
+    saveConfig(DEV_KEY, next).catch(() => {});
+  }, []);
+
+  const tokens = devConfig.tokens;
+  const webhooks = devConfig.webhooks;
+  const importJobs = devConfig.importJobs;
 
   const apiEndpoints = [
     { method: 'GET', path: '/api/v1/patients', desc: 'List all pets with pagination', auth: 'read' },
@@ -160,21 +188,21 @@ export default function DeveloperPage() {
     }
   };
 
-  const toggleTokenMask = (id: string) => setTokens((prev) => prev.map((t) => t.id === id ? { ...t, masked: !t.masked } : t));
-  const revokeToken = (id: string) => setTokens((prev) => prev.map((t) => t.id === id ? { ...t, status: 'Revoked' } : t));
+  const toggleTokenMask = (id: string) => persistDev({ ...devConfig, tokens: tokens.map((t) => t.id === id ? { ...t, masked: !t.masked } : t) });
+  const revokeToken = (id: string) => persistDev({ ...devConfig, tokens: tokens.map((t) => t.id === id ? { ...t, status: 'Revoked' } : t) });
   const addToken = () => {
     if (!newTokenName) return;
     const generated = `pcp_live_${Math.random().toString(36).slice(2, 18)}${Math.random().toString(36).slice(2, 18)}`;
-    setTokens((prev) => [...prev, {
+    persistDev({ ...devConfig, tokens: [...tokens, {
       id: `tok${Date.now()}`, name: newTokenName, token: generated, masked: false,
       scopes: newTokenScopes, status: 'Active', created: new Date().toISOString().slice(0, 10),
       lastUsed: '', requests: 0,
-    }]);
+    }] });
     setNewTokenName('');
     setNewTokenScopes(['read']);
     setTokenModalOpen(false);
   };
-  const deleteToken = (id: string) => setTokens((prev) => prev.filter((t) => t.id !== id));
+  const deleteToken = (id: string) => persistDev({ ...devConfig, tokens: tokens.filter((t) => t.id !== id) });
 
   const toggleScope = (scope: string) => {
     setNewTokenScopes((prev) => prev.includes(scope) ? prev.filter((s) => s !== scope) : [...prev, scope]);
@@ -182,34 +210,39 @@ export default function DeveloperPage() {
 
   const addWebhook = () => {
     if (!newWebhookUrl) return;
-    setWebhooks((prev) => [...prev, {
+    persistDev({ ...devConfig, webhooks: [...webhooks, {
       id: `wh${Date.now()}`, url: newWebhookUrl, events: newWebhookEvents, status: 'Pending',
       secret: `whsec_${Math.random().toString(36).slice(2, 16)}`, createdAt: new Date().toISOString().slice(0, 10),
       lastDelivery: '', deliveries: 0, failures: 0,
-    }]);
+    }] });
     setNewWebhookUrl('');
     setNewWebhookEvents(['appointment.created']);
     setWebhookModalOpen(false);
   };
-  const deleteWebhook = (id: string) => setWebhooks((prev) => prev.filter((w) => w.id !== id));
-  const toggleWebhookStatus = (id: string) => setWebhooks((prev) => prev.map((w) => w.id === id ? { ...w, status: w.status === 'Active' ? 'Paused' : 'Active' } : w));
+  const deleteWebhook = (id: string) => persistDev({ ...devConfig, webhooks: webhooks.filter((w) => w.id !== id) });
+  const toggleWebhookStatus = (id: string) => persistDev({ ...devConfig, webhooks: webhooks.map((w) => w.id === id ? { ...w, status: w.status === 'Active' ? 'Paused' : 'Active' } : w) });
   const toggleWebhookEvent = (event: string) => {
     setNewWebhookEvents((prev) => prev.includes(event) ? prev.filter((e) => e !== event) : [...prev, event]);
   };
 
   const startImport = () => {
     if (!importFileName) return;
-    setImportJobs((prev) => [{
+    const newJob: ImportJob = {
       id: `imp${Date.now()}`, filename: importFileName, format: importFormat,
       module: importModule, records: 0, status: 'Processing',
       date: new Date().toISOString(), errors: 0,
-    }, ...prev]);
+    };
+    persistDev({ ...devConfig, importJobs: [newJob, ...importJobs] });
     setImportFileName('');
     setImportModalOpen(false);
     setTimeout(() => {
-      setImportJobs((prev) => prev.map((j) => j.status === 'Processing' ? {
-        ...j, status: 'Completed', records: Math.floor(Math.random() * 500) + 50, errors: Math.floor(Math.random() * 3),
-      } : j));
+      setDevConfig((prev) => {
+        const updated = { ...prev, importJobs: prev.importJobs.map((j) => j.status === 'Processing' ? {
+          ...j, status: 'Completed' as const, records: Math.floor(Math.random() * 500) + 50, errors: Math.floor(Math.random() * 3),
+        } : j) };
+        saveConfig(DEV_KEY, updated).catch(() => {});
+        return updated;
+      });
     }, 2500);
   };
 

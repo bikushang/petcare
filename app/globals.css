@@ -123,7 +123,7 @@ html { scroll-behavior: smooth; }
 }
 .hv-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 18px 40px -12px rgba(76, 29, 149, 0.22);
+  box-shadow: 0 18px 40px -12px rgb(var(--c-plum) / 0.22);
 }
 
 /* Underline grow for text links. */

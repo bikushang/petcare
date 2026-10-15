@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { fetchConfig, saveConfig } from './api';
 
 const CMS_KEY = 'petcare-pro-cms';
+export const CMS_CONFIG_KEY = 'cms-content';
 
 export type CmsContent = {
   hero: {
@@ -221,6 +223,7 @@ function writeContent(c: CmsContent) {
 }
 
 const SEO_KEY = 'petcare-pro-seo';
+export const SEO_CONFIG_KEY = 'seo-settings';
 
 function readSeo(): SeoSettings {
   if (typeof window === 'undefined') return defaultSeo;
@@ -242,14 +245,29 @@ export function useCms() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
     setContent(readContent());
-    setLoaded(true);
+
+    fetchConfig<CmsContent>(CMS_CONFIG_KEY)
+      .then((serverContent) => {
+        if (!mounted || !serverContent) return;
+        const merged = { ...defaultContent, ...serverContent };
+        setContent(merged);
+        writeContent(merged);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (mounted) setLoaded(true);
+      });
+
+    return () => { mounted = false; };
   }, []);
 
   const update = useCallback((updater: (prev: CmsContent) => CmsContent) => {
     setContent((prev) => {
       const next = updater(prev);
       writeContent(next);
+      saveConfig(CMS_CONFIG_KEY, next).catch(() => {});
       return next;
     });
   }, []);
@@ -257,6 +275,7 @@ export function useCms() {
   const reset = useCallback(() => {
     setContent(defaultContent);
     writeContent(defaultContent);
+    saveConfig(CMS_CONFIG_KEY, defaultContent).catch(() => {});
   }, []);
 
   return { content, update, loaded, reset };
@@ -267,14 +286,29 @@ export function useSeo() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
     setSeo(readSeo());
-    setLoaded(true);
+
+    fetchConfig<SeoSettings>(SEO_CONFIG_KEY)
+      .then((serverSeo) => {
+        if (!mounted || !serverSeo) return;
+        const merged = { ...defaultSeo, ...serverSeo };
+        setSeo(merged);
+        writeSeo(merged);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (mounted) setLoaded(true);
+      });
+
+    return () => { mounted = false; };
   }, []);
 
   const update = useCallback((updater: (prev: SeoSettings) => SeoSettings) => {
     setSeo((prev) => {
       const next = updater(prev);
       writeSeo(next);
+      saveConfig(SEO_CONFIG_KEY, next).catch(() => {});
       return next;
     });
   }, []);
@@ -282,6 +316,7 @@ export function useSeo() {
   const reset = useCallback(() => {
     setSeo(defaultSeo);
     writeSeo(defaultSeo);
+    saveConfig(SEO_CONFIG_KEY, defaultSeo).catch(() => {});
   }, []);
 
   return { seo, update, loaded, reset };

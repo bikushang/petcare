@@ -18,7 +18,7 @@ const statuses = ['Scheduled', 'Pre-op', 'In surgery', 'Recovery', 'Completed', 
 const procedureTypes = ['Planned', 'Emergency'] as const;
 const categories = ['Soft tissue', 'Orthopedic', 'Dental', 'Ophthalmic', 'Neurologic', 'Abdominal', 'Other'] as const;
 const theaters = ['Theater A', 'Theater B', 'Dental Suite'];
-const vetNames = ['Dr. Rivera', 'Dr. Okafor', 'Dr. Patel', 'Grace Tan'];
+const VET_ROLES = ['Veterinarian', 'Veterinary Nurse'];
 const staffRoles = ['Surgeon', 'Anesthetist', 'Surgical Nurse', 'Assistant', 'Recovery Nurse'] as const;
 const equipCategories = ['Surgical instrument', 'Anesthesia equipment', 'Monitoring device', 'Consumable', 'Imaging'] as const;
 const outcomes = ['Successful', 'Successful with complications', 'Unsuccessful', 'Pending'] as const;
@@ -58,7 +58,7 @@ const blankForm = () => ({
   actualDurationMin: 0,
   status: 'Scheduled' as Surgery['status'],
   theater: theaters[0],
-  staff: [{ role: 'Surgeon' as StaffAssignment['role'], staffId: '', staffName: vetNames[0] }] as StaffAssignment[],
+  staff: [{ role: 'Surgeon' as StaffAssignment['role'], staffId: '', staffName: '' }] as StaffAssignment[],
   equipmentChecklist: [] as EquipmentItem[],
   consentSigned: false,
   consentSignedBy: '',
@@ -93,6 +93,10 @@ const blankForm = () => ({
 
 export default function SurgeriesPage() {
   const { db, create, update, remove } = useDB();
+  const vetNames = useMemo(() => {
+    if (!db) return [] as string[];
+    return db.staff.filter((s) => VET_ROLES.includes(s.role) && s.status === 'Active').map((s) => s.name);
+  }, [db]);
   const [open, setOpen] = useState(false);
   const [editS, setEditS] = useState<Surgery | null>(null);
   const [form, setForm] = useState(blankForm());
@@ -154,7 +158,7 @@ export default function SurgeriesPage() {
 
   const openNew = () => {
     setEditS(null);
-    setForm(blankForm());
+    setForm({ ...blankForm(), staff: [{ role: 'Surgeon' as StaffAssignment['role'], staffId: '', staffName: vetNames[0] ?? '' }] });
     setActiveTab('overview');
     setOpen(true);
   };

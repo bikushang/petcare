@@ -1238,3 +1238,20 @@ export async function updateItem<C extends Collection>(
 export async function deleteItem(collection: Collection, id: string): Promise<void> {
   await apiFetch(`/${endpointMap[collection]}/${id}`, { method: 'DELETE' });
 }
+
+export async function fetchConfig<T>(key: string): Promise<T | null> {
+  try {
+    const res = await apiFetch<{ key: string; data: T }>(`/config/${key}`);
+    return res.data;
+  } catch {
+    return null;
+  }
+}
+
+export async function saveConfig<T>(key: string, data: T): Promise<T> {
+  const res = await apiFetch<{ key: string; data: T }>(`/config/${key}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+  return res.data;
+}

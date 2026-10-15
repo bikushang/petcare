@@ -314,14 +314,14 @@ export default function SettingsPage() {
           <SectionTitle title="Theme & appearance" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { name: 'Light', value: 'light', icon: Sun, bg: 'bg-white border-2', text: 'text-ink' },
-              { name: 'Dark', value: 'dark', icon: Moon, bg: 'bg-ink border-2', text: 'text-white' },
-              { name: 'Violet (Default)', value: 'plum', icon: Building, bg: 'bg-lilac border-2', text: 'text-plum' },
-              { name: 'Coral', value: 'coral', icon: Building, bg: 'bg-coral/15 border-2', text: 'text-coral' },
+              { name: 'Light', value: 'light', icon: Sun, bg: 'bg-white', text: 'text-ink', border: 'border-line' },
+              { name: 'Dark', value: 'dark', icon: Moon, bg: 'bg-ink', text: 'text-white', border: 'border-line' },
+              { name: 'Violet (Default)', value: 'plum', icon: Building, bg: 'bg-lilac', text: 'text-plum', border: 'border-lilac' },
+              { name: 'Coral', value: 'coral', icon: Building, bg: 'bg-coral/15', text: 'text-coral', border: 'border-coral/30' },
             ].map((theme) => (
               <button key={theme.value} onClick={() => set('theme', theme.value)}
                 className={`rounded-2xl p-5 border-2 transition-all text-center ${current.theme === theme.value ? 'border-plum ring-2 ring-lilac' : 'border-line hover:border-plum/30'}`}>
-                <div className={`w-full h-20 rounded-xl ${theme.bg} ${theme.text} flex items-center justify-center mb-3`}>
+                <div className={`w-full h-20 rounded-xl border ${theme.bg} ${theme.text} ${theme.border} flex items-center justify-center mb-3`}>
                   <theme.icon className="w-8 h-8" />
                 </div>
                 <div className="text-sm font-medium text-ink">{theme.name}</div>
@@ -331,18 +331,36 @@ export default function SettingsPage() {
           </div>
 
           <div className="mt-6 pt-6 border-t border-line">
-            <h4 className="text-sm font-semibold text-ink mb-3">Color palette preview</h4>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-semibold text-ink">Color palette preview</h4>
+              <span className="text-[11px] text-ink/50">Changes apply live across the entire app</span>
+            </div>
             <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
               {[
-                { name: 'Primary', color: '#4C1D95' }, { name: 'Deep', color: '#3B0764' },
-                { name: 'Accent', color: '#7C3AED' }, { name: 'Tint', color: '#EDE9FE' },
-                { name: 'Coral', color: '#f17f65' }, { name: 'Info', color: '#0ea5e9' },
+                { name: 'Primary', var: '--c-plum' },
+                { name: 'Deep', var: '--c-grape' },
+                { name: 'Accent', var: '--c-iris' },
+                { name: 'Tint', var: '--c-lilac' },
+                { name: 'Coral', color: '#f17f65' },
+                { name: 'Info', color: '#0ea5e9' },
               ].map((c) => (
                 <div key={c.name} className="rounded-xl overflow-hidden border border-line">
-                  <div className="h-12" style={{ backgroundColor: c.color }} />
-                  <div className="p-2"><div className="text-[10px] font-medium text-ink">{c.name}</div><div className="text-[9px] text-ink/40 font-mono">{c.color}</div></div>
+                  <div className="h-12" style={c.var ? { backgroundColor: `rgb(var(${c.var}))` } : { backgroundColor: c.color }} />
+                  <div className="p-2"><div className="text-[10px] font-medium text-ink">{c.name}</div></div>
                 </div>
               ))}
+            </div>
+          </div>
+
+          <div className="mt-6 pt-6 border-t border-line">
+            <h4 className="text-sm font-semibold text-ink mb-3">Custom primary color</h4>
+            <p className="text-[11px] text-ink/50 mb-4">Pick a custom primary color for the Light and Dark themes. The Violet and Coral themes use their own fixed palettes.</p>
+            <div className="flex items-center gap-4">
+              <ColorInput value={current.primaryColor} onChange={(e) => set('primaryColor', e.target.value)} />
+              <div className="flex items-center gap-2 text-xs text-ink/60">
+                <span>Current:</span>
+                <code className="font-mono text-ink">{current.primaryColor}</code>
+              </div>
             </div>
           </div>
         </Card>

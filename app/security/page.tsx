@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import {
   ShieldCheck, KeyRound, ScrollText, Activity, Lock, Globe, Smartphone,
   HardDrive, Database, FileLock2, HeartPulse, Wifi, AlertTriangle,
@@ -12,7 +12,44 @@ import {
 import Shell from '../components/Shell';
 import { Card, Button, Badge, EmptyState, Select, Input, Modal, Field, Tabs } from '../components/ui';
 import { useDB, today } from '../lib/store';
+import { fetchConfig, saveConfig } from '../lib/api';
 import { rolePermissions, allRoles, roleInfo, type Role, type Module, type Action } from '../lib/platform';
+
+type IpRule = { id: string; ip: string; label: string; type: 'Allow' | 'Block' };
+type Session = { id: string; user: string; role: string; device: string; ip: string; location: string; started: string; lastActive: string; status: string };
+type Device = { id: string; user: string; device: string; os: string; browser: string; lastSeen: string; trusted: boolean; fingerprint: string };
+
+type SecurityConfig = {
+  ipRules: IpRule[];
+  sessions: Session[];
+  devices: Device[];
+  twoFAEnabled: Record<string, boolean>;
+};
+
+const SECURITY_KEY = 'security-config';
+
+const defaultSecurityConfig: SecurityConfig = {
+  twoFAEnabled: {},
+  ipRules: [
+    { id: 'ip1', ip: '192.168.1.0/24', label: 'Office network — Northgate', type: 'Allow' },
+    { id: 'ip2', ip: '10.0.0.0/8', label: 'Office network — Riverside', type: 'Allow' },
+    { id: 'ip3', ip: '203.0.113.0/24', label: 'Known threat range', type: 'Block' },
+  ],
+  sessions: [
+    { id: 's1', user: 'Alex Chen', role: 'Super Admin', device: 'Chrome on macOS', ip: '192.168.1.10', location: 'Northgate, CA', started: '2026-10-07T08:30:00', lastActive: '2026-10-07T14:22:00', status: 'Active' },
+    { id: 's2', user: 'Dr. Maya Rivera', role: 'Veterinarian', device: 'Safari on iPad', ip: '192.168.1.45', location: 'Northgate, CA', started: '2026-10-07T09:00:00', lastActive: '2026-10-07T13:45:00', status: 'Active' },
+    { id: 's3', user: 'Sofia Reyes', role: 'Branch Manager', device: 'Edge on Windows', ip: '10.0.0.22', location: 'Riverside, CA', started: '2026-10-07T08:45:00', lastActive: '2026-10-07T12:10:00', status: 'Active' },
+    { id: 's4', user: 'Lena Ortiz', role: 'Receptionist', device: 'Chrome on Windows', ip: '192.168.1.50', location: 'Northgate, CA', started: '2026-10-06T17:30:00', lastActive: '2026-10-06T18:00:00', status: 'Expired' },
+    { id: 's5', user: 'Yuki Tanaka', role: 'Accountant', device: 'Firefox on macOS', ip: '192.168.1.60', location: 'Northgate, CA', started: '2026-10-06T14:00:00', lastActive: '2026-10-06T17:15:00', status: 'Expired' },
+  ],
+  devices: [
+    { id: 'd1', user: 'Alex Chen', device: 'MacBook Pro 16"', os: 'macOS 14.5', browser: 'Chrome 129', lastSeen: '2026-10-07T14:22:00', trusted: true, fingerprint: 'a1b2c3d4' },
+    { id: 'd2', user: 'Dr. Maya Rivera', device: 'iPad Air', os: 'iPadOS 17.5', browser: 'Safari 17', lastSeen: '2026-10-07T13:45:00', trusted: true, fingerprint: 'e5f6g7h8' },
+    { id: 'd3', user: 'Sofia Reyes', device: 'Dell Latitude', os: 'Windows 11', browser: 'Edge 129', lastSeen: '2026-10-07T12:10:00', trusted: true, fingerprint: 'i9j0k1l2' },
+    { id: 'd4', user: 'Lena Ortiz', device: 'HP EliteBook', os: 'Windows 11', browser: 'Chrome 129', lastSeen: '2026-10-06T18:00:00', trusted: false, fingerprint: 'm3n4o5p6' },
+    { id: 'd5', user: 'Hannah Kim', device: 'iPhone 15', os: 'iOS 17.6', browser: 'Safari 17', lastSeen: '2026-10-05T16:30:00', trusted: false, fingerprint: 'q7r8s9t0' },
+  ],
+};
 
 type Tab = 'overview' | 'rbac' | '2fa' | 'audit' | 'activity' | 'ip' | 'sessions' | 'devices' | 'encryption' | 'backup' | 'privacy' | 'compliance' | 'sensitive';
 
@@ -39,27 +76,27 @@ export default function SecurityPage() {
   const [ipModalOpen, setIpModalOpen] = useState(false);
   const [ipForm, setIpForm] = useState({ ip: '', label: '', type: 'Allow' });
 
-  // Simulated security state (in-memory)
-  const [twoFAEnabled, setTwoFAEnabled] = useState<Record<string, boolean>>({});
-  const [ipRules, setIpRules] = useState([
-    { id: 'ip1', ip: '192.168.1.0/24', label: 'Office network — Northgate', type: 'Allow' as const },
-    { id: 'ip2', ip: '10.0.0.0/8', label: 'Office network — Riverside', type: 'Allow' as const },
-    { id: 'ip3', ip: '203.0.113.0/24', label: 'Known threat range', type: 'Block' as const },
-  ]);
-  const [sessions, setSessions] = useState([
-    { id: 's1', user: 'Alex Chen', role: 'Super Admin', device: 'Chrome on macOS', ip: '192.168.1.10', location: 'Northgate, CA', started: '2026-10-07T08:30:00', lastActive: '2026-10-07T14:22:00', status: 'Active' },
-    { id: 's2', user: 'Dr. Maya Rivera', role: 'Veterinarian', device: 'Safari on iPad', ip: '192.168.1.45', location: 'Northgate, CA', started: '2026-10-07T09:00:00', lastActive: '2026-10-07T13:45:00', status: 'Active' },
-    { id: 's3', user: 'Sofia Reyes', role: 'Branch Manager', device: 'Edge on Windows', ip: '10.0.0.22', location: 'Riverside, CA', started: '2026-10-07T08:45:00', lastActive: '2026-10-07T12:10:00', status: 'Active' },
-    { id: 's4', user: 'Lena Ortiz', role: 'Receptionist', device: 'Chrome on Windows', ip: '192.168.1.50', location: 'Northgate, CA', started: '2026-10-06T17:30:00', lastActive: '2026-10-06T18:00:00', status: 'Expired' },
-    { id: 's5', user: 'Yuki Tanaka', role: 'Accountant', device: 'Firefox on macOS', ip: '192.168.1.60', location: 'Northgate, CA', started: '2026-10-06T14:00:00', lastActive: '2026-10-06T17:15:00', status: 'Expired' },
-  ]);
-  const [devices, setDevices] = useState([
-    { id: 'd1', user: 'Alex Chen', device: 'MacBook Pro 16"', os: 'macOS 14.5', browser: 'Chrome 129', lastSeen: '2026-10-07T14:22:00', trusted: true, fingerprint: 'a1b2c3d4' },
-    { id: 'd2', user: 'Dr. Maya Rivera', device: 'iPad Air', os: 'iPadOS 17.5', browser: 'Safari 17', lastSeen: '2026-10-07T13:45:00', trusted: true, fingerprint: 'e5f6g7h8' },
-    { id: 'd3', user: 'Sofia Reyes', device: 'Dell Latitude', os: 'Windows 11', browser: 'Edge 129', lastSeen: '2026-10-07T12:10:00', trusted: true, fingerprint: 'i9j0k1l2' },
-    { id: 'd4', user: 'Lena Ortiz', device: 'HP EliteBook', os: 'Windows 11', browser: 'Chrome 129', lastSeen: '2026-10-06T18:00:00', trusted: false, fingerprint: 'm3n4o5p6' },
-    { id: 'd5', user: 'Hannah Kim', device: 'iPhone 15', os: 'iOS 17.6', browser: 'Safari 17', lastSeen: '2026-10-05T16:30:00', trusted: false, fingerprint: 'q7r8s9t0' },
-  ]);
+  const [securityConfig, setSecurityConfig] = useState<SecurityConfig>(defaultSecurityConfig);
+  const [configLoaded, setConfigLoaded] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    fetchConfig<SecurityConfig>(SECURITY_KEY)
+      .then((data) => { if (mounted && data) setSecurityConfig({ ...defaultSecurityConfig, ...data }); })
+      .catch(() => {})
+      .finally(() => { if (mounted) setConfigLoaded(true); });
+    return () => { mounted = false; };
+  }, []);
+
+  const persistSecurity = useCallback((next: SecurityConfig) => {
+    setSecurityConfig(next);
+    saveConfig(SECURITY_KEY, next).catch(() => {});
+  }, []);
+
+  const twoFAEnabled = securityConfig.twoFAEnabled;
+  const ipRules = securityConfig.ipRules;
+  const sessions = securityConfig.sessions;
+  const devices = securityConfig.devices;
 
   if (!db) return <Shell module="security" title="Security & Audit"><div className="text-sm text-ink/50">Loading…</div></Shell>;
 
@@ -195,14 +232,17 @@ export default function SecurityPage() {
   // ── IP rule handlers ──
   const addIpRule = () => {
     if (!ipForm.ip) return;
-    setIpRules((prev) => [...prev, { id: `ip${Date.now()}`, ip: ipForm.ip, label: ipForm.label, type: ipForm.type as 'Allow' | 'Block' }]);
+    persistSecurity({
+      ...securityConfig,
+      ipRules: [...ipRules, { id: `ip${Date.now()}`, ip: ipForm.ip, label: ipForm.label, type: ipForm.type as 'Allow' | 'Block' }],
+    });
     setIpForm({ ip: '', label: '', type: 'Allow' });
     setIpModalOpen(false);
   };
-  const removeIpRule = (id: string) => setIpRules((prev) => prev.filter((r) => r.id !== id));
-  const revokeSession = (id: string) => setSessions((prev) => prev.map((s) => s.id === id ? { ...s, status: 'Revoked' } : s));
-  const toggleDeviceTrust = (id: string) => setDevices((prev) => prev.map((d) => d.id === id ? { ...d, trusted: !d.trusted } : d));
-  const toggle2FA = (staffId: string) => setTwoFAEnabled((prev) => ({ ...prev, [staffId]: !prev[staffId] }));
+  const removeIpRule = (id: string) => persistSecurity({ ...securityConfig, ipRules: ipRules.filter((r) => r.id !== id) });
+  const revokeSession = (id: string) => persistSecurity({ ...securityConfig, sessions: sessions.map((s) => s.id === id ? { ...s, status: 'Revoked' } : s) });
+  const toggleDeviceTrust = (id: string) => persistSecurity({ ...securityConfig, devices: devices.map((d) => d.id === id ? { ...d, trusted: !d.trusted } : d) });
+  const toggle2FA = (staffId: string) => persistSecurity({ ...securityConfig, twoFAEnabled: { ...twoFAEnabled, [staffId]: !twoFAEnabled[staffId] } });
 
   return (
     <Shell title="Security & Audit" subtitle="Access control, audit trails, privacy compliance, and threat monitoring">

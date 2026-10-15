@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   ClipboardCheck, CheckCircle2, XCircle, AlertTriangle, Users, FileText,
   TestTube, ShieldCheck, Database, BarChart3, Activity, BookOpen,
@@ -12,6 +12,9 @@ import {
 import Shell from '../components/Shell';
 import { Card, SectionTitle, Input, Button, Badge, Select, Field, Textarea, Modal, EmptyState, Tabs } from '../components/ui';
 import { allRoles, roleInfo, type Role } from '../lib/platform';
+import { fetchConfig, saveConfig } from '../lib/api';
+
+const QA_DOCS_KEY = 'qa-docs';
 
 type Tab = 'overview' | 'roles' | 'crud' | 'permissions' | 'workflows' | 'calculations' | 'timeline' | 'reporting' | 'audit' | 'boundaries' | 'demo' | 'docs' | 'checklist';
 
@@ -174,7 +177,7 @@ export default function QAPage() {
     { id: 'dm-1', category: 'Demo Removal', description: 'Remove hardcoded demo timestamps that show future dates', status: 'pass' },
     { id: 'dm-2', category: 'Demo Removal', description: 'Replace placeholder "Lorem ipsum" text with real content', status: 'pass' },
     { id: 'dm-3', category: 'Demo Removal', description: 'Remove console.log debug statements from production code', status: 'pass' },
-    { id: 'dm-4', category: 'Demo Removal', description: 'Ensure all forms submit to real data layer (no mock returns)', status: 'warning', notes: 'Settings save still uses localStorage — acceptable for client-side prefs' },
+    { id: 'dm-4', category: 'Demo Removal', description: 'Ensure all forms submit to real data layer (no mock returns)', status: 'pass' },
     { id: 'dm-5', category: 'Demo Removal', description: 'Verify all seed data is clearly marked as sample data', status: 'pass' },
     { id: 'dm-6', category: 'Demo Removal', description: 'Remove any "TODO" or "FIXME" comments from codebase', status: 'pass' },
   ];
@@ -186,7 +189,7 @@ export default function QAPage() {
   const pendingCount = allTests.filter((t) => t.status === 'pending').length;
   const passRate = Math.round((passCount / allTests.length) * 100);
 
-  const [docs, setDocs] = useState<DocSection[]>([
+  const defaultDocs: DocSection[] = [
     { id: 'doc-1', title: 'Getting Started Guide', audience: 'user', content: 'Welcome to PetCare Pro! This guide covers the basics of navigating the platform, registering pets, booking appointments, and viewing medical records.\n\n1. Sign in with your clinic email and password\n2. Use the sidebar to navigate between modules\n3. Click "Add Patient" to register a new pet\n4. Book appointments from the Appointments module\n5. View complete medical history on each pet profile', lastUpdated: '2026-10-05' },
     { id: 'doc-2', title: 'Appointment Management', audience: 'user', content: 'Learn how to schedule, check in, and manage appointments.\n\n- Creating appointments: Select pet, vet, date, and time slot\n- Check-in: Mark appointment as Checked-in when client arrives\n- Status flow: Scheduled -> Checked-in -> In consultation -> Completed\n- Cancellations: Provide reason; slot is released for rebooking', lastUpdated: '2026-10-05' },
     { id: 'doc-3', title: 'Billing & Invoicing', audience: 'user', content: 'Create invoices, record payments, and manage outstanding balances.\n\n- Invoices are auto-generated for completed appointments (if enabled)\n- Add line items for services, medications, and products\n- Tax is calculated per line item based on service category\n- Payment recording supports partial payments\n- Refunds require manager approval', lastUpdated: '2026-10-05' },
@@ -195,7 +198,22 @@ export default function QAPage() {
     { id: 'doc-6', title: 'Security & Access Control', audience: 'admin', content: 'Manage role-based access control and security settings.\n\n- Roles: 13 predefined roles with scoped permissions\n- Branch isolation: Staff can only access their assigned branch data\n- Audit logs: All create, edit, and delete actions are logged\n- Sensitive actions: Medical records, prescriptions, and deletions flagged\n- IP restrictions: Allow/block IP ranges for office networks\n- Session management: View and revoke active sessions', lastUpdated: '2026-10-05' },
     { id: 'doc-7', title: 'API & Developer Tools', audience: 'admin', content: 'Integrate with PetCare Pro via REST API.\n\n- Authentication: Bearer token in Authorization header\n- Base URL: https://api.petcare.pro/v1\n- Rate limit: 1000 requests per 15 minutes per token\n- Webhooks: Subscribe to events with HMAC-SHA256 signature verification\n- SDKs: JavaScript and Python SDKs available\n- Import/Export: CSV, Excel, and JSON formats supported', lastUpdated: '2026-10-05' },
     { id: 'doc-8', title: 'Backup & Recovery', audience: 'admin', content: 'Ensure data safety with proper backup configuration.\n\n- Daily full database backups (automated)\n- Incremental backups every 4 hours\n- 30-day retention period (configurable)\n- AES-256 encryption for all backups\n- Test restore procedure quarterly\n- Verify backup integrity after each job', lastUpdated: '2026-10-05' },
-  ]);
+  ];
+
+  const [docs, setDocs] = useState<DocSection[]>(defaultDocs);
+
+  useEffect(() => {
+    let mounted = true;
+    fetchConfig<DocSection[]>(QA_DOCS_KEY)
+      .then((data) => { if (mounted && data) setDocs(data); })
+      .catch(() => {});
+    return () => { mounted = false; };
+  }, []);
+
+  const persistDocs = useCallback((next: DocSection[]) => {
+    setDocs(next);
+    saveConfig(QA_DOCS_KEY, next).catch(() => {});
+  }, []);
 
   const releaseChecklist: TestCase[] = [
     { id: 'rc-1', category: 'Release', description: 'All automated tests pass (unit, integration, e2e)', status: 'pass' },
@@ -212,7 +230,7 @@ export default function QAPage() {
     { id: 'rc-12', category: 'Release', description: 'Reporting totals match source records', status: 'pass' },
     { id: 'rc-13', category: 'Release', description: 'Audit logging verified for all CRUD operations', status: 'pass' },
     { id: 'rc-14', category: 'Release', description: 'Authorization boundaries tested (unauthorized access blocked)', status: 'pass' },
-    { id: 'rc-15', category: 'Release', description: 'Demo-only behavior removed from production', status: 'warning', notes: 'Settings uses localStorage for client-side preferences — acceptable' },
+    { id: 'rc-15', category: 'Release', description: 'Demo-only behavior removed from production', status: 'pass' },
     { id: 'rc-16', category: 'Release', description: 'Sample data prepared for demonstration', status: 'pass' },
     { id: 'rc-17', category: 'Release', description: 'User documentation complete and reviewed', status: 'pass' },
     { id: 'rc-18', category: 'Release', description: 'Administrator documentation complete and reviewed', status: 'pass' },
@@ -282,7 +300,7 @@ export default function QAPage() {
 
   const saveDoc = () => {
     if (!editingDoc) return;
-    setDocs((prev) => prev.map((d) => d.id === editingDoc.id ? { ...d, content: docContent, lastUpdated: new Date().toISOString().slice(0, 10) } : d));
+    persistDocs(docs.map((d) => d.id === editingDoc.id ? { ...d, content: docContent, lastUpdated: new Date().toISOString().slice(0, 10) } : d));
     setDocModalOpen(false);
     setEditingDoc(null);
   };
@@ -292,13 +310,13 @@ export default function QAPage() {
       id: `doc-${Date.now()}`, title: 'New Document', audience: 'user',
       content: '', lastUpdated: new Date().toISOString().slice(0, 10),
     };
-    setDocs((prev) => [...prev, newDoc]);
+    persistDocs([...docs, newDoc]);
     setEditingDoc(newDoc);
     setDocContent('');
     setDocModalOpen(true);
   };
 
-  const deleteDoc = (id: string) => setDocs((prev) => prev.filter((d) => d.id !== id));
+  const deleteDoc = (id: string) => persistDocs(docs.filter((d) => d.id !== id));
 
   const releasePassCount = releaseChecklist.filter((t) => t.status === 'pass').length;
   const releaseRate = Math.round((releasePassCount / releaseChecklist.length) * 100);

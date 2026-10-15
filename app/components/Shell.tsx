@@ -1,7 +1,8 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ShieldAlert } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
@@ -31,6 +32,12 @@ export default function Shell({
   const [newPw, setNewPw] = useState('');
   const [pwError, setPwError] = useState('');
   const [pwSuccess, setPwSuccess] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setMobileNavOpen(false);
+  }, [pathname]);
 
   if (!user) {
     return (
@@ -62,9 +69,20 @@ export default function Shell({
 
   return (
     <div className="min-h-screen flex bg-canvas">
-      <Sidebar role={user.role} branch={user.branch} />
+      <Sidebar
+        role={user.role}
+        branch={user.branch}
+        mobileOpen={mobileNavOpen}
+        onClose={() => setMobileNavOpen(false)}
+      />
       <div className="flex-1 min-w-0 flex flex-col">
-        <Topbar title={title} subtitle={subtitle} user={user} onPasswordChange={() => setPwOpen(true)} />
+        <Topbar
+          title={title}
+          subtitle={subtitle}
+          user={user}
+          onPasswordChange={() => setPwOpen(true)}
+          onOpenMobileNav={() => setMobileNavOpen(true)}
+        />
         <main className="flex-1 p-6 md:p-8 max-w-[1400px] w-full mx-auto">
           {permitted ? (
             children
