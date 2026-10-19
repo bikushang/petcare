@@ -33,7 +33,8 @@ export default function Sidebar({
 
       {/* Sidebar — hidden on desktop via the className, rendered as drawer on mobile */}
     <aside className={`
-      fixed lg:static inset-y-0 left-0 z-50 lg:z-auto
+      fixed lg:sticky lg:top-0 inset-y-0 left-0 z-50 lg:z-auto
+      h-screen
       flex flex-col w-64 shrink-0 border-r border-line bg-white
       transform transition-transform duration-300 ease-out-soft
       ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -47,7 +48,7 @@ export default function Sidebar({
           <div className="text-[11px] text-plum/80">{branch}</div>
         </div>
       </Link>
-      <nav className="flex-1 overflow-y-auto py-3 px-3">
+      <nav className="min-h-0 flex-1 overflow-y-auto py-3 px-3">
         {items.map((item) => {
           const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
           const Icon = item.icon;
