@@ -2,5 +2,13 @@
 command = "npx next build"
 publish = ".next"
 
+# The browser uses same-origin /api/* requests. In production, route those
+# requests to the Express serverless function instead of Next.js's 404 page.
+[[redirects]]
+from = "/api/*"
+to = "/.netlify/functions/api/:splat"
+status = 200
+force = true
+
 [[plugins]]
 package = "@netlify/plugin-nextjs"
