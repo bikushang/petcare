@@ -241,6 +241,22 @@ async function seedIfEmpty() {
     };
   }
 
+  return runSeed();
+}
+
+async function forceSeed() {
+  const models = [
+    Owner, Pet, Appointment, MedRecord, MedStock, Invoice, Expense,
+    Staff, Boarding, Grooming, Vaccination, Prescription, Surgery,
+    LabTest, Supplier, Purchase, PharmacySale, Warehouse, InventoryItem,
+    StockTransfer, StockAdjustment, Campaign, Segment, Message,
+    SiteReview, Subscriber,
+  ];
+  await Promise.all(models.map((m) => m.deleteMany({})));
+  return runSeed();
+}
+
+async function runSeed() {
   const o1 = uid("own");
   const o2 = uid("own");
   const o3 = uid("own");
@@ -8684,4 +8700,9 @@ const seed = asyncHandler(async (req, res) => {
   res.json(result);
 });
 
-module.exports = { seed, seedIfEmpty };
+const forceSeedHandler = asyncHandler(async (req, res) => {
+  const result = await forceSeed();
+  res.json(result);
+});
+
+module.exports = { seed, seedIfEmpty, forceSeed: forceSeedHandler };
