@@ -1,13 +1,12 @@
 const serverless = require('serverless-http');
 const app = require('../../server/app');
 const { connectDB } = require('../../server/config/db');
-const { seedIfEmpty } = require('../../server/controllers/seedController');
 
 let initialized;
 
 async function initialize() {
   if (!initialized) {
-    initialized = connectDB().then(() => seedIfEmpty());
+    initialized = connectDB();
   }
   return initialized;
 }

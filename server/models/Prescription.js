@@ -13,7 +13,7 @@ const PrescriptionItemSchema = new mongoose.Schema(
     },
     frequency: {
       type: String,
-      enum: ['Once daily', 'Twice daily', 'Three times daily', 'Four times daily', 'Every other day', 'Weekly', 'As needed', 'Every 4 hours', 'Every 6 hours', 'Every 8 hours', 'Every 12 hours'],
+      enum: ['Once daily', 'Twice daily', 'Three times daily', 'Four times daily', 'Every other day', 'Weekly', 'Twice weekly', 'As needed', 'Every 4 hours', 'Every 6 hours', 'Every 8 hours', 'Every 12 hours'],
       default: 'Once daily',
     },
     duration: { type: String, default: '' },
