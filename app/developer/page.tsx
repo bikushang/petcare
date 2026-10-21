@@ -604,7 +604,7 @@ export default function DeveloperPage() {
                 <div className="mt-2"><span className="text-sky-300">import</span> {'{ PetCare }'} <span className="text-sky-300">from</span> <span className="text-lilac">'@petcare/sdk'</span>;</div>
                 <div className="mt-2"><span className="text-sky-300">const</span> client = <span className="text-sky-300">new</span> <span className="text-amber-300">PetCare</span>({'{'}</div>
                 <div className="pl-4">apiKey: <span className="text-lilac">'pcp_live_...'</span>,</div>
-                <div className="pl-4">branch: <span className="text-lilac">'northgate'</span></div>
+                <div className="pl-4">branch: <span className="text-lilac">'vetnora'</span></div>
                 <div>{'}'});</div>
                 <div className="mt-2"><span className="text-ink/40">// List patients</span></div>
                 <div><span className="text-sky-300">const</span> pets = <span className="text-sky-300">await</span> client.patients.list({'{'}</div>
@@ -621,7 +621,7 @@ export default function DeveloperPage() {
                 <div className="mt-2"><span className="text-sky-300">from</span> petcare <span className="text-sky-300">import</span> PetCareClient</div>
                 <div className="mt-2">client = <span className="text-amber-300">PetCareClient</span>(</div>
                 <div className="pl-4">api_key=<span className="text-lilac">"pcp_live_..."</span>,</div>
-                <div className="pl-4">branch=<span className="text-lilac">"northgate"</span></div>
+                <div className="pl-4">branch=<span className="text-lilac">"vetnora"</span></div>
                 <div>)</div>
                 <div className="mt-2"><span className="text-ink/40"># List appointments</span></div>
                 <div>appts = client.appointments.list(</div>

@@ -52,28 +52,28 @@ export type Branch = {
 
 export const clinics: Clinic[] = [
   {
-    id: 'clinic-northgate',
-    name: 'Northgate Animal Hospital',
-    legalName: 'Northgate Veterinary Care LLC',
+    id: 'clinic-vetnora',
+    name: 'Vetnora Animal Hospital',
+    legalName: 'Vetnora Veterinary Care LLC',
     phone: '+1 415 555 0100',
-    email: 'reception@northgategp.com',
-    address: '128 Maple Avenue, Northgate, CA 94110',
+    email: 'reception@vetnoragp.com',
+    address: '128 Maple Avenue, Vetnora, CA 94110',
   },
 ];
 
 export const branches: Branch[] = [
   {
-    id: 'branch-northgate',
-    clinicId: 'clinic-northgate',
-    name: 'Northgate',
+    id: 'branch-vetnora',
+    clinicId: 'clinic-vetnora',
+    name: 'Vetnora',
     phone: '+1 415 555 0101',
-    email: 'northgate@petcare.pro',
-    address: '128 Maple Avenue, Northgate, CA 94110',
+    email: 'vetnora@petcare.pro',
+    address: '128 Maple Avenue, Vetnora, CA 94110',
     status: 'Active',
   },
   {
     id: 'branch-riverside',
-    clinicId: 'clinic-northgate',
+    clinicId: 'clinic-vetnora',
     name: 'Riverside',
     phone: '+1 415 555 0102',
     email: 'riverside@petcare.pro',
@@ -507,18 +507,18 @@ export type DemoAccount = {
 
 export const demoAccounts: DemoAccount[] = [
   { email: 'admin@petcare.pro', password: 'admin123', name: 'Alex Chen', role: 'Super Admin', branch: 'All branches' },
-  { email: 'owner@petcare.pro', password: 'owner123', name: 'Dr. James Whitfield', role: 'Clinic Owner', branch: 'Northgate' },
+  { email: 'owner@petcare.pro', password: 'owner123', name: 'Dr. James Whitfield', role: 'Clinic Owner', branch: 'Vetnora' },
   { email: 'manager@petcare.pro', password: 'manager123', name: 'Sofia Reyes', role: 'Branch Manager', branch: 'Riverside' },
-  { email: 'vet@petcare.pro', password: 'vet123', name: 'Dr. Maya Rivera', role: 'Veterinarian', branch: 'Northgate' },
-  { email: 'reception@petcare.pro', password: 'reception123', name: 'Lena Ortiz', role: 'Receptionist', branch: 'Northgate' },
+  { email: 'vet@petcare.pro', password: 'vet123', name: 'Dr. Maya Rivera', role: 'Veterinarian', branch: 'Vetnora' },
+  { email: 'reception@petcare.pro', password: 'reception123', name: 'Lena Ortiz', role: 'Receptionist', branch: 'Vetnora' },
   { email: 'nurse@petcare.pro', password: 'nurse123', name: 'Grace Tan', role: 'Veterinary Nurse', branch: 'Riverside' },
-  { email: 'lab@petcare.pro', password: 'lab123', name: 'Oscar Mbeki', role: 'Laboratory Technician', branch: 'Northgate' },
-  { email: 'pharmacy@petcare.pro', password: 'pharmacy123', name: 'Nadia Hassan', role: 'Pharmacist', branch: 'Northgate' },
-  { email: 'groomer@petcare.pro', password: 'groomer123', name: 'Hannah Kim', role: 'Groomer', branch: 'Northgate' },
+  { email: 'lab@petcare.pro', password: 'lab123', name: 'Oscar Mbeki', role: 'Laboratory Technician', branch: 'Vetnora' },
+  { email: 'pharmacy@petcare.pro', password: 'pharmacy123', name: 'Nadia Hassan', role: 'Pharmacist', branch: 'Vetnora' },
+  { email: 'groomer@petcare.pro', password: 'groomer123', name: 'Hannah Kim', role: 'Groomer', branch: 'Vetnora' },
   { email: 'boarding@petcare.pro', password: 'boarding123', name: 'Tom Bradley', role: 'Boarding Staff', branch: 'Riverside' },
-  { email: 'accounts@petcare.pro', password: 'accounts123', name: 'Yuki Tanaka', role: 'Accountant', branch: 'Northgate' },
-  { email: 'inventory@petcare.pro', password: 'inventory123', name: 'Sam Whitfield', role: 'Inventory Manager', branch: 'Northgate' },
-  { email: 'petowner@petcare.pro', password: 'owner123', name: 'Eleanor Hayes', role: 'Pet Owner', branch: 'Northgate' },
+  { email: 'accounts@petcare.pro', password: 'accounts123', name: 'Yuki Tanaka', role: 'Accountant', branch: 'Vetnora' },
+  { email: 'inventory@petcare.pro', password: 'inventory123', name: 'Sam Whitfield', role: 'Inventory Manager', branch: 'Vetnora' },
+  { email: 'petowner@petcare.pro', password: 'owner123', name: 'Eleanor Hayes', role: 'Pet Owner', branch: 'Vetnora' },
 ];
 
 /* ─────────────────────────────────────────────────────────

@@ -921,12 +921,12 @@ export default function InventoryPage() {
         <Modal open={whOpen} onClose={() => setWhOpen(false)} title={editWh ? 'Edit Warehouse' : 'New Warehouse'}>
           <ErrorNote message={whError} />
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Warehouse Name" required><Input value={whForm.name} onChange={(e) => setWh('name', e.target.value)} placeholder="e.g. Northgate Main Store" /></Field>
+            <Field label="Warehouse Name" required><Input value={whForm.name} onChange={(e) => setWh('name', e.target.value)} placeholder="e.g. Vetnora Main Store" /></Field>
             <Field label="Code" required><Input className="font-mono" value={whForm.code} onChange={(e) => setWh('code', e.target.value)} placeholder="WH-NG-01" /></Field>
             <Field label="Branch">
               <Select value={whForm.branch} onChange={(e) => setWh('branch', e.target.value)}>
                 <option value="">— Select —</option>
-                <option value="Northgate">Northgate</option>
+                <option value="Vetnora">Vetnora</option>
                 <option value="Riverside">Riverside</option>
               </Select>
             </Field>

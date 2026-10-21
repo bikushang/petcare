@@ -42,7 +42,7 @@ const MILESTONES = [
   {
     year: '2019',
     title: 'A single-vet practice above a bakery',
-    body: 'Dr. Amara Rivera opened Northgate Animal Hospital in two rented rooms above a bakery on Maple Avenue, seeing eleven patients in the first week and doing her own reception.',
+    body: 'Dr. Amara Rivera opened Vetnora Animal Hospital in two rented rooms above a bakery on Maple Avenue, seeing eleven patients in the first week and doing her own reception.',
   },
   {
     year: '2020',
@@ -151,7 +151,7 @@ const OUTREACH = [
   {
     icon: Scan,
     title: 'Low-cost microchipping clinics',
-    body: 'Every second Saturday we run a walk-in microchip clinic at the Northgate branch for $20 including lifetime registration — 1,180 pets chipped so far.',
+    body: 'Every second Saturday we run a walk-in microchip clinic at the Vetnora branch for $20 including lifetime registration — 1,180 pets chipped so far.',
   },
   {
     icon: PawPrint,
@@ -187,7 +187,7 @@ export default function AboutPage() {
         eyebrow="About us"
         title="Seven years of putting animals first"
         breadcrumb="About"
-        subtitle="Northgate Animal Hospital started in 2019 with one veterinarian and a second-hand exam table. Today we are thirteen people across two Bay Area branches, caring for more than 500 pet families with the same promise we opened with."
+        subtitle="Vetnora Animal Hospital started in 2019 with one veterinarian and a second-hand exam table. Today we are thirteen people across two Bay Area branches, caring for more than 500 pet families with the same promise we opened with."
       >
         <div className="flex flex-wrap items-center gap-3">
           <CtaLink href={SITE_ROUTES.team} variant="white" icon={Users}>Meet the team</CtaLink>
@@ -217,7 +217,7 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="mt-7 flex flex-wrap gap-2">
-              {['Founded 2019', 'Northgate & Riverside', '13 staff', 'Rated 4.9 from 487 reviews'].map((pill) => (
+              {['Founded 2019', 'Vetnora & Riverside', '13 staff', 'Rated 4.9 from 487 reviews'].map((pill) => (
                 <span
                   key={pill}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-lilac text-plum text-[12px] font-semibold"
@@ -232,7 +232,7 @@ export default function AboutPage() {
             <div className="absolute -top-8 -right-6 w-56 h-56 rounded-full bg-lilac blur-3xl" aria-hidden="true" />
             <img
               src={about.aboutImage}
-              alt="A veterinarian examining a calm dog on a consulting table at Northgate Animal Hospital"
+              alt="A veterinarian examining a calm dog on a consulting table at Vetnora Animal Hospital"
               className="relative w-full h-[320px] sm:h-[420px] object-cover rounded-3xl border border-line shadow-lift"
             />
             <div className="relative -mt-10 ml-4 mr-8 sm:mr-16 rounded-2xl border border-line bg-white p-5 shadow-lift-sm">
@@ -254,7 +254,7 @@ export default function AboutPage() {
         <SectionHeading
           eyebrow="Mission & values"
           title="Medicine we would want for our own animals"
-          subtitle="Four commitments shape every consultation, estimate and follow-up call at Northgate. They are written on the wall of the staff room, and they decide how we hire."
+          subtitle="Four commitments shape every consultation, estimate and follow-up call at Vetnora. They are written on the wall of the staff room, and they decide how we hire."
         />
 
         <div className="relative overflow-hidden rounded-3xl bg-grape p-8 md:p-12 mb-10">
@@ -455,7 +455,7 @@ export default function AboutPage() {
               </span>
               <p className="text-[12px] text-ink/55 leading-relaxed">
                 Microchip clinics run every second Saturday, 9:00–13:00, at 128 Maple Avenue,
-                Northgate. No appointment needed — bring any paperwork you already have.
+                Vetnora. No appointment needed — bring any paperwork you already have.
               </p>
             </div>
           </div>
@@ -465,7 +465,7 @@ export default function AboutPage() {
       {/* 9 — CTA band */}
       <CtaBand
         title="Come and see the practice for yourself"
-        subtitle="Book a consultation, or ask reception for a tour of the Northgate or Riverside branch before you register — we are glad to show you the wards and theatres."
+        subtitle="Book a consultation, or ask reception for a tour of the Vetnora or Riverside branch before you register — we are glad to show you the wards and theatres."
         primaryLabel="Book an appointment"
         primaryHref={SITE_ROUTES.book}
         secondaryLabel="Meet the team"

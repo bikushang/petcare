@@ -97,7 +97,7 @@ export default function PrivacyPage() {
         <SectionHeading
           eyebrow="Who we are"
           title="The practice is the data controller"
-          subtitle="Northgate Animal Hospital is responsible for the personal information described on this page. There is no parent company and no marketing group behind us."
+          subtitle="Vetnora Animal Hospital is responsible for the personal information described on this page. There is no parent company and no marketing group behind us."
         />
         <div className="max-w-3xl mx-auto rounded-2xl border border-line bg-white p-6 md:p-8 shadow-soft">
           <dl className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -115,7 +115,7 @@ export default function PrivacyPage() {
             </div>
           </dl>
           <p className="mt-6 pt-5 border-t border-line text-[13px] text-ink/60 leading-relaxed">
-            This policy covers this website and everything we do at both the Northgate and Riverside
+            This policy covers this website and everything we do at both the Vetnora and Riverside
             branches. If you ask us a question about your own data, a named member of staff answers it
             — we do not route privacy requests to an automated inbox.
           </p>

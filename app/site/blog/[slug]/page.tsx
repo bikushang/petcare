@@ -157,7 +157,7 @@ export default function ArticlePage() {
                 </div>
               </div>
               <p className="mt-4 text-[13px] text-ink/60 leading-relaxed">
-                Written by a member of the clinical team at Northgate Animal Hospital. Everything on this
+                Written by a member of the clinical team at Vetnora Animal Hospital. Everything on this
                 page reflects what we actually do in the consult room — if a protocol changes, the
                 article changes with it.
               </p>

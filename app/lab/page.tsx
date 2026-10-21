@@ -304,7 +304,7 @@ export default function LabPage() {
       @media print{body{padding:20px}}
     </style></head><body>
     <div class="header">
-      <div><div class="clinic-name">PetCare Pro</div><div class="clinic-sub">Northgate Animal Hospital &middot; 128 Maple Ave, Northgate, CA</div></div>
+      <div><div class="clinic-name">PetCare Pro</div><div class="clinic-sub">Vetnora Animal Hospital &middot; 128 Maple Ave, Vetnora, CA</div></div>
       <div class="report-num">Laboratory Report<br><b>${printT.testNumber}</b><div class="barcode">|||${printT.barcode}|||</div>${printT.dateOrdered}</div>
     </div>
     <div class="patient-box">

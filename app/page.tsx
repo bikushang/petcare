@@ -181,7 +181,7 @@ function SuperAdminDashboard({ stats, db, petName = () => 'Unknown', ownerName =
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        <StatCard icon={Building2} label="Branches" value={2} sub="Northgate · Riverside" tone="plum" />
+        <StatCard icon={Building2} label="Branches" value={2} sub="Vetnora · Riverside" tone="plum" />
         <StatCard icon={Users} label="Staff" value={stats.staff} sub={`${stats.activeStaff} active`} tone="sky" />
         <StatCard icon={PawPrint} label="Patients" value={stats.pets} sub={`${stats.owners} owners`} tone="amber" />
         <StatCard icon={TrendingUp} label="Revenue (paid)" value={`${stats.revenue.toLocaleString()}`} sub={`${stats.pendingRev.toLocaleString()} pending`} tone="coral" />

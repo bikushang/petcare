@@ -81,7 +81,7 @@ export default function TermsPage() {
       <PageHero
         eyebrow="Legal"
         title="Terms of service"
-        subtitle="The agreement between you and Northgate Animal Hospital when you book an appointment, use this website or bring your pet in. Short, specific, and written to be read."
+        subtitle="The agreement between you and Vetnora Animal Hospital when you book an appointment, use this website or bring your pet in. Short, specific, and written to be read."
         breadcrumb="Terms of service"
       >
         <div className="flex flex-wrap items-center gap-2.5">
@@ -117,7 +117,7 @@ export default function TermsPage() {
               If your pet has collapsed, is struggling to breathe, is bleeding heavily, has eaten
               something toxic, cannot urinate or is having a seizure that will not stop, phone{' '}
               <a href={telHref(contact.phone)} className="font-semibold text-coral hv-underline">{contact.phone}</a>{' '}
-              and start driving to Northgate. The emergency line is answered by a nurse 24 hours a day.
+              and start driving to Vetnora. The emergency line is answered by a nurse 24 hours a day.
             </p>
           </div>
         </div>

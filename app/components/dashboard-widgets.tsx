@@ -119,18 +119,18 @@ export function computeBI(db: DB, todays: any[]) {
   const retentionRate = totalOwners > 0 ? Math.round((returningOwners / totalOwners) * 100) : 0;
 
   // Branch comparison
-  const branches = ['Northgate', 'Riverside'];
+  const branches = ['Vetnora', 'Riverside'];
   const branchComparison = branches.map((b) => {
     const branchStaff = db.staff.filter((s) => s.branch === b);
     const branchPets = db.pets.filter((p) => {
       const owner = db.owners.find((o) => o.id === p.ownerId);
       const staffRec = db.staff.find((s) => s.email === owner?.email);
-      return staffRec?.branch === b || (b === 'Northgate' && !staffRec);
+      return staffRec?.branch === b || (b === 'Vetnora' && !staffRec);
     });
     const branchRev = db.invoices.filter((i) => {
       const owner = db.owners.find((o) => o.id === i.ownerId);
       const staffRec = db.staff.find((s) => s.email === owner?.email);
-      return staffRec?.branch === b || (b === 'Northgate' && !staffRec);
+      return staffRec?.branch === b || (b === 'Vetnora' && !staffRec);
     }).reduce((s, inv) => s + invTotal(inv), 0);
     return { branch: b, staff: branchStaff.length, pets: branchPets.length, revenue: branchRev };
   });

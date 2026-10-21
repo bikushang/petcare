@@ -75,8 +75,8 @@ export default function QAPage() {
   ];
 
   const permissionTests: TestCase[] = [
-    { id: 'perm-1', category: 'Branch Isolation', description: 'Branch Manager at Northgate cannot see Riverside records', status: 'pass' },
-    { id: 'perm-2', category: 'Branch Isolation', description: 'Veterinarian at Northgate cannot edit Riverside medical records', status: 'pass' },
+    { id: 'perm-1', category: 'Branch Isolation', description: 'Branch Manager at Vetnora cannot see Riverside records', status: 'pass' },
+    { id: 'perm-2', category: 'Branch Isolation', description: 'Veterinarian at Vetnora cannot edit Riverside medical records', status: 'pass' },
     { id: 'perm-3', category: 'Branch Isolation', description: 'Receptionist cannot access Staff management module', status: 'pass' },
     { id: 'perm-4', category: 'Branch Isolation', description: 'Pet Owner can only view their own pets and records', status: 'pass' },
     { id: 'perm-5', category: 'Branch Isolation', description: 'Groomer can only access Grooming module and patient list', status: 'pass' },
@@ -558,7 +558,7 @@ export default function QAPage() {
             <h3 className="text-sm font-semibold text-ink mb-3">Sample data & demonstration workflows</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {[
-                { name: 'Demo clinic setup', desc: 'Northgate Animal Hospital with 2 branches, 13 staff, 250+ pets', icon: Building2, status: 'Ready' },
+                { name: 'Demo clinic setup', desc: 'Vetnora Animal Hospital with 2 branches, 13 staff, 250+ pets', icon: Building2, status: 'Ready' },
                 { name: 'Demo accounts', desc: '13 role-based accounts for all user types', icon: Users, status: 'Ready' },
                 { name: 'Sample appointments', desc: 'Mix of scheduled, in-progress, completed, and cancelled', icon: CalendarDays, status: 'Ready' },
                 { name: 'Sample medical records', desc: 'Full timelines for 5 demo pets with various conditions', icon: Stethoscope, status: 'Ready' },

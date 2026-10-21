@@ -228,7 +228,7 @@ export default function PricingPage() {
       <PageHero
         eyebrow="Transparent pricing"
         title="Know the cost before you walk in"
-        subtitle="Every price below is an estimate in US dollars for our Northgate and Riverside branches. Estimates vary with your pet's weight, age and how a procedure actually goes — so we quote a range rather than a number we would have to walk back."
+        subtitle="Every price below is an estimate in US dollars for our Vetnora and Riverside branches. Estimates vary with your pet's weight, age and how a procedure actually goes — so we quote a range rather than a number we would have to walk back."
         breadcrumb="Pricing"
       >
         <div className="flex flex-col gap-5">

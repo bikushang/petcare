@@ -33,7 +33,7 @@ export const CLINIC_VETS: ClinicVet[] = [
     role: 'Clinical Director & co-founder',
     initials: 'AR',
     focus: ['Soft-tissue surgery', 'UC Davis', '14 years in practice', 'Fear Free certified'],
-    bio: 'Amara graduated from UC Davis School of Veterinary Medicine and spent six years in a busy referral hospital before opening Northgate in two rented rooms on Maple Avenue in 2019. She still operates four days a week — soft-tissue work is her first love, from complex wound reconstruction to gastrointestinal foreign bodies — and she sets the clinical protocols both branches follow. If a case is complicated, she is the one who phones you at the end of the day to talk it through.',
+    bio: 'Amara graduated from UC Davis School of Veterinary Medicine and spent six years in a busy referral hospital before opening Vetnora in two rented rooms on Maple Avenue in 2019. She still operates four days a week — soft-tissue work is her first love, from complex wound reconstruction to gastrointestinal foreign bodies — and she sets the clinical protocols both branches follow. If a case is complicated, she is the one who phones you at the end of the day to talk it through.',
     languages: 'English, Spanish',
     icon: Stethoscope,
     leadership: true,

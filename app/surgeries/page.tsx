@@ -268,7 +268,7 @@ export default function SurgeriesPage() {
       @media print{body{padding:20px}}
     </style></head><body>
     <div class="header">
-      <div><div class="clinic-name">PetCare Pro</div><div class="clinic-sub">Northgate Animal Hospital &middot; 128 Maple Ave, Northgate, CA</div></div>
+      <div><div class="clinic-name">PetCare Pro</div><div class="clinic-sub">Vetnora Animal Hospital &middot; 128 Maple Ave, Vetnora, CA</div></div>
       <div class="surg-num">Surgery Report No<br><b>${printS.surgeryNumber}</b><br>${printS.date} at ${printS.time}</div>
     </div>
     <div class="patient-box">

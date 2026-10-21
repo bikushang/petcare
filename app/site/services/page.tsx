@@ -131,7 +131,7 @@ const PHARMACY_FEATURES = [
   { icon: BellRing, title: 'Refill reminders', body: 'We text and email before a chronic prescription runs out, so insulin or thyroid tablets never lapse.' },
   { icon: ShieldCheck, title: 'Drug-interaction checks', body: 'Every dispense is screened against your pet’s full medication list and known sensitivities before it leaves the counter.' },
   { icon: Droplets, title: 'Compounded flavoured medication', body: 'Chicken, tuna or beef-flavoured liquids and transdermal gels for pets who refuse tablets.' },
-  { icon: Truck, title: 'Home delivery within 10 miles', body: 'Free next-day delivery across Northgate and Riverside for repeat prescriptions ordered before 15:00.' },
+  { icon: Truck, title: 'Home delivery within 10 miles', body: 'Free next-day delivery across Vetnora and Riverside for repeat prescriptions ordered before 15:00.' },
   { icon: Weight, title: 'Prescription diets in stock', body: 'Renal, urinary, gastrointestinal, hypoallergenic and weight-management ranges held on the shelf, not back-ordered.' },
 ];
 
@@ -148,7 +148,7 @@ export default function ServicesPage() {
       <PageHero
         eyebrow="What we do"
         title="Complete veterinary care under one roof"
-        subtitle="Wellness, diagnostics, surgery, dentistry, grooming, boarding and pharmacy — delivered by one team of 13 at our Northgate and Riverside branches, with fear-free handling and written estimates every time."
+        subtitle="Wellness, diagnostics, surgery, dentistry, grooming, boarding and pharmacy — delivered by one team of 13 at our Vetnora and Riverside branches, with fear-free handling and written estimates every time."
         breadcrumb="Services"
       >
         <div className="flex flex-wrap items-center gap-3">
@@ -359,7 +359,7 @@ export default function ServicesPage() {
             </ul>
             <p className="mt-5 text-[12px] text-ink/45 leading-relaxed">
               Complex orthopaedic cases are performed with a visiting board-certified surgeon at the
-              Northgate branch on alternate Thursdays.
+              Vetnora branch on alternate Thursdays.
             </p>
           </div>
         </div>
@@ -470,7 +470,7 @@ export default function ServicesPage() {
             </div>
             <img
               src="https://images.pexels.com/photos/2598683/pexels-photo-2598683.jpeg?auto=compress&cs=tinysrgb&w=800"
-              alt="Dog being gently groomed and brushed by a member of the Northgate team"
+              alt="Dog being gently groomed and brushed by a member of the Vetnora team"
               className="rounded-3xl shadow-soft w-full h-52 object-cover"
             />
           </div>

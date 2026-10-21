@@ -192,7 +192,7 @@ export default function PrescriptionsPage() {
       @media print{body{padding:20px}}
     </style></head><body>
     <div class="header">
-      <div><div class="clinic-name">PetCare Pro</div><div class="clinic-sub">Northgate Animal Hospital &middot; 128 Maple Ave, Northgate, CA</div></div>
+      <div><div class="clinic-name">PetCare Pro</div><div class="clinic-sub">Vetnora Animal Hospital &middot; 128 Maple Ave, Vetnora, CA</div></div>
       <div class="rx-num">Prescription ID<br><b>${printRx.prescriptionNumber}</b><br>${printRx.date}</div>
     </div>
     <div class="patient-box">
@@ -241,8 +241,8 @@ export default function PrescriptionsPage() {
     const lines: string[] = [
       '═══════════════════════════════════════════════════════════',
       '                    PETCARE PRO',
-      '         Northgate Animal Hospital',
-      '      128 Maple Ave, Northgate, CA 94110',
+      '         Vetnora Animal Hospital',
+      '      128 Maple Ave, Vetnora, CA 94110',
       '═══════════════════════════════════════════════════════════',
       '',
       `  Prescription No: ${printRx.prescriptionNumber}`,

@@ -180,7 +180,7 @@ export function SiteHeader() {
               <PawPrint className="w-5 h-5" />
             </span>
             <span className="text-sm font-bold text-ink leading-tight">
-              Northgate<span className="hidden sm:inline"> Animal Hospital</span>
+              Vetnora<span className="hidden sm:inline"> Animal Hospital</span>
             </span>
           </Link>
 
@@ -310,7 +310,7 @@ export function SiteFooter() {
               <span className="w-9 h-9 rounded-xl bg-plum flex items-center justify-center">
                 <PawPrint className="w-5 h-5 text-white" />
               </span>
-              <span className="text-sm font-bold">Northgate Animal Hospital</span>
+              <span className="text-sm font-bold">Vetnora Animal Hospital</span>
             </div>
             <p className="text-[13px] text-white/55 leading-relaxed max-w-sm whitespace-pre-line">
               {footer.tagline}

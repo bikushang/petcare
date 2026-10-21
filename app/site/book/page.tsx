@@ -41,7 +41,7 @@ const PET_TYPES = [
 
 const CLIENT_TYPES = [
   { value: 'existing', label: 'I am an existing client', hint: 'We already have your pet on file' },
-  { value: 'new', label: 'I am new to Northgate', hint: 'We will send a short registration form' },
+  { value: 'new', label: 'I am new to Vetnora', hint: 'We will send a short registration form' },
 ];
 
 const SIZE_BANDS = [
@@ -65,7 +65,7 @@ const SERVICES = [
 ];
 
 const BRANCH_OPTIONS = [
-  { value: 'northgate', label: 'Northgate — 128 Maple Avenue' },
+  { value: 'vetnora', label: 'Vetnora — 128 Maple Avenue' },
   { value: 'riverside', label: 'Riverside — 42 Willow Court' },
 ];
 
@@ -212,7 +212,7 @@ export default function BookPage() {
 
   /* Step 2 — service */
   const [service, setService] = useState('');
-  const [branch, setBranch] = useState('northgate');
+  const [branch, setBranch] = useState('vetnora');
   const [vet, setVet] = useState('any');
   const [addOns, setAddOns] = useState<string[]>([]);
 
@@ -441,7 +441,7 @@ export default function BookPage() {
   const resetForm = () => {
     setBookingRef('');
     setPetType(''); setClientType('existing'); setPetName(''); setSizeBand('');
-    setPetAge(''); setWeight(''); setService(''); setBranch('northgate'); setVet('any');
+    setPetAge(''); setWeight(''); setService(''); setBranch('vetnora'); setVet('any');
     setAddOns([]); setDate(''); setTime(''); setOwnerName(''); setOwnerEmail('');
     setOwnerPhone(''); setNotes(''); setFiles([]); setReminders(true); setPolicy(false);
     setErrors({});
@@ -553,7 +553,7 @@ export default function BookPage() {
                         : 'Your file is already with us, so there is nothing to fill in beforehand.',
                       files.length > 0
                         ? `We have your ${files.length} attached file${files.length > 1 ? 's' : ''} and the vet will read them before the consult.`
-                        : `If you find old records before the visit, email them to records@northgatevet.com quoting your reference.`,
+                        : `If you find old records before the visit, email them to records@vetnoravet.com quoting your reference.`,
                       'Arrive 10 minutes early so we can weigh your pet and settle them in.',
                     ].map((stepText, i) => (
                       <li key={i} className="flex items-start gap-3 text-[13px] text-white/75 leading-relaxed">
@@ -728,7 +728,7 @@ export default function BookPage() {
                   </Field>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <Field label="Preferred branch" hint="Surgery, emergencies and in-house labs are Northgate only">
+                    <Field label="Preferred branch" hint="Surgery, emergencies and in-house labs are Vetnora only">
                       <Select value={branch} onChange={(e) => setBranch(e.target.value)}>
                         {BRANCH_OPTIONS.map((b) => (
                           <option key={b.value} value={b.value}>{b.label}</option>
@@ -1145,10 +1145,10 @@ export default function BookPage() {
         </div>
       </Section>
 
-      {/* 7 ── New to Northgate? ─────────────────────────────────── */}
+      {/* 7 ── New to Vetnora? ─────────────────────────────────── */}
       <Section id="new-clients">
         <SectionHeading
-          eyebrow="New to Northgate?"
+          eyebrow="New to Vetnora?"
           title="Your first visit, start to finish"
           subtitle="Around a quarter of our bookings each month are from families transferring in. Here is exactly how it goes."
         />
@@ -1156,7 +1156,7 @@ export default function BookPage() {
           <div className="rounded-2xl overflow-hidden border border-line shadow-soft">
             <img
               src="https://images.pexels.com/photos/6235285/pexels-photo-6235285.jpeg?auto=compress&cs=tinysrgb&w=800"
-              alt="A veterinarian examining a dog during a first consultation at Northgate Animal Hospital"
+              alt="A veterinarian examining a dog during a first consultation at Vetnora Animal Hospital"
               className="w-full h-[300px] md:h-[420px] object-cover"
             />
           </div>
@@ -1237,7 +1237,7 @@ export default function BookPage() {
             <h3 className="text-xl font-bold text-ink tracking-tight mb-2.5">This is an emergency</h3>
             <p className="text-[13px] text-ink/65 leading-relaxed mb-4">
               Do not book online and do not wait for a reply. Phone us, tell the nurse what has happened, and start
-              driving to Northgate — we will have a team waiting at the door.
+              driving to Vetnora — we will have a team waiting at the door.
             </p>
             <ul className="space-y-2 mb-6">
               {[

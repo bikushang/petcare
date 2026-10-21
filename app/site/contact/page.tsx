@@ -25,9 +25,9 @@ import {
 
 const BRANCHES = [
   {
-    name: 'Northgate',
+    name: 'Vetnora',
     tag: 'Main hospital',
-    address: '128 Maple Avenue, Northgate, CA 94110',
+    address: '128 Maple Avenue, Vetnora, CA 94110',
     ext: 'ext. 1',
     hours: ['Mon–Fri 8:00–18:00', 'Sat 9:00–14:00', 'Sun closed (emergency line open)'],
     services: [
@@ -37,7 +37,7 @@ const BRANCHES = [
       'Soft-tissue and orthopaedic surgery suite',
       'Overnight boarding with medication schedules',
     ],
-    directions: 'https://maps.google.com/?q=128+Maple+Avenue+Northgate+CA+94110',
+    directions: 'https://maps.google.com/?q=128+Maple+Avenue+Vetnora+CA+94110',
   },
   {
     name: 'Riverside',
@@ -57,12 +57,12 @@ const BRANCHES = [
 ];
 
 const DIRECTORY = [
-  { icon: Headphones, team: 'Reception & appointments', ext: 'ext. 1', email: 'reception@northgatevet.com', note: 'Booking, rescheduling, general questions' },
-  { icon: Pill, team: 'Prescription refills', ext: 'ext. 2', email: 'refills@northgatevet.com', note: 'Repeat medication and food scripts' },
-  { icon: CreditCard, team: 'Billing & insurance', ext: 'ext. 3', email: 'billing@northgatevet.com', note: 'Invoices, payment plans, claim forms' },
-  { icon: FileText, team: 'Medical records', ext: 'ext. 4', email: 'records@northgatevet.com', note: 'Transfers, history requests, lab copies' },
-  { icon: Scissors, team: 'Boarding & grooming', ext: 'ext. 5', email: 'boarding@northgatevet.com', note: 'Stay dates, grooming styles, drop-off times' },
-  { icon: Siren, team: 'Emergency (24/7)', ext: 'press 9', email: 'emergency@northgatevet.com', note: 'Always answered by a nurse, day or night' },
+  { icon: Headphones, team: 'Reception & appointments', ext: 'ext. 1', email: 'reception@vetnoravet.com', note: 'Booking, rescheduling, general questions' },
+  { icon: Pill, team: 'Prescription refills', ext: 'ext. 2', email: 'refills@vetnoravet.com', note: 'Repeat medication and food scripts' },
+  { icon: CreditCard, team: 'Billing & insurance', ext: 'ext. 3', email: 'billing@vetnoravet.com', note: 'Invoices, payment plans, claim forms' },
+  { icon: FileText, team: 'Medical records', ext: 'ext. 4', email: 'records@vetnoravet.com', note: 'Transfers, history requests, lab copies' },
+  { icon: Scissors, team: 'Boarding & grooming', ext: 'ext. 5', email: 'boarding@vetnoravet.com', note: 'Stay dates, grooming styles, drop-off times' },
+  { icon: Siren, team: 'Emergency (24/7)', ext: 'press 9', email: 'emergency@vetnoravet.com', note: 'Always answered by a nurse, day or night' },
 ];
 
 const RESPONSE_TIMES = [
@@ -119,7 +119,7 @@ export default function ContactPage() {
 
   const topicLabel = TOPICS.find((t) => t.value === topic)?.label ?? '';
   const branchLabel =
-    branch === 'northgate' ? 'Northgate' : branch === 'riverside' ? 'Riverside' : 'No preference';
+    branch === 'vetnora' ? 'Vetnora' : branch === 'riverside' ? 'Riverside' : 'No preference';
 
   const resetForm = () => {
     setReference('');
@@ -309,7 +309,7 @@ export default function ContactPage() {
             <p className="text-lg font-bold text-coral tabular-nums">{contact.phone}</p>
             <p className="mt-2 text-[13px] text-ink/60 leading-relaxed">
               Collapse, breathing trouble, suspected poisoning, bloat, trauma, or a seizure that will not stop — phone us
-              first and drive straight to Northgate.
+              first and drive straight to Vetnora.
             </p>
             <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-coral">
               What counts as an emergency <ChevronRight className="hv-slide w-3.5 h-3.5" />
@@ -429,9 +429,9 @@ export default function ContactPage() {
                       ))}
                     </Select>
                   </Field>
-                  <Field label="Preferred branch" hint="Northgate is the main hospital">
+                  <Field label="Preferred branch" hint="Vetnora is the main hospital">
                     <Select value={branch} onChange={(e) => setBranch(e.target.value)}>
-                      <option value="northgate">Northgate — 128 Maple Avenue</option>
+                      <option value="vetnora">Vetnora — 128 Maple Avenue</option>
                       <option value="riverside">Riverside — 42 Willow Court</option>
                       <option value="no-preference">No preference</option>
                     </Select>
@@ -573,7 +573,7 @@ export default function ContactPage() {
       <Section id="branches">
         <SectionHeading
           eyebrow="Our two branches"
-          title="Northgate for everything, Riverside for routine care"
+          title="Vetnora for everything, Riverside for routine care"
           subtitle="Both share one clinical record system, so whichever you visit the team already knows your pet's history."
         />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -634,13 +634,13 @@ export default function ContactPage() {
         <SectionHeading
           eyebrow="Find us"
           title="Look for the violet awning on Maple Avenue"
-          subtitle="We are a five-minute walk from Northgate Library and share the block with two cafés, so there is somewhere to wait if you arrive early."
+          subtitle="We are a five-minute walk from Vetnora Library and share the block with two cafés, so there is somewhere to wait if you arrive early."
         />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
           <div className="lg:col-span-2 relative rounded-2xl overflow-hidden border border-line shadow-soft bg-white">
             <img
               src={contact.mapImage}
-              alt="Map view of the streets around Northgate Animal Hospital on Maple Avenue"
+              alt="Map view of the streets around Vetnora Animal Hospital on Maple Avenue"
               className="w-full h-[280px] md:h-[420px] object-cover"
             />
             {/* Violet pin marker overlay */}
@@ -653,7 +653,7 @@ export default function ContactPage() {
               </div>
               <span className="w-1 h-5 bg-plum rounded-b-full" />
               <span className="mt-1.5 rounded-lg bg-white/95 backdrop-blur-sm px-3 py-1.5 shadow-lift-sm border border-line">
-                <span className="block text-[11px] font-bold text-ink leading-tight">Northgate Animal Hospital</span>
+                <span className="block text-[11px] font-bold text-ink leading-tight">Vetnora Animal Hospital</span>
                 <span className="block text-[10px] text-ink/55 leading-tight">128 Maple Avenue</span>
               </span>
             </div>

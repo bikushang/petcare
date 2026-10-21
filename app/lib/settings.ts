@@ -58,12 +58,12 @@ export type ClinicSettings = {
 };
 
 export const defaultSettings: ClinicSettings = {
-  clinicName: 'Northgate Animal Hospital',
-  legalName: 'Northgate Veterinary Care LLC',
+  clinicName: 'Vetnora Animal Hospital',
+  legalName: 'Vetnora Veterinary Care LLC',
   phone: '+1 415 555 0100',
-  email: 'reception@northgatevet.com',
-  address: '128 Maple Avenue, Northgate, CA 94110',
-  website: 'www.northgatevet.com',
+  email: 'reception@vetnoravet.com',
+  address: '128 Maple Avenue, Vetnora, CA 94110',
+  website: 'www.vetnoravet.com',
   taxId: 'TAX-94110-001',
   registrationNumber: 'VET-CA-2019-0042',
   currency: 'USD',
@@ -85,8 +85,8 @@ export const defaultSettings: ClinicSettings = {
   theme: 'light',
   primaryColor: '#4C1D95',
   fontSize: 'medium',
-  emailFrom: 'noreply@northgatevet.com',
-  emailReplyTo: 'reception@northgatevet.com',
+  emailFrom: 'noreply@vetnoravet.com',
+  emailReplyTo: 'reception@vetnoravet.com',
   smsProvider: 'Twilio',
   lowStockThreshold: '10',
   appointmentSlotMin: '30',

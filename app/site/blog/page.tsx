@@ -150,7 +150,7 @@ export default function BlogPage() {
       <PageHero
         eyebrow="Pet care journal"
         title="Practical advice from our veterinary team"
-        subtitle="Everything here is written by the vets and nurses who see your pets at Northgate — no sponsored content, no scraped listicles. If an article changes what we do in the consult room, we update it."
+        subtitle="Everything here is written by the vets and nurses who see your pets at Vetnora — no sponsored content, no scraped listicles. If an article changes what we do in the consult room, we update it."
         breadcrumb="Blog"
       >
         <div className="flex flex-wrap items-center gap-3">
@@ -186,7 +186,7 @@ export default function BlogPage() {
                 on top of each other, so most cats walk through our door already at their limit.
                 We rebuilt the whole feline appointment around that fact — pheromone-prepped rooms,
                 a separate cat entrance, and examinations done inside an open carrier wherever possible.
-                Here is exactly what happens in a Northgate feline consultation, and the three things
+                Here is exactly what happens in a Vetnora feline consultation, and the three things
                 you can do at home in the week beforehand to make it easier.
               </p>
 
@@ -469,7 +469,7 @@ export default function BlogPage() {
                   <h3 className="text-base font-semibold text-ink">You are on the list</h3>
                   <p className="mt-2 text-[13px] text-ink/55 leading-relaxed">
                     We have added <span className="font-semibold text-ink/75">{email}</span>. The next
-                    digest goes out on the first Tuesday of the month — look for Northgate Animal
+                    digest goes out on the first Tuesday of the month — look for Vetnora Animal
                     Hospital in your inbox, and check spam just in case.
                   </p>
                   <Button

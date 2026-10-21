@@ -179,7 +179,7 @@ export default function PublicSitePage() {
               <div className="relative rounded-3xl overflow-hidden border border-line bg-white shadow-lift p-2">
                 <img
                   src={content.hero.heroImage || HERO_IMAGE_FALLBACK}
-                  alt="A veterinarian examining a dog during a routine check-up at Northgate Animal Hospital"
+                  alt="A veterinarian examining a dog during a routine check-up at Vetnora Animal Hospital"
                   className="w-full h-[320px] sm:h-[420px] lg:h-[480px] object-cover rounded-[1.25rem]"
                 />
               </div>
@@ -274,7 +274,7 @@ export default function PublicSitePage() {
             <div className="absolute -top-8 -left-8 w-56 h-56 rounded-full bg-iris/20 blur-3xl pointer-events-none" />
             <img
               src={content.about.aboutImage}
-              alt="A nurse at Northgate Animal Hospital comforting a cat before its examination"
+              alt="A nurse at Vetnora Animal Hospital comforting a cat before its examination"
               className="relative rounded-3xl shadow-lift w-full h-[340px] sm:h-[420px] object-cover"
             />
             <div className="absolute -bottom-6 right-4 sm:right-8 bg-white rounded-2xl border border-line shadow-lift px-5 py-4 text-center">
@@ -288,7 +288,7 @@ export default function PublicSitePage() {
           {/* Benefit rows */}
           <div className="order-1 lg:order-2">
             <SectionHeading
-              eyebrow="Why Northgate"
+              eyebrow="Why Vetnora"
               title="Veterinary care that respects your pet — and your time"
               subtitle="Four things our clients tell us they cannot find anywhere else in the Bay Area."
               center={false}
@@ -323,7 +323,7 @@ export default function PublicSitePage() {
         <SectionHeading
           eyebrow="How it works"
           title="Three steps from worry to answers"
-          subtitle="No phone tag, no waiting rooms full of barking, no vague invoices. Here is what a visit to Northgate actually looks like."
+          subtitle="No phone tag, no waiting rooms full of barking, no vague invoices. Here is what a visit to Vetnora actually looks like."
         />
 
         <div className="relative">
@@ -363,7 +363,7 @@ export default function PublicSitePage() {
         <SectionHeading
           eyebrow="Our people"
           title="Meet the team your pet will actually remember"
-          subtitle="Thirteen veterinarians, nurses and support staff across our Northgate and Riverside branches — and you can request the same face every visit."
+          subtitle="Thirteen veterinarians, nurses and support staff across our Vetnora and Riverside branches — and you can request the same face every visit."
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -72,7 +72,7 @@ const QUESTIONS: Question[] = [
     id: 'ap-1',
     category: 'appointments',
     q: 'How do I book an appointment?',
-    a: 'There are three ways: the online booking page, the client portal if you already have an account with us, or by calling +1 415 555 0100 between 8:00 and 18:00 on weekdays. Online booking shows live availability for both the Northgate and Riverside branches, so you see every open slot rather than being offered the first one we happen to find. You will get a confirmation email within a minute and a text reminder 24 hours before the visit.',
+    a: 'There are three ways: the online booking page, the client portal if you already have an account with us, or by calling +1 415 555 0100 between 8:00 and 18:00 on weekdays. Online booking shows live availability for both the Vetnora and Riverside branches, so you see every open slot rather than being offered the first one we happen to find. You will get a confirmation email within a minute and a text reminder 24 hours before the visit.',
   },
   {
     id: 'ap-2',
@@ -248,7 +248,7 @@ const QUESTIONS: Question[] = [
     id: 'bo-5',
     category: 'boarding',
     q: 'Are you open overnight?',
-    a: 'The Northgate clinic runs Mon–Fri 8:00–18:00 and Sat 9:00–14:00, and is closed on Sundays for routine appointments. Our emergency service, however, is 24/7 on the same number, +1 415 555 0100, with a vet or nurse answering out of hours rather than a machine. Overnight and Sunday emergencies are seen at our Riverside branch where a vet and nurse are on site, your records travel with you between the two, and hospitalised patients are never left unattended overnight.',
+    a: 'The Vetnora clinic runs Mon–Fri 8:00–18:00 and Sat 9:00–14:00, and is closed on Sundays for routine appointments. Our emergency service, however, is 24/7 on the same number, +1 415 555 0100, with a vet or nurse answering out of hours rather than a machine. Overnight and Sunday emergencies are seen at our Riverside branch where a vet and nurse are on site, your records travel with you between the two, and hospitalised patients are never left unattended overnight.',
   },
   {
     id: 'bo-6',
@@ -455,7 +455,7 @@ export default function FaqPage() {
       <PageHero
         eyebrow="Help centre"
         title="Questions pet owners ask us most"
-        subtitle="Thirty answers written by the vets and nurses who actually do the work at Northgate — booking, money, vaccines, anaesthesia, boarding and what counts as an emergency at 2am."
+        subtitle="Thirty answers written by the vets and nurses who actually do the work at Vetnora — booking, money, vaccines, anaesthesia, boarding and what counts as an emergency at 2am."
         breadcrumb="FAQ"
       >
         <div className="max-w-xl">
@@ -802,7 +802,7 @@ export default function FaqPage() {
       {/* 9 ── CTA band ------------------------------------------- */}
       <CtaBand
         title="Got the answer you needed? Let us meet your pet"
-        subtitle="Same-day sick appointments, written estimates before every procedure, and a free nurse check-in after surgery — at both the Northgate and Riverside branches."
+        subtitle="Same-day sick appointments, written estimates before every procedure, and a free nurse check-in after surgery — at both the Vetnora and Riverside branches."
         primaryLabel="Book an appointment"
         primaryHref={SITE_ROUTES.book}
         secondaryLabel="Read client reviews"

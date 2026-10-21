@@ -31,16 +31,16 @@ const SECURITY_KEY = 'security-config';
 const defaultSecurityConfig: SecurityConfig = {
   twoFAEnabled: {},
   ipRules: [
-    { id: 'ip1', ip: '192.168.1.0/24', label: 'Office network — Northgate', type: 'Allow' },
+    { id: 'ip1', ip: '192.168.1.0/24', label: 'Office network — Vetnora', type: 'Allow' },
     { id: 'ip2', ip: '10.0.0.0/8', label: 'Office network — Riverside', type: 'Allow' },
     { id: 'ip3', ip: '203.0.113.0/24', label: 'Known threat range', type: 'Block' },
   ],
   sessions: [
-    { id: 's1', user: 'Alex Chen', role: 'Super Admin', device: 'Chrome on macOS', ip: '192.168.1.10', location: 'Northgate, CA', started: '2026-10-07T08:30:00', lastActive: '2026-10-07T14:22:00', status: 'Active' },
-    { id: 's2', user: 'Dr. Maya Rivera', role: 'Veterinarian', device: 'Safari on iPad', ip: '192.168.1.45', location: 'Northgate, CA', started: '2026-10-07T09:00:00', lastActive: '2026-10-07T13:45:00', status: 'Active' },
+    { id: 's1', user: 'Alex Chen', role: 'Super Admin', device: 'Chrome on macOS', ip: '192.168.1.10', location: 'Vetnora, CA', started: '2026-10-07T08:30:00', lastActive: '2026-10-07T14:22:00', status: 'Active' },
+    { id: 's2', user: 'Dr. Maya Rivera', role: 'Veterinarian', device: 'Safari on iPad', ip: '192.168.1.45', location: 'Vetnora, CA', started: '2026-10-07T09:00:00', lastActive: '2026-10-07T13:45:00', status: 'Active' },
     { id: 's3', user: 'Sofia Reyes', role: 'Branch Manager', device: 'Edge on Windows', ip: '10.0.0.22', location: 'Riverside, CA', started: '2026-10-07T08:45:00', lastActive: '2026-10-07T12:10:00', status: 'Active' },
-    { id: 's4', user: 'Lena Ortiz', role: 'Receptionist', device: 'Chrome on Windows', ip: '192.168.1.50', location: 'Northgate, CA', started: '2026-10-06T17:30:00', lastActive: '2026-10-06T18:00:00', status: 'Expired' },
-    { id: 's5', user: 'Yuki Tanaka', role: 'Accountant', device: 'Firefox on macOS', ip: '192.168.1.60', location: 'Northgate, CA', started: '2026-10-06T14:00:00', lastActive: '2026-10-06T17:15:00', status: 'Expired' },
+    { id: 's4', user: 'Lena Ortiz', role: 'Receptionist', device: 'Chrome on Windows', ip: '192.168.1.50', location: 'Vetnora, CA', started: '2026-10-06T17:30:00', lastActive: '2026-10-06T18:00:00', status: 'Expired' },
+    { id: 's5', user: 'Yuki Tanaka', role: 'Accountant', device: 'Firefox on macOS', ip: '192.168.1.60', location: 'Vetnora, CA', started: '2026-10-06T14:00:00', lastActive: '2026-10-06T17:15:00', status: 'Expired' },
   ],
   devices: [
     { id: 'd1', user: 'Alex Chen', device: 'MacBook Pro 16"', os: 'macOS 14.5', browser: 'Chrome 129', lastSeen: '2026-10-07T14:22:00', trusted: true, fingerprint: 'a1b2c3d4' },
@@ -673,7 +673,7 @@ export default function SecurityPage() {
           <Modal open={ipModalOpen} onClose={() => setIpModalOpen(false)} title="Add IP restriction rule">
             <div className="space-y-3">
               <Field label="IP address / CIDR range"><Input value={ipForm.ip} onChange={(e) => setIpForm((f) => ({ ...f, ip: e.target.value }))} placeholder="192.168.1.0/24" /></Field>
-              <Field label="Label"><Input value={ipForm.label} onChange={(e) => setIpForm((f) => ({ ...f, label: e.target.value }))} placeholder="Office network — Northgate" /></Field>
+              <Field label="Label"><Input value={ipForm.label} onChange={(e) => setIpForm((f) => ({ ...f, label: e.target.value }))} placeholder="Office network — Vetnora" /></Field>
               <Field label="Rule type">
                 <Select value={ipForm.type} onChange={(e) => setIpForm((f) => ({ ...f, type: e.target.value }))}>
                   <option>Allow</option><option>Block</option>

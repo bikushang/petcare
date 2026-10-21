@@ -32,7 +32,7 @@ const LEADERSHIP: Person[] = [
     role: 'Clinical Director & co-founder',
     initials: 'AR',
     focus: ['Soft-tissue surgery', 'UC Davis', '14 years in practice', 'Fear Free certified'],
-    bio: 'Amara graduated from UC Davis School of Veterinary Medicine and spent six years in a busy referral hospital before opening Northgate in two rented rooms on Maple Avenue in 2019. She still operates four days a week — soft-tissue work is her first love, from complex wound reconstruction to gastrointestinal foreign bodies — and she sets the clinical protocols both branches follow. If a case is complicated, she is the one who phones you at the end of the day to talk it through.',
+    bio: 'Amara graduated from UC Davis School of Veterinary Medicine and spent six years in a busy referral hospital before opening Vetnora in two rented rooms on Maple Avenue in 2019. She still operates four days a week — soft-tissue work is her first love, from complex wound reconstruction to gastrointestinal foreign bodies — and she sets the clinical protocols both branches follow. If a case is complicated, she is the one who phones you at the end of the day to talk it through.',
     languages: 'English, Spanish',
     icon: Stethoscope,
   },
@@ -212,14 +212,14 @@ const ROLES = [
   },
   {
     title: 'Registered Veterinary Technician',
-    branch: 'Northgate branch',
+    branch: 'Vetnora branch',
     type: 'Full-time',
     salary: '$68,000 – $82,000 DOE',
     body: 'Join Priya\'s nursing team across anaesthesia, dentistry and inpatient care. RVT licence required; we will fund your Fear Free certification and a VTS pathway if you want one.',
   },
   {
     title: 'Weekend Client Care Associate',
-    branch: 'Northgate branch',
+    branch: 'Vetnora branch',
     type: 'Part-time · Sat & alternate Fri',
     salary: '$24 – $29 per hour',
     body: 'Front-desk work for someone who is calm on the phone and warm in person. No veterinary experience needed — we train, and plenty of our nurses started at the front desk.',
@@ -271,7 +271,7 @@ export default function TeamPage() {
         eyebrow="Our people"
         title="Thirteen people who treat your pet like their own"
         breadcrumb="Team"
-        subtitle="Six veterinarians, four nurses and technicians, and three client-care staff across our Northgate and Riverside branches. Every clinical member of the team is Fear Free certified, and most of them have been here for years — which is exactly the point."
+        subtitle="Six veterinarians, four nurses and technicians, and three client-care staff across our Vetnora and Riverside branches. Every clinical member of the team is Fear Free certified, and most of them have been here for years — which is exactly the point."
       >
         <div className="flex flex-wrap items-center gap-3">
           <CtaLink href={SITE_ROUTES.book} variant="white">Book with a vet</CtaLink>
@@ -452,7 +452,7 @@ export default function TeamPage() {
             />
             <img
               src="https://images.pexels.com/photos/6235260/pexels-photo-6235260.jpeg?auto=compress&cs=tinysrgb&w=1200"
-              alt="Veterinary staff discussing a patient's notes together in the Northgate treatment room"
+              alt="Veterinary staff discussing a patient's notes together in the Vetnora treatment room"
               className="w-full h-56 object-cover rounded-2xl border border-line shadow-lift-sm"
             />
             <div className="mt-5 flex items-start gap-3 rounded-2xl bg-canvas border border-line p-5">
@@ -546,7 +546,7 @@ export default function TeamPage() {
           </div>
           <p className="mt-6 text-[12px] text-ink/45">
             No suitable role listed? Speculative applications are genuinely welcome — email
-            reception@northgatevet.com and we will keep your details on file for six months.
+            reception@vetnoravet.com and we will keep your details on file for six months.
           </p>
         </div>
       </Section>

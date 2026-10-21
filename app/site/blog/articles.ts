@@ -42,7 +42,7 @@ export const articles: Article[] = [
     id: 'puppy-vaccines',
     title: 'The puppy vaccine schedule your vet actually follows',
     excerpt:
-      'Core vaccines cover parvovirus, distemper, adenovirus and rabies, and the timing matters far more than the brand on the vial. Here is the schedule we run at Northgate, and why the final parvo booster has to land after 16 weeks of age.',
+      'Core vaccines cover parvovirus, distemper, adenovirus and rabies, and the timing matters far more than the brand on the vial. Here is the schedule we run at Vetnora, and why the final parvo booster has to land after 16 weeks of age.',
     category: 'Preventive care',
     author: 'Dr. Amara Rivera',
     authorRole: 'Clinical Director, DVM',
@@ -94,7 +94,7 @@ export const articles: Article[] = [
     readMins: 6,
     icon: UtensilsCrossed,
     standfirst:
-      'Roughly half the dogs we weigh at Northgate are carrying more weight than they should, and almost none of their owners are over-feeding on purpose. They are following the chart on the bag, which is the problem.',
+      'Roughly half the dogs we weigh at Vetnora are carrying more weight than they should, and almost none of their owners are over-feeding on purpose. They are following the chart on the bag, which is the problem.',
     sections: [
       {
         heading: 'Why the bag over-feeds most dogs',

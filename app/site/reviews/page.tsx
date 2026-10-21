@@ -119,7 +119,7 @@ const ALL_REVIEWS: Review[] = [
     service: 'Wellness',
     rating: 5,
     date: '2 February 2026',
-    body: 'Luna has clawed her way out of every other clinic in the Bay Area. Northgate put her in the cat-only waiting area, used a pheromone towel, and did the whole exam on the floor with her. First visit in nine years where nobody bled.',
+    body: 'Luna has clawed her way out of every other clinic in the Bay Area. Vetnora put her in the cat-only waiting area, used a pheromone towel, and did the whole exam on the floor with her. First visit in nine years where nobody bled.',
   },
   {
     id: 'rv-3',
@@ -164,7 +164,7 @@ const ALL_REVIEWS: Review[] = [
     service: 'Surgery',
     rating: 5,
     date: '19 April 2026',
-    body: 'Brachycephalic airway surgery on a French Bulldog is not a small thing and I had quotes from three practices. Northgate was the only one that insisted on pre-op bloodwork and a sedated airway exam first, and the only one that gave me the anaesthesia monitoring protocol in writing. Coco snores like a normal dog now.',
+    body: 'Brachycephalic airway surgery on a French Bulldog is not a small thing and I had quotes from three practices. Vetnora was the only one that insisted on pre-op bloodwork and a sedated airway exam first, and the only one that gave me the anaesthesia monitoring protocol in writing. Coco snores like a normal dog now.',
   },
   {
     id: 'rv-8',
@@ -209,7 +209,7 @@ const ALL_REVIEWS: Review[] = [
     service: 'Surgery',
     rating: 5,
     date: '28 September 2026',
-    body: 'Olive slipped a disc and went off her back legs overnight. Northgate stabilised her, were completely straight with me that she needed a neurologist rather than trying to manage it in-house, and had the referral booked before lunch. They sent the imaging ahead so the specialist was not starting from scratch.',
+    body: 'Olive slipped a disc and went off her back legs overnight. Vetnora stabilised her, were completely straight with me that she needed a neurologist rather than trying to manage it in-house, and had the referral booked before lunch. They sent the imaging ahead so the specialist was not starting from scratch.',
   },
 ];
 
@@ -355,7 +355,7 @@ export default function ReviewsPage() {
       <PageHero
         eyebrow="Client reviews"
         title="4.9 out of 5, from 487 pet families"
-        subtitle="Every review below comes from a real Northgate client. We ask the same four questions after every visit, publish the answers unedited, and reply to the ones that tell us we got something wrong."
+        subtitle="Every review below comes from a real Vetnora client. We ask the same four questions after every visit, publish the answers unedited, and reply to the ones that tell us we got something wrong."
         breadcrumb="Reviews"
       >
         <div className="flex flex-col gap-6">
@@ -682,7 +682,7 @@ export default function ReviewsPage() {
                 <Monogram name="Eleanor Hayes" className="w-12 h-12 text-sm bg-white/15 text-white" />
                 <span>
                   <span className="block text-sm font-semibold text-white">Eleanor Hayes</span>
-                  <span className="block text-[12px] text-white/55">Buddy’s owner · Northgate client since 2021</span>
+                  <span className="block text-[12px] text-white/55">Buddy’s owner · Vetnora client since 2021</span>
                 </span>
               </figcaption>
               </figure>
@@ -904,7 +904,7 @@ export default function ReviewsPage() {
                   <Checkbox
                     checked={consent}
                     onChange={(e) => setConsent(e.target.checked)}
-                    label="I am happy for Northgate Animal Hospital to publish this review with my first name and my pet’s name."
+                    label="I am happy for Vetnora Animal Hospital to publish this review with my first name and my pet’s name."
                     hint="Leave this unticked and we will publish it under initials only."
                   />
                 </div>

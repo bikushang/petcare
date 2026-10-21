@@ -219,10 +219,10 @@ export default function EmergencyPage() {
 
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-white/70">
             <span className="flex items-center gap-2 font-semibold text-white">
-              <Siren className="w-4 h-4 text-coral" /> Open 24/7 for emergencies · Northgate branch
+              <Siren className="w-4 h-4 text-coral" /> Open 24/7 for emergencies · Vetnora branch
             </span>
             <span className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-coral" /> 128 Maple Avenue, Northgate, CA 94110
+              <MapPin className="w-4 h-4 text-coral" /> 128 Maple Avenue, Vetnora, CA 94110
             </span>
           </div>
 
@@ -258,7 +258,7 @@ export default function EmergencyPage() {
                 <span className="flex items-start gap-2.5 text-ink/70">
                   <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-coral" />
                   <span>
-                    <span className="block font-semibold text-ink">128 Maple Avenue, Northgate, CA 94110</span>
+                    <span className="block font-semibold text-ink">128 Maple Avenue, Vetnora, CA 94110</span>
                     Emergency parking is the three bays directly outside the blue door — leave the car there.
                   </span>
                 </span>
@@ -384,7 +384,7 @@ export default function EmergencyPage() {
         <SectionHeading
           eyebrow="Capability"
           title="Emergencies we treat"
-          subtitle="Our Northgate branch runs oxygen, in-house laboratory, digital radiography, ultrasound and a theatre that can be opened in under fifteen minutes, overnight included."
+          subtitle="Our Vetnora branch runs oxygen, in-house laboratory, digital radiography, ultrasound and a theatre that can be opened in under fifteen minutes, overnight included."
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -470,7 +470,7 @@ export default function EmergencyPage() {
         <SectionHeading
           eyebrow="Your visit"
           title="What happens when you arrive"
-          subtitle="So there are no surprises at the worst possible moment. This is the sequence every emergency patient goes through at Northgate."
+          subtitle="So there are no surprises at the worst possible moment. This is the sequence every emergency patient goes through at Vetnora."
         />
 
         <div className="relative max-w-3xl mx-auto">
@@ -549,7 +549,7 @@ export default function EmergencyPage() {
                 <Building2 className="w-4 h-4 mt-0.5 shrink-0 text-plum" />
                 <span>
                   Overnight and Sunday emergencies are all handled at the{' '}
-                  <span className="font-semibold text-ink">Northgate branch, 128 Maple Avenue</span> — our
+                  <span className="font-semibold text-ink">Vetnora branch, 128 Maple Avenue</span> — our
                   Riverside branch is routine appointments only.
                 </span>
               </p>
@@ -697,7 +697,7 @@ export default function EmergencyPage() {
       {/* ───────────── 9. CTA band ───────────── */}
       <CtaBand
         title="If you are reading this and worried, call now"
-        subtitle="A vet or emergency nurse answers 24 hours a day at the Northgate branch. Triage advice is free, and we would rather hear from you twice than too late."
+        subtitle="A vet or emergency nurse answers 24 hours a day at the Vetnora branch. Triage advice is free, and we would rather hear from you twice than too late."
         primaryLabel={`Call ${PHONE_DISPLAY}`}
         primaryHref={PHONE_HREF}
         secondaryLabel="Non-urgent? Book online"
