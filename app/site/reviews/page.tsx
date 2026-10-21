@@ -690,7 +690,7 @@ export default function ReviewsPage() {
 
             <div>
               <img
-                src="https://images.pexels.com/photos/2598683/pexels-photo-2598683.jpeg?auto=compress&cs=tinysrgb&w=800"
+                src="https://images.pexels.com/photos/6816845/pexels-photo-6816845.jpeg"
                 alt="A golden retriever resting calmly on an examination table while a veterinary nurse checks him over"
                 className="w-full h-52 md:h-64 object-cover rounded-2xl border border-white/15"
               />

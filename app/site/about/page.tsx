@@ -170,7 +170,7 @@ const OUTREACH = [
   },
 ];
 
-const HERO_IMAGE = 'https://images.pexels.com/photos/2598683/pexels-photo-2598683.jpeg?auto=compress&cs=tinysrgb&w=800';
+const HERO_IMAGE = 'https://images.pexels.com/photos/6816845/pexels-photo-6816845.jpeg';
 
 /* ---------------------------------------------------------------- */
 /* Page                                                              */

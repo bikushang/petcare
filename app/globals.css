@@ -33,6 +33,15 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Keep the Netlify development badge hidden on every route. */
+.nl-badge,
+#nl-badge {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 button,
 input,
 select,
@@ -94,10 +103,6 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: #b9a9dd;
   background-clip: content-box;
-}
-
-.nl-badge {
-  display: none !important;
 }
 
 .hv-lift {

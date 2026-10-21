@@ -83,7 +83,7 @@ const defaultContent: CmsContent = {
       { id: 'stat-3', label: 'Expert staff', value: '13' },
       { id: 'stat-4', label: 'Branches', value: '2' },
     ],
-    aboutImage: 'https://images.pexels.com/photos/6235285/pexels-photo-6235285.jpeg?auto=compress&cs=tinysrgb&w=800',
+    aboutImage: 'https://images.pexels.com/photos/33394308/pexels-photo-33394308.jpeg',
   },
   testimonials: {
     sectionTitle: 'What pet families say',
@@ -100,7 +100,7 @@ const defaultContent: CmsContent = {
     email: 'reception@vetnoravet.com',
     address: '128 Maple Avenue, Vetnora, CA 94110',
     hours: 'Mon–Fri: 8:00 AM – 6:00 PM\nSat: 9:00 AM – 2:00 PM\nSun: Closed',
-    mapImage: 'https://images.pexels.com/photos/2598683/pexels-photo-2598683.jpeg?auto=compress&cs=tinysrgb&w=800',
+    mapImage: 'https://images.pexels.com/photos/6816845/pexels-photo-6816845.jpeg',
   },
   footer: {
     tagline: 'Compassionate veterinary care for the Bay Area community.',

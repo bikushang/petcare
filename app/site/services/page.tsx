@@ -313,7 +313,7 @@ export default function ServicesPage() {
               </p>
             </div>
             <img
-              src="https://images.pexels.com/photos/6235285/pexels-photo-6235285.jpeg?auto=compress&cs=tinysrgb&w=800"
+              src="https://images.pexels.com/photos/33394308/pexels-photo-33394308.jpeg"
               alt="Veterinary nurse preparing a blood sample in the in-house laboratory"
               className="rounded-3xl shadow-soft w-full h-56 object-cover"
             />
@@ -469,7 +469,7 @@ export default function ServicesPage() {
               </ul>
             </div>
             <img
-              src="https://images.pexels.com/photos/2598683/pexels-photo-2598683.jpeg?auto=compress&cs=tinysrgb&w=800"
+              src="https://images.pexels.com/photos/6816845/pexels-photo-6816845.jpeg"
               alt="Dog being gently groomed and brushed by a member of the Vetnora team"
               className="rounded-3xl shadow-soft w-full h-52 object-cover"
             />

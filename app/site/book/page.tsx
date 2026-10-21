@@ -1155,7 +1155,7 @@ export default function BookPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
           <div className="rounded-2xl overflow-hidden border border-line shadow-soft">
             <img
-              src="https://images.pexels.com/photos/6235285/pexels-photo-6235285.jpeg?auto=compress&cs=tinysrgb&w=800"
+              src="https://images.pexels.com/photos/33394308/pexels-photo-33394308.jpeg"
               alt="A veterinarian examining a dog during a first consultation at Vetnora Animal Hospital"
               className="w-full h-[300px] md:h-[420px] object-cover"
             />
