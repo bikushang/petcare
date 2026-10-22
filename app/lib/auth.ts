@@ -70,6 +70,28 @@ export async function login(email: string, password: string): Promise<User> {
   return data.user as User;
 }
 
+export type SignupPayload = {
+  name: string;
+  email: string;
+  password: string;
+  phone?: string;
+  clinicName: string;
+  branchName: string;
+  address?: string;
+};
+
+export async function signup(payload: SignupPayload): Promise<User> {
+  const data = await authFetch('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem(TOKEN_KEY, data.token);
+    window.localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+  }
+  return data.user as User;
+}
+
 export function logout() {
   if (typeof window !== 'undefined') {
     window.localStorage.removeItem(TOKEN_KEY);

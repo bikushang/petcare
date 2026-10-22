@@ -245,6 +245,12 @@ export default function LoginPage() {
                   })}
                 </div>
               </div>
+              <p className="mt-6 text-xs text-ink/50 text-center">
+                New clinic?{' '}
+                <a href="/signup" className="text-plum hover:underline font-medium">
+                  Create an account
+                </a>
+              </p>
             </>
           )}
 

@@ -90,6 +90,24 @@ Open the local URL printed by Next.js, usually `http://localhost:3000`.
 
 The development configuration proxies `/api/*` requests to the local Express API.
 
+### Netlify environment variables
+
+The Netlify function does not read your local `.env` file. In the Netlify site dashboard, open **Project configuration → Environment variables** and add these variables for the Production and Deploy Preview scopes as needed:
+
+```text
+JWT_SECRET=<a unique random value with at least 32 characters>
+MONGODB_URI=<your MongoDB connection string>
+MONGODB_DB=petcare_pro
+```
+
+Generate a secret locally with:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
+```
+
+Do not commit the generated value or place it in `netlify.toml`. Trigger a new deploy after saving the variables; changing only the repository will not update an already deployed Netlify function.
+
 ## 4. Production build
 
 Build the Next.js frontend:
@@ -101,7 +119,7 @@ npm run build
 Start the frontend with:
 
 ```bash
-npm run start
+npm run dev
 ```
 
 The Express API must also be deployed and started separately using the configured environment variables. A production deployment must route API requests to the Express API or use the included Netlify integration correctly. Do not assume that deploying only the Next.js frontend will also start the Express server.

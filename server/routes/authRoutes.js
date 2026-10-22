@@ -4,8 +4,9 @@
 const express = require('express');
 const router = express.Router();
 const { authRequired } = require('../middleware/authMiddleware');
-const { login, me, changePassword, requestReset, confirmReset, updateStatus } = require('../controllers/authController');
+const { login, register, me, changePassword, requestReset, confirmReset, updateStatus } = require('../controllers/authController');
 
+router.post('/register', register);
 router.post('/login', login);
 router.get('/me', authRequired, me);
 router.put('/change-password', authRequired, changePassword);

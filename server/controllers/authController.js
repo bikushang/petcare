@@ -158,8 +158,57 @@ const updateStatus = asyncHandler(async (req, res) => {
   res.json(staff.toSafeObject());
 });
 
+const register = asyncHandler(async (req, res) => {
+  const {
+    name, email, password, phone, clinicName, branchName, address,
+  } = req.body;
+
+  if (!name || !email || !password || !clinicName || !branchName) {
+    return res.status(400).json({
+      error: 'MISSING_FIELDS',
+      message: 'Name, email, password, clinic name, and branch name are required',
+    });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({
+      error: 'WEAK_PASSWORD',
+      message: 'Password must be at least 6 characters',
+    });
+  }
+
+  const existing = await Staff.findOne({ email: email.toLowerCase() });
+  if (existing) {
+    return res.status(409).json({
+      error: 'EMAIL_TAKEN',
+      message: 'An account with that email already exists',
+    });
+  }
+
+  const hashed = await bcrypt.hash(password, 10);
+  const branch = branchName.trim();
+
+  const owner = await Staff.create({
+    name: name.trim(),
+    email: email.toLowerCase(),
+    password: hashed,
+    role: 'Clinic Owner',
+    branch,
+    branchAccess: [branch],
+    phone: phone?.trim() || '',
+    status: 'Active',
+    hireDate: new Date().toISOString().slice(0, 10),
+    department: 'Administration',
+    employmentType: 'Full-time',
+  });
+
+  const token = signToken(owner._id);
+  res.status(201).json({ token, user: owner.toSafeObject() });
+});
+
 module.exports = {
   login,
+  register,
   me,
   changePassword,
   requestReset,
