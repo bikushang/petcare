@@ -689,7 +689,7 @@ export default function StaffPage() {
               <Input type="tel" value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+1 415 555 0200" />
             </Field>
             <Field label="Email">
-              <Input type="email" value={form.email} onChange={(e) => set('email', e.target.value)} placeholder="name@petcare.pro" />
+              <Input type="email" value={form.email} onChange={(e) => set('email', e.target.value)} placeholder="name@vetnoravet.com" />
             </Field>
             <Field label="Status">
               <Select value={form.status} onChange={(e) => set('status', e.target.value)}>

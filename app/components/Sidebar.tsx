@@ -17,6 +17,7 @@ export default function Sidebar({
   mobileOpen?: boolean;
   onClose?: () => void;
 }) {
+  // Vetnora is the sample clinic name used by this demo installation.
   const pathname = usePathname();
   const items = navForRole(role);
   const info = roleInfo[role];
@@ -44,7 +45,7 @@ export default function Sidebar({
           <PawPrint className="w-5 h-5" />
         </div>
         <div className="leading-tight">
-          <div className="text-sm font-semibold text-ink group-hover:text-plum transition-colors duration-200">PetCare Pro</div>
+          <div className="text-sm font-semibold text-ink group-hover:text-plum transition-colors duration-200">Vetnora</div>
           <div className="text-[11px] text-plum/80">{branch}</div>
         </div>
       </Link>

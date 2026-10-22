@@ -13,7 +13,7 @@ async function start() {
   try {
     await connectDB();
     app.listen(PORT, () => {
-      console.log(`[server] PetCare Pro API running on http://localhost:${PORT}`);
+      console.log(`[server] Vetnora API running on http://localhost:${PORT}`);
     });
   } catch (err) {
     console.error('[server] Failed to start:', err.message);

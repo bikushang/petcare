@@ -268,7 +268,7 @@ export default function SurgeriesPage() {
       @media print{body{padding:20px}}
     </style></head><body>
     <div class="header">
-      <div><div class="clinic-name">PetCare Pro</div><div class="clinic-sub">Vetnora Animal Hospital &middot; 128 Maple Ave, Vetnora, CA</div></div>
+      <div><div class="clinic-name">Vetnora Animal Hospital</div><div class="clinic-sub">128 Maple Ave, Vetnora, CA</div></div>
       <div class="surg-num">Surgery Report No<br><b>${printS.surgeryNumber}</b><br>${printS.date} at ${printS.time}</div>
     </div>
     <div class="patient-box">
@@ -308,7 +308,7 @@ export default function SurgeriesPage() {
     <div class="footer">
       <div class="sig-line"></div>
       <div class="sig-name">${printS.staff.find((s) => s.role === 'Surgeon')?.staffName ?? ''}</div>
-      <div style="font-size:11px;color:#666">Surgeon, PetCare Pro</div>
+      <div style="font-size:11px;color:#666">Surgeon, Vetnora Animal Hospital</div>
     </div>
     </body></html>`);
     win.document.close();
@@ -803,7 +803,7 @@ export default function SurgeriesPage() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 rounded-xl bg-plum flex items-center justify-center"><Stethoscope className="w-5 h-5 text-white" /></div>
-                  <div><div className="text-sm font-bold text-ink">PetCare Pro</div><div className="text-[10px] text-ink/50">Surgery Report</div></div>
+                  <div><div className="text-sm font-bold text-ink">Vetnora Animal Hospital</div><div className="text-[10px] text-ink/50">Surgery Report</div></div>
                 </div>
                 <div className="text-right">
                   <div className="text-[10px] text-ink/40">Report No</div>

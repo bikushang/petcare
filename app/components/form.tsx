@@ -1,7 +1,7 @@
 'use client';
 
 /* ════════════════════════════════════════════════════════════════════
-   Custom form controls — PetCare Pro
+   Custom form controls — Vetnora
    ────────────────────────────────────────────────────────────────────
    Every control here is hand-built: no native <select> dropdown, no
    native date picker, no native radio/checkbox rendering. Inputs that

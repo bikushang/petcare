@@ -399,7 +399,7 @@ export default function VaccinationsPage() {
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 rounded-xl bg-plum flex items-center justify-center"><Syringe className="w-5 h-5 text-white" /></div>
                   <div>
-                    <div className="text-sm font-bold text-ink">PetCare Pro</div>
+                    <div className="text-sm font-bold text-ink">Vetnora Animal Hospital</div>
                     <div className="text-[10px] text-ink/50">Vaccination Certificate</div>
                   </div>
                 </div>

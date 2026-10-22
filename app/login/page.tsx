@@ -55,10 +55,8 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
     try {
-      const token = await requestPasswordReset(resetEmail);
-      setResetToken(token);
-      setMode('reset-confirm');
-      setResetMsg('A reset token has been generated. Enter your new password below.');
+      await requestPasswordReset(resetEmail);
+      setResetMsg('If that email exists, reset instructions will be sent through the configured email service.');
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -96,7 +94,7 @@ export default function LoginPage() {
               <PawPrint className="w-6 h-6" />
             </div>
             <div>
-              <div className="text-lg font-semibold">PetCare Pro</div>
+              <div className="text-lg font-semibold">Vetnora</div>
               <div className="text-xs text-white/70">Veterinary Practice Platform</div>
             </div>
           </div>
@@ -124,7 +122,7 @@ export default function LoginPage() {
           </div>
         </div>
         <div className="relative text-xs text-white/50">
-          (c) 2026 PetCare Pro. Secure authentication with JWT sessions.
+          (c) 2026 Vetnora. Secure authentication with JWT sessions.
         </div>
       </div>
 
@@ -135,7 +133,7 @@ export default function LoginPage() {
             <div className="w-10 h-10 rounded-xl bg-plum text-white flex items-center justify-center">
               <PawPrint className="w-5 h-5" />
             </div>
-            <div className="text-lg font-semibold text-ink">PetCare Pro</div>
+            <div className="text-lg font-semibold text-ink">Vetnora</div>
           </div>
 
           {mode === 'login' && (
@@ -156,7 +154,7 @@ export default function LoginPage() {
                     icon={Mail}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@petcare.pro"
+                    placeholder="you@example.invalid"
                   />
                 </Field>
                 <Field label="Password">
@@ -264,7 +262,7 @@ export default function LoginPage() {
                     icon={Mail}
                     value={resetEmail}
                     onChange={(e) => setResetEmail(e.target.value)}
-                    placeholder="you@petcare.pro"
+                    placeholder="you@example.invalid"
                   />
                 </Field>
                 {error && (

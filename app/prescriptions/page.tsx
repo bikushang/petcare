@@ -192,7 +192,7 @@ export default function PrescriptionsPage() {
       @media print{body{padding:20px}}
     </style></head><body>
     <div class="header">
-      <div><div class="clinic-name">PetCare Pro</div><div class="clinic-sub">Vetnora Animal Hospital &middot; 128 Maple Ave, Vetnora, CA</div></div>
+      <div><div class="clinic-name">Vetnora Animal Hospital</div><div class="clinic-sub">128 Maple Ave, Vetnora, CA</div></div>
       <div class="rx-num">Prescription ID<br><b>${printRx.prescriptionNumber}</b><br>${printRx.date}</div>
     </div>
     <div class="patient-box">
@@ -226,7 +226,7 @@ export default function PrescriptionsPage() {
       <div class="signature">
         <div class="sig-line"></div>
         <div class="sig-name">${printRx.vet}</div>
-        <div class="sig-title">Veterinarian, PetCare Pro</div>
+        <div class="sig-title">Veterinarian, Vetnora Animal Hospital</div>
       </div>
     </div>
     </body></html>`);
@@ -240,7 +240,7 @@ export default function PrescriptionsPage() {
     const ownerName = ownerOf(printRx.petId);
     const lines: string[] = [
       '═══════════════════════════════════════════════════════════',
-      '                    PETCARE PRO',
+      '             VETNORA ANIMAL HOSPITAL',
       '         Vetnora Animal Hospital',
       '      128 Maple Ave, Vetnora, CA 94110',
       '═══════════════════════════════════════════════════════════',
@@ -276,7 +276,7 @@ export default function PrescriptionsPage() {
     if (printRx.notes) lines.push(`  Notes: ${printRx.notes}`, '');
     if (printRx.isRepeat) lines.push(`  Repeat Prescription: ${printRx.repeatCount}/${printRx.maxRepeats} used. Parent: ${printRx.parentPrescriptionId}`, '');
     lines.push('─── SIGNATURE ───────────────────────────────────────────', '');
-    lines.push(`  ${printRx.vet}`, '  Veterinarian, PetCare Pro', '');
+    lines.push(`  ${printRx.vet}`, '  Veterinarian, Vetnora Animal Hospital', '');
     lines.push('═══════════════════════════════════════════════════════════');
     const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -593,7 +593,7 @@ export default function PrescriptionsPage() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <div className="w-10 h-10 rounded-xl bg-plum flex items-center justify-center"><FileText className="w-5 h-5 text-white" /></div>
-                  <div><div className="text-sm font-bold text-ink">PetCare Pro</div><div className="text-[10px] text-ink/50">Prescription Document</div></div>
+                  <div><div className="text-sm font-bold text-ink">Vetnora Animal Hospital</div><div className="text-[10px] text-ink/50">Prescription Document</div></div>
                 </div>
                 <div className="text-right">
                   <div className="text-[10px] text-ink/40">Prescription No</div>

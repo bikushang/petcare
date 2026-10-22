@@ -6,8 +6,12 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const asyncHandler = require('../middleware/asyncHandler');
 const Staff = require('../models/Staff');
+const crypto = require('crypto');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'petcare-pro-dev-secret-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET || JWT_SECRET.length < 32) {
+  throw new Error('JWT_SECRET must be configured with at least 32 characters before starting the server');
+}
 const JWT_EXPIRY = '7d';
 
 function signToken(staffId) {
@@ -86,12 +90,14 @@ const requestReset = asyncHandler(async (req, res) => {
     return res.json({ success: true, message: 'If that email exists, a reset link has been sent' });
   }
 
-  const token = require('crypto').randomBytes(32).toString('hex');
-  staff.resetToken = token;
+  const token = crypto.randomBytes(32).toString('hex');
+  staff.resetToken = crypto.createHash('sha256').update(token).digest('hex');
   staff.resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000);
   await staff.save();
 
-  res.json({ success: true, message: 'If that email exists, a reset link has been sent', resetToken: token });
+  // Deliver the token through a configured email provider in production.
+  // Never include it in an API response or log it.
+  res.json({ success: true, message: 'If that email exists, a reset link has been sent' });
 });
 
 const confirmReset = asyncHandler(async (req, res) => {
@@ -103,8 +109,9 @@ const confirmReset = asyncHandler(async (req, res) => {
     return res.status(400).json({ error: 'WEAK_PASSWORD', message: 'New password must be at least 6 characters' });
   }
 
+  const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
   const staff = await Staff.findOne({
-    resetToken: token,
+    resetToken: tokenHash,
     resetTokenExpiry: { $gt: new Date() },
   });
 

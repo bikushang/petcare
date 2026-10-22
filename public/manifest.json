@@ -1,7 +1,7 @@
 {
-  "name": "Vetnora Animal Hospital",
-  "short_name": "Vetnora",
-  "description": "Compassionate veterinary care for the Bay Area community.",
+  "name": "Vetnora Demo Clinic",
+  "short_name": "Vetnora Demo",
+  "description": "Fictional demo application. Not a real clinic or verified service.",
   "start_url": "/site",
   "display": "standalone",
   "background_color": "#f7faf8",

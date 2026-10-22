@@ -103,12 +103,11 @@ export async function changePassword(currentPassword: string, newPassword: strin
   });
 }
 
-export async function requestPasswordReset(email: string): Promise<string> {
-  const data = await authFetch('/auth/request-reset', {
+export async function requestPasswordReset(email: string): Promise<void> {
+  await authFetch('/auth/request-reset', {
     method: 'POST',
     body: JSON.stringify({ email }),
   });
-  return data.resetToken || '';
 }
 
 export async function confirmPasswordReset(token: string, newPassword: string): Promise<void> {

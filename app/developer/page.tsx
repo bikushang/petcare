@@ -266,7 +266,7 @@ export default function DeveloperPage() {
               <p className="text-[11px] text-ink/50 mb-4">The platform exposes a versioned REST API (v1) for all core modules. All endpoints require Bearer token authentication and support pagination, filtering, and sorting.</p>
               <div className="space-y-2">
                 {[
-                  { label: 'Base URL', value: 'https://api.petcare.pro/v1', icon: Terminal },
+                  { label: 'Base URL', value: 'https://api.vetnoravet.com/v1', icon: Terminal },
                   { label: 'Auth scheme', value: 'Bearer token (API tokens)', icon: Shield },
                   { label: 'Response format', value: 'JSON (UTF-8)', icon: FileJson },
                   { label: 'Rate limit', value: '1000 req / 15 min per token', icon: Zap },
@@ -516,7 +516,7 @@ export default function DeveloperPage() {
               <h3 className="text-sm font-semibold text-ink mb-3">Authentication</h3>
               <div className="rounded-xl bg-ink text-white p-4 font-mono text-xs overflow-x-auto">
                 <div className="text-ink/40"># Example request with Bearer token</div>
-                <div className="mt-2"><span className="text-sky-300">curl</span> <span className="text-lilac">https://api.petcare.pro/v1/patients</span></div>
+                <div className="mt-2"><span className="text-sky-300">curl</span> <span className="text-lilac">https://api.vetnoravet.com/v1/patients</span></div>
                 <div className="mt-1">  -H <span className="text-amber-300">"Authorization: Bearer pcp_live_..."</span></div>
                 <div className="mt-1">  -H <span className="text-amber-300">"Content-Type: application/json"</span></div>
               </div>
