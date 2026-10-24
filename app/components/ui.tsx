@@ -273,7 +273,7 @@ export function Modal({
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto">
-      <div className="absolute inset-0 bg-ink/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed inset-0 bg-ink/40 backdrop-blur-sm" onClick={onClose} />
       <div className={`relative w-full ${wide ? 'max-w-3xl' : 'max-w-lg'} mt-10 mb-10 bg-white rounded-2xl shadow-soft border border-line animate-popIn`}>
         <div className="flex items-center justify-between px-5 h-14 border-b border-line">
           <h3 className="text-sm font-semibold text-ink">{title}</h3>
